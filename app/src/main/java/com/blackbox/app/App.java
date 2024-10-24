@@ -3,12 +3,27 @@
  */
 package com.blackbox.app;
 
-public class App {
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+public class App extends Application {
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Hello world!");
+
+        Label label = new Label("Hello world!");
+
+        primaryStage.setScene(new Scene(label));
+        primaryStage.show();
     }
 }

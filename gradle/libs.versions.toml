@@ -4,5 +4,12 @@
 [versions]
 guava = "33.2.1-jre"
 
+javafx-plugin = "0.1.0"
+javafx-lib = "23.0.1"
+
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
+
+[plugins]
+javafx-plugin = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }
+

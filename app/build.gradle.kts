@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    alias(libs.plugins.javafx.plugin)
 }
 
 repositories {
@@ -36,6 +37,11 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+javafx {
+    version = libs.versions.javafx.lib.get()
+    modules("javafx.controls")
 }
 
 application {
