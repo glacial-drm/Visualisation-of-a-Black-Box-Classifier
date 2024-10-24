@@ -40,5 +40,5 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = "com.blackbox.App"
+    mainClass = "com.blackbox.app.App"
 }

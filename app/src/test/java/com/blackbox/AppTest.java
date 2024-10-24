@@ -5,6 +5,7 @@ package com.blackbox;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import com.blackbox.app.App;
 
 public class AppTest {
     @Test
