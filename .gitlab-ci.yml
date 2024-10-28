@@ -31,4 +31,7 @@ test:
       - app/build/test-results/test/*.xml
     reports:
       junit: app/build/test-results/test/*.xml
+      coverage_report:
+        coverage_format: jacoco
+        path: app/build/reports/jacoco/test/jacocoTestReport.xml
 
