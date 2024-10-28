@@ -18,6 +18,7 @@ before_script:
 
 build:
   stage: build
+  tags: [ docker ]
   script: gradle --build-cache assemble
   cache:
     key: "$CI_COMMIT_REF_NAME"
@@ -28,6 +29,7 @@ build:
 
 test:
   stage: test
+  tags: [ docker ]
   script: gradle check
   cache:
     key: "$CI_COMMIT_REF_NAME"
@@ -38,5 +40,6 @@ test:
 
 deploy:
   stage: deploy
+  tags: [ docker ]
   script: echo "Define your deployment script!"
   environment: production
