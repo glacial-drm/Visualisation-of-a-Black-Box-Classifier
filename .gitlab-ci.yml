@@ -28,7 +28,7 @@ test:
   artifacts:
     when: always
     paths:
-      - build/test-results/test/*.xml
+      - app/build/test-results/test/*.xml
     reports:
-      junit: build/test-results/test/*.xml
+      junit: app/build/test-results/test/*.xml
 
