@@ -25,4 +25,10 @@ test:
     paths:
       - build
       - .gradle
+  artifacts:
+    when: always
+    paths:
+      - build/test-results/test/*.xml
+    reports:
+      junit: build/test-results/test/*.xml
 
