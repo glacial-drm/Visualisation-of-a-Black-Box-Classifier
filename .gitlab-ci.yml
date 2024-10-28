@@ -38,8 +38,3 @@ test:
       - build
       - .gradle
 
-deploy:
-  stage: deploy
-  tags: [ docker ]
-  script: echo "Define your deployment script!"
-  environment: production
