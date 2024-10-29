@@ -58,3 +58,4 @@ application {
     // Define the main class for the application.
     mainClass = "com.blackbox.app.App"
 }
+
