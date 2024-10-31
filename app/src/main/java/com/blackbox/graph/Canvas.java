@@ -10,6 +10,12 @@ import com.huskerdev.openglfx.canvas.GLProfile;
 import com.huskerdev.openglfx.lwjgl.LWJGLExecutor;
 
 public class Canvas {
+    /**
+     * Create a {@link com.huskerdev.openglfx.canvas.GLCanvas GLCanvas}.
+     *
+     * @return: {@link javafx.scene.layout.Region Region}
+     *          to abstract away {@link com.huskerdev.openglfx.canvas.GLCanvas GLCanvas}
+     */
     public static Region createCanvas() {
         GLCanvas canvas = new GLCanvas(
             LWJGLExecutor.LWJGL_MODULE,
