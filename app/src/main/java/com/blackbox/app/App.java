@@ -3,17 +3,13 @@
  */
 package com.blackbox.app;
 
-import static org.lwjgl.opengl.GL11.*;
-
-import com.huskerdev.openglfx.canvas.GLCanvas;
-import com.huskerdev.openglfx.canvas.GLCanvasAnimator;
-import com.huskerdev.openglfx.canvas.GLProfile;
-import com.huskerdev.openglfx.lwjgl.LWJGLExecutor;
+import com.blackbox.graph.Canvas;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -33,33 +29,7 @@ public class App extends Application {
         Label label1 = new Label("Hello world!");
         Label label2 = new Label("Hello world!");
 
-        GLCanvas canvas = new GLCanvas(
-            LWJGLExecutor.LWJGL_MODULE,
-            GLProfile.Core,
-            // flipY
-            false,
-            // msaa
-            0,
-            // fxaa
-            false
-        );
-        canvas.setAnimator(new GLCanvasAnimator(60.0));
-
-        canvas.addOnInitEvent(event -> {
-            System.out.println("init");
-        });
-        canvas.addOnReshapeEvent(event -> {
-            System.out.println("reshape");
-        });
-        canvas.addOnRenderEvent(event -> {
-            glClearColor(255f, (float)Math.random() % 255f, 0f, 1f);
-
-            // clear the framebuffer
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        });
-        canvas.addOnDisposeEvent(event -> {
-            System.out.println("dispose");
-        });
+        Region canvas = Canvas.createCanvas();
         canvas.setMinWidth(200);
         canvas.setMaxWidth(200);
         canvas.setMinHeight(200);
