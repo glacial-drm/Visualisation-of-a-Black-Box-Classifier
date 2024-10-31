@@ -3,9 +3,18 @@
  */
 package com.blackbox.app;
 
+import static org.lwjgl.opengl.GL11.*;
+
+import com.huskerdev.openglfx.canvas.GLCanvas;
+import com.huskerdev.openglfx.canvas.GLCanvasAnimator;
+import com.huskerdev.openglfx.canvas.GLProfile;
+import com.huskerdev.openglfx.lwjgl.LWJGLExecutor;
+
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -14,9 +23,6 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        new Thread(() -> {
-            new Canvas().run();
-        }).start();
         launch(args);
     }
 
@@ -24,9 +30,45 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Hello world!");
 
-        Label label = new Label("Hello world!");
+        Label label1 = new Label("Hello world!");
+        Label label2 = new Label("Hello world!");
 
-        primaryStage.setScene(new Scene(label));
+        GLCanvas canvas = new GLCanvas(
+            LWJGLExecutor.LWJGL_MODULE,
+            GLProfile.Core,
+            // flipY
+            false,
+            // msaa
+            0,
+            // fxaa
+            false
+        );
+        canvas.setAnimator(new GLCanvasAnimator(60.0));
+
+        canvas.addOnInitEvent(event -> {
+            System.out.println("init");
+        });
+        canvas.addOnReshapeEvent(event -> {
+            System.out.println("reshape");
+        });
+        canvas.addOnRenderEvent(event -> {
+            glClearColor(255f, (float)Math.random() % 255f, 0f, 1f);
+
+            // clear the framebuffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        });
+        canvas.addOnDisposeEvent(event -> {
+            System.out.println("dispose");
+        });
+        canvas.setMinWidth(200);
+        canvas.setMaxWidth(200);
+        canvas.setMinHeight(200);
+        canvas.setMaxHeight(200);
+
+        VBox container = new VBox(label1, canvas, label2);
+        container.paddingProperty().set(new Insets(8));
+
+        primaryStage.setScene(new Scene(container));
         primaryStage.show();
     }
 }
