@@ -6,11 +6,13 @@ guava = "33.2.1-jre"
 
 javafx-plugin = "0.1.0"
 javafx-lib = "23.0.1"
+joml = "1.10.7"
 lwjgl = "3.3.4"
 openglfx = "4.0.5"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
+joml = { group = "org.joml", name = "joml", version.ref = "joml" }
 lwjgl-bom = { group = "org.lwjgl", name = "lwjgl-bom", version.ref = "lwjgl" }
 lwjgl-lib = { group = "org.lwjgl", name = "lwjgl" }
 # List of modules can be found here: https://www.lwjgl.org/customize

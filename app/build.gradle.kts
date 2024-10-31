@@ -50,6 +50,8 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
 
+    implementation(libs.joml)
+
     implementation(platform(libs.lwjgl.bom))
     implementation(libs.lwjgl.lib)
     implementation(libs.lwjgl.opengl)
