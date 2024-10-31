@@ -3,8 +3,6 @@
  */
 package com.blackbox.app;
 
-import org.lwjgl.Version;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -16,7 +14,9 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+        new Thread(() -> {
+            new Canvas().run();
+        }).start();
         launch(args);
     }
 

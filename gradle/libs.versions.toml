@@ -14,6 +14,7 @@ lwjgl-bom = { group = "org.lwjgl", name = "lwjgl-bom", version.ref = "lwjgl" }
 lwjgl-lib = { group = "org.lwjgl", name = "lwjgl" }
 # List of modules can be found here: https://www.lwjgl.org/customize
 lwjgl-opengl = { group = "org.lwjgl", name = "lwjgl-opengl" }
+lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw" }
 
 [plugins]
 javafx-plugin = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }

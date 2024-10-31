@@ -53,8 +53,10 @@ dependencies {
     implementation(platform(libs.lwjgl.bom))
     implementation(libs.lwjgl.lib)
     implementation(libs.lwjgl.opengl)
+    implementation(libs.lwjgl.glfw)
     runtimeOnly(variantOf(libs.lwjgl.lib) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.opengl) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.glfw) { classifier(lwjglNatives) })
 }
 
 testing {
