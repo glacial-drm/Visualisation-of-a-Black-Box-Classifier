@@ -3,12 +3,14 @@
  */
 package com.blackbox.app;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import javafx.application.Application;
 
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        Model model = new Model();
+        Controller controller = new Controller(model);
+
+        View.controller = controller;
+        Application.launch(View.class, args);
     }
 }
