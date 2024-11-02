@@ -10,6 +10,7 @@ plugins {
     application
     // Apply the application plugin to add support for building a CLI application in Java.
     alias(libs.plugins.javafx.plugin)
+    jacoco
 }
 
 repositories {
@@ -69,15 +70,30 @@ testing {
         // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
             // Use JUnit Jupiter test framework
-            useJUnitJupiter("5.10.3")
+            useJUnitJupiter(libs.versions.junit)
         }
+    }
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+
+// Coverage report runs after tests
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    reports {
+        html.required = true
     }
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
     }
 }
 
