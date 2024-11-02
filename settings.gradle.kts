@@ -12,4 +12,5 @@ plugins {
 }
 
 rootProject.name = "blackbox"
+startParameter.setContinueOnFailure(true)
 include("app")
