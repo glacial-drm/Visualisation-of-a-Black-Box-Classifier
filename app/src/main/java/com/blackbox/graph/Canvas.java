@@ -1,5 +1,6 @@
 package com.blackbox.graph;
 
+import com.blackbox.renderer.Renderer;
 import javafx.scene.layout.Region;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -33,31 +34,32 @@ public class Canvas {
         );
         canvas.setAnimator(new GLCanvasAnimator(60.0));
 
+        Renderer renderer = new Renderer();
         canvas.addOnInitEvent(event -> {
             System.out.println("init");
         });
         canvas.addOnReshapeEvent(event -> {
-            System.out.println("reshape");
+            renderer.resize(event.width, event.height);
         });
         canvas.addOnRenderEvent(event -> {
             // Check event queue
             while (!eventQueue.isEmpty()) {
                 // Get an event
                 CanvasEvent canvasEvent = eventQueue.poll();
-                if (canvasEvent == null) { break; }
+                if (canvasEvent == null) {
+                    break;
+                }
 
                 // Process event
                 if (canvasEvent instanceof PointsLoaded) {
-                    PointsLoaded pointsLoaded = (PointsLoaded)canvasEvent;
+                    PointsLoaded pointsLoaded = (PointsLoaded) canvasEvent;
                     System.out.println(String.format("Received PointsLoaded event with data: %d", pointsLoaded.data));
                 }
             }
 
             // Do rendering
-            glClearColor(255f, (float)Math.random() % 255f, 0f, 1f);
+            renderer.render();
 
-            // clear the framebuffer
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         });
         canvas.addOnDisposeEvent(event -> {
             System.out.println("dispose");
