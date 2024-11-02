@@ -1,23 +1,20 @@
 package com.blackbox.renderer;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
     private int sWidth, sHeight;
 
-    public void Renderer(int width, int height){
-        sWidth = width;
-        sHeight = height;
-    }
-
+    /**
+     * the main render loop
+     * takes no data and returns no data
+     * Handles clearing the screen, setting up buffers, creating shaders and rendering the science
+     */
     public void render(){
         clearScreen();
 
-        float vertices[] = {
+        float[] vertices = {
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
                 0.0f,  0.5f, 0.0f,
@@ -29,25 +26,28 @@ public class Renderer {
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
-        String vertexCode = "#version 330 core\n" +
-                "layout (location = 0) in vec3 aPos;\n" +
-                "out vec3 colour;\n" +
-                "void main()\n" +
-                "{\n" +
-                "gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n" +
-                "colour = aPos\n"+
-                "}\n";
+        String vertexCode = """
+                #version 330 core
+                layout (location = 0) in vec3 aPos;
+                out vec3 colour;
+                void main()
+                {
+                gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+                colour = aPos
+                }
+                """;
 
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, vertexCode);
         glCompileShader(vertexShader);
 
-        String fragmentCode = "#version 330 core\n" +
-                "out vec4 FragColor;\n" +
-                "in vec3 colour;\n" +
-                "void main() {" +
-                "    FragColor = vec4(colour, 1.0f);" +
-                "}";
+        String fragmentCode = """
+                #version 330 core
+                out vec4 FragColor;
+                in vec3 colour;
+                void main() {\
+                    FragColor = vec4(colour, 1.0f);\
+                }""";
 
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, fragmentCode);
@@ -68,6 +68,11 @@ public class Renderer {
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
 
+    /**
+     * Changes the viewport of the program
+     * @param width must be less than the screen width
+     * @param height must be less than the screen height
+     */
     public void resize(int width, int height){
         // Could check args are less than screen size
         sWidth = width;
@@ -76,6 +81,9 @@ public class Renderer {
         glViewport(0, 0, sWidth, sHeight);
     }
 
+    /**
+     * Handles clearing the opengl buffers and resting the screen to a default colour
+     */
     private void clearScreen() {
         glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
