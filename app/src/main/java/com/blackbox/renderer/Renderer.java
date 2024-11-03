@@ -47,7 +47,9 @@ public class Renderer {
         sWidth = width;
         sHeight = height;
 
-        glViewport(0, 0, sWidth, sHeight);
+        try{
+            glViewport(0, 0, sWidth, sHeight);
+        }catch (Exception e){}
     }
 
     /**
