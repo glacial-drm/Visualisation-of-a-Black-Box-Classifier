@@ -6,9 +6,13 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 public class View extends Application {
     /** The controller. */
@@ -32,8 +36,16 @@ public class View extends Application {
             controller.pointsLoaded(3);
         });
 
+        // Menu Bar (top screen bar)
+        MenuBar menuBar = new MenuBar();
+        for(int i = 0; i < controller.getMenuList().length; i++){
+            menuBar.getMenus().add(i, new Menu(controller.getMenuList()[i]));
+        }
+
+
+
         // Container
-        VBox container = new VBox(canvas, button);
+        VBox container = new VBox(menuBar, canvas, button);
         container.setPadding(new Insets(8));
         container.setSpacing(16);
 

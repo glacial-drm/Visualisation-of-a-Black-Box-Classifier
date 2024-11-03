@@ -9,6 +9,8 @@ public class Controller {
     /** The model. */
     private Model model;
 
+    private String[] menuList = {"File", "Edit", "View", "Tools", "Import", "Export", "Help"};
+
     /**
      * A message queue going to the {@link com.blackbox.graph.Canvas Canvas}.
      *
@@ -42,4 +44,7 @@ public class Controller {
     public String getMesssge() {
         return model.message;
     }
+
+    // Other getters
+    public String[] getMenuList() {return menuList;}
 }
