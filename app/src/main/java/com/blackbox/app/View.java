@@ -23,6 +23,12 @@ public class View extends Application {
         // Test title
         primaryStage.setTitle(controller.getMesssge());
 
+        // Menu Bar
+        MenuBar menuBar = new MenuBar();
+        for(int i = 0; i < controller.getMenuList().length; i++){
+            menuBar.getMenus().add(i, new Menu(controller.getMenuList()[i]));
+        }
+
         // Canvas
         Region canvas = Canvas.createCanvas(controller.eventQueue);
         canvas.setMinWidth(200);
@@ -36,21 +42,16 @@ public class View extends Application {
             controller.pointsLoaded(3);
         });
 
-        // Menu Bar (top screen bar)
-        MenuBar menuBar = new MenuBar();
-        for(int i = 0; i < controller.getMenuList().length; i++){
-            menuBar.getMenus().add(i, new Menu(controller.getMenuList()[i]));
-        }
-
         // Classifier Section
-
-        // Graph Display Section
+        Region classifierRegion = new Region();
 
         // Output Details Section
+        Region outputRegion = new Region();
 
         // Navigation Details Section
+        Region navigationRegion = new Region();
 
-        // Container
+        // Container --change to gridpane(?)
         VBox container = new VBox(menuBar, canvas, button);
         container.setPadding(new Insets(8));
         container.setSpacing(16);
