@@ -42,7 +42,13 @@ public class View extends Application {
             menuBar.getMenus().add(i, new Menu(controller.getMenuList()[i]));
         }
 
+        // Classifier Section
 
+        // Graph Display Section
+
+        // Output Details Section
+
+        // Navigation Details Section
 
         // Container
         VBox container = new VBox(menuBar, canvas, button);
