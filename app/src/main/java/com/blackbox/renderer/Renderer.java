@@ -14,10 +14,6 @@ public class Renderer {
     public void render(){
         clearScreen();
 
-        Shader shader = new Shader();
-        shader.create("vertex.glsl", "fragment.glsl");
-
-
         float[] vertices = {
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
@@ -30,41 +26,10 @@ public class Renderer {
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
-        String vertexCode = """
-                #version 330 core
-                layout (location = 0) in vec3 aPos;
-                out vec3 colour;
-                void main()
-                {
-                gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-                colour = aPos
-                }
-                """;
 
-        int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, vertexCode);
-        glCompileShader(vertexShader);
-
-        String fragmentCode = """
-                #version 330 core
-                out vec4 FragColor;
-                in vec3 colour;
-                void main() {\
-                    FragColor = vec4(colour, 1.0f);\
-                }""";
-
-        int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, fragmentCode);
-        glCompileShader(fragmentShader);
-
-        int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-        glUseProgram(shaderProgram);
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
+        Shader shader = new Shader();
+        shader.create("vertex.glsl", "fragment.glsl");
+        shader.setActive();
 
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
