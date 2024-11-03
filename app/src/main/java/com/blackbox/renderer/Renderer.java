@@ -28,7 +28,7 @@ public class Renderer {
 
 
         Shader shader = new Shader();
-        shader.create("vertex.glsl", "fragment.glsl");
+        boolean valid = shader.create("vertex.glsl", "fragment.glsl");
         shader.setActive();
 
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
@@ -56,5 +56,17 @@ public class Renderer {
     private void clearScreen() {
         glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    // Getters and setter mostly used for testing
+
+    /** Gets the viewport width */
+    public int getWidth() {
+        return sWidth;
+    }
+
+    /** Gets the viewport height */
+    public int getHeight() {
+        return sHeight;
     }
 }
