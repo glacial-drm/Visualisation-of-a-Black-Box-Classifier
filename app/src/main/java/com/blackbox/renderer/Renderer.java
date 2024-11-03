@@ -14,6 +14,10 @@ public class Renderer {
     public void render(){
         clearScreen();
 
+        Shader shader = new Shader();
+        shader.create("vertex.glsl", "fragment.glsl");
+
+
         float[] vertices = {
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f,
