@@ -19,21 +19,14 @@ public class Renderer {
                 0.5f, -0.5f, 0.0f,
                 0.0f,  0.5f, 0.0f,
         };
-        int vao = glGenVertexArrays();
-        glBindVertexArray(vao);
-
-        int vboId = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
         String vertexCode = """
                 #version 330 core
                 layout (location = 0) in vec3 aPos;
-                out vec3 colour;
+                
                 void main()
                 {
-                gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-                colour = aPos
+                gl_Position = aPos;
                 }
                 """;
 
@@ -45,8 +38,8 @@ public class Renderer {
                 #version 330 core
                 out vec4 FragColor;
                 in vec3 colour;
-                void main() {\
-                    FragColor = vec4(colour, 1.0f);\
+                void main() {
+                    FragColour = (1.0f, 0.0f, 0.0f, 1.0f);
                 }""";
 
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -62,8 +55,14 @@ public class Renderer {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-        glEnableVertexAttribArray(0);
+        Vao vao = new Vao();
+        vao.create();
+        vao.bind();
+
+        Vbo vbo = new Vbo();
+        vbo.create();
+        vbo.storeFloatData(vertices, 0);
+        vao.enableVertexAttrib(0);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
     }
