@@ -11,8 +11,9 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class IndexBufferTest {
     IndexBuffer ibo;
+
     @BeforeEach
-    void init(){
+    void init() {
         glfwInit();
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
@@ -21,42 +22,42 @@ public class IndexBufferTest {
     }
 
     @Test
-    void testInitBuffer(){
+    void testInitBuffer() {
         IndexBuffer ibo = new IndexBuffer();
         assertNotEquals(ibo.getIboId(), 0);
     }
 
     @Test
-    void testDestroyBuffer(){
+    void testDestroyBuffer() {
         assertTrue(ibo.destroy());
     }
 
     @Test
-    void testBind(){
+    void testBind() {
         assertTrue(ibo.bind());
     }
 
     @Test
-    void testUnbind(){
+    void testUnbind() {
         assertTrue(ibo.unbind());
     }
 
     @Test
-    void testStoreData(){
-        int[] indices = {1,2,3};
-        ibo.storeIndexData(indices);
+    void testStoreData() {
+        int[] data = {1, 2, 3};
+        ibo.storeIndexData(data);
         assertEquals(ibo.getCount(), 3);
     }
 
     @Test
-    void testStoreNothing(){
-        int[] indices = {};
-        assertThrows(IllegalArgumentException.class, () -> ibo.storeIndexData(indices));
+    void testStoreNothing() {
+        int[] data = {};
+        assertThrows(IllegalArgumentException.class, () -> ibo.storeIndexData(data));
     }
 
     @Test
-    void testNonTriangleIndices(){
-        int[] indices = {1,2};
-        assertThrows(IllegalArgumentException.class, () -> ibo.storeIndexData(indices));
+    void testNonTriangledata() {
+        int[] data = {1, 2};
+        assertThrows(IllegalArgumentException.class, () -> ibo.storeIndexData(data));
     }
 }

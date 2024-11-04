@@ -1,19 +1,20 @@
 package com.blackbox;
 
-import com.blackbox.renderer.IndexBuffer;
 import com.blackbox.renderer.VertexArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.opengl.GL;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class VertexArrayTest {
     VertexArray vao;
+
     @BeforeEach
-    void init(){
+    void init() {
         glfwInit();
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
@@ -22,25 +23,23 @@ public class VertexArrayTest {
     }
 
     @Test
-    void testInitBuffer(){
+    void testInitBuffer() {
         VertexArray vao = new VertexArray();
         assertNotEquals(vao.getVaoId(), 0);
     }
 
     @Test
-    void testDestroyBuffer(){
+    void testDestroyBuffer() {
         assertTrue(vao.delete());
     }
 
     @Test
-    void testBind(){
+    void testBind() {
         assertTrue(vao.bind());
     }
 
     @Test
-    void testUnbind(){
+    void testUnbind() {
         assertTrue(vao.unbind());
     }
-
-
 }
