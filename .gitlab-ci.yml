@@ -22,6 +22,10 @@ test:
   script: 
     - >
       dockerd &
+      until docker version > /dev/null 2>&1
+      do
+        sleep 1
+      done
 
       docker buildx build \
         --build-arg BASE_IMAGE=alpine:latest \
