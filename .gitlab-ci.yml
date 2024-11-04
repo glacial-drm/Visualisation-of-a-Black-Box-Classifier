@@ -18,6 +18,7 @@ build:
 test:
   stage: test
   tags: [ docker ]
+  image: docker:latest
   script: 
     - >
       docker buildx build \
