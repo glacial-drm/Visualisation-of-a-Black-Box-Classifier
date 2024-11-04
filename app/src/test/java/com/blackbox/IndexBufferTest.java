@@ -13,8 +13,13 @@ public class IndexBufferTest {
     IndexBuffer ibo;
     @BeforeEach
     void init(){
-        glfwInit();
+        if (!glfwInit()) {
+            fail("Glfw failed to init");
+        }
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+        if (window == 0) {
+            fail("Window failed to init");
+        }
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
         ibo = new IndexBuffer();
