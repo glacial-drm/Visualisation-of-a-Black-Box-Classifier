@@ -1,7 +1,7 @@
 build:
   stage: build
   tags: [ docker ]
-  image: gradle
+  image: alpine:latest
   script: 
     - >
       apk add --update gradle glfw
