@@ -22,7 +22,7 @@ test:
   script: 
     - |
       dockerd &
-      until [ -f /var/run/docker.sock ]
+      until [ -S /var/run/docker.sock ]
       do
         sleep 1
       done
