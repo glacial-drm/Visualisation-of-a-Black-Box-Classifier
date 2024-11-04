@@ -21,7 +21,7 @@ test:
   image: docker:latest
   script: 
     - >
-      dockerd &;
+      dockerd &
 
       docker buildx build \
         --build-arg BASE_IMAGE=alpine:latest \
