@@ -1,8 +1,7 @@
-image: gradle:alpine
+image: utensils/opengl:stable
 
 before_script:
-  - apk add mesa-gl
-  - apk add glfw
+  - apk add --update gradle glfw
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
 
