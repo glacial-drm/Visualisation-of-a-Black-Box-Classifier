@@ -20,7 +20,7 @@ test:
   tags: [ docker ]
   image: docker:latest
   script: 
-    - >
+    - |
       dockerd &
       until docker version > /dev/null 2>&1
       do
