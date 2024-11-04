@@ -5,11 +5,12 @@ import com.blackbox.graph.Canvas;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class View extends Application {
             menuBar.getMenus().add(i, new Menu(controller.getMenuList()[i]));
         }
 
-        // Canvas
+        // Canvas (Graph section)
         Region canvas = Canvas.createCanvas(controller.eventQueue);
         canvas.setMinWidth(200);
         canvas.setMaxWidth(200);
@@ -43,16 +44,48 @@ public class View extends Application {
         });
 
         // Classifier Section
-        Region classifierRegion = new Region();
+        GridPane classifierRegion = new GridPane();
+        ComboBox<Text> classifierList = new ComboBox<Text>();
+
+        classifierRegion.add(new Text("Classifier:"), 0, 0);
+        classifierRegion.add(classifierList, 1, 0);
+
+        classifierRegion.setMinWidth(200);
+        classifierRegion.setMaxWidth(200);
+        classifierRegion.setMinHeight(200);
+        classifierRegion.setMaxHeight(200);
 
         // Output Details Section
-        Region outputRegion = new Region();
+        GridPane outputRegion = new GridPane();
+
+
+        outputRegion.add(new Text("Output Details:"), 0, 0);
+
+        outputRegion.setMinWidth(200);
+        outputRegion.setMaxWidth(200);
+        outputRegion.setMinHeight(200);
+        outputRegion.setMaxHeight(200);
 
         // Navigation Details Section
-        Region navigationRegion = new Region();
+        GridPane navigationRegion = new GridPane();
 
-        // Container --change to gridpane(?)
-        VBox container = new VBox(menuBar, canvas, button);
+
+        navigationRegion.add(new Text("Navigation Details:"), 0, 0);
+
+        navigationRegion.setMinWidth(200);
+        navigationRegion.setMaxWidth(200);
+        navigationRegion.setMinHeight(200);
+        navigationRegion.setMaxHeight(200);
+
+        // Adding sections to grid
+        GridPane grid = new GridPane();
+        grid.add(classifierRegion, 0, 0/*, 0, 2*/);
+        grid.add(canvas, 1, 0, 2, 1);
+        grid.add(outputRegion, 1, 2);
+        grid.add(navigationRegion, 2, 2);
+
+        // Container
+        VBox container = new VBox(menuBar, grid, button);
         container.setPadding(new Insets(8));
         container.setSpacing(16);
 
