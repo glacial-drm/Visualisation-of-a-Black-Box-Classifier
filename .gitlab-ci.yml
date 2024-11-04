@@ -26,6 +26,7 @@ test:
       do
         sleep 1
       done
+      sleep 10
 
       docker buildx build \
         --build-arg BASE_IMAGE=alpine:latest \
