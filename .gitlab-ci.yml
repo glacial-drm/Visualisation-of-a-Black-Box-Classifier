@@ -4,10 +4,10 @@ build:
   image: alpine:latest
   script: 
     - >
-      apk add --update gradle glfw
-      GRADLE_USER_HOME="$(pwd)/.gradle"
-      export GRADLE_USER_HOME
-      gradle --build-cache assemble
+      apk add --update gradle glfw;
+      GRADLE_USER_HOME="$(pwd)/.gradle";
+      export GRADLE_USER_HOME;
+      gradle --build-cache assemble;
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
@@ -32,9 +32,9 @@ test:
         --tag utensils/opengl \
         --platform=linux/amd64 \
         --progress=auto \
-        --file Dockerfile .
+        --file Dockerfile .;
 
-      docker run --rm -v ./:/src -i utensils/opengl "cd /src; gradle check"
+      docker run --rm -v ./:/src -i utensils/opengl "cd /src; gradle check";
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
