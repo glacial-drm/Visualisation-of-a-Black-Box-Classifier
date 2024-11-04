@@ -11,19 +11,17 @@ public class Renderer {
      * takes no data and returns no data
      * Handles clearing the screen, setting up buffers, creating shaders and rendering the science
      */
-    public void render(){
+    public void render() {
         clearScreen();
 
-        float[] vertices = {
-                -0.5f, 0.5f, 0f,//v0
+        float[] vertices = {-0.5f, 0.5f, 0f,//v0
                 -0.5f, -0.5f, 0f,//v1
                 0.5f, -0.5f, 0f,//v2
                 0.5f, 0.5f, 0f,//v3
         };
 
-        int[] indices = {
-                0,1,3,//top left triangle (v0, v1, v3)
-                3,1,2//bottom right triangle (v3, v1, v2)
+        int[] indices = {0, 1, 3,//top left triangle (v0, v1, v3)
+                3, 1, 2//bottom right triangle (v3, v1, v2)
         };
 
 
@@ -80,10 +78,11 @@ public class Renderer {
 
     /**
      * Changes the viewport of the program
-     * @param width must be less than the screen width
+     *
+     * @param width  must be less than the screen width
      * @param height must be less than the screen height
      */
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         // Could check args are less than screen size
         sWidth = width;
         sHeight = height;
