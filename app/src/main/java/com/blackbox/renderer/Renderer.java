@@ -15,10 +15,17 @@ public class Renderer {
         clearScreen();
 
         float[] vertices = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f,
+                -0.5f, 0.5f, 0f,//v0
+                -0.5f, -0.5f, 0f,//v1
+                0.5f, -0.5f, 0f,//v2
+                0.5f, 0.5f, 0f,//v3
         };
+
+        int[] indices = {
+                0,1,3,//top left triangle (v0, v1, v3)
+                3,1,2//bottom right triangle (v3, v1, v2)
+        };
+
 
         String vertexCode = """
                 #version 330 core
@@ -55,16 +62,20 @@ public class Renderer {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        Vao vao = new Vao();
-        vao.create();
-        vao.bind();
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
 
-        Vbo vbo = new Vbo();
-        vbo.create();
-        vbo.storeFloatData(vertices, 0);
-        vao.enableVertexAttrib(0);
+        IndexBuffer indexBuffer = new IndexBuffer();
+        indexBuffer.bind();
+        indexBuffer.storeIndexData(indices);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        VertexBuffer vertexBuffer = new VertexBuffer();
+        vertexBuffer.storeFloatData(vertices, 0, 3);
+
+        vertexArray.enableVertexAttrib(0);
+        glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
+        vertexArray.disableVertexAttrib();
+        vertexArray.unbind();
     }
 
     /**
