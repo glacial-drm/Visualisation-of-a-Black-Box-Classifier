@@ -17,9 +17,28 @@ build:
       - .gradle
 
 test:
+  image: docker
   stage: test
   tags: [ docker ]
-  script: gradle check
+  script: 
+    - >
+      docker buildx build \
+        --build-arg BASE_IMAGE=alpine:latest \
+        --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+        --build-arg BUILD_OPTIMIZATION=3 \
+        --build-arg BUILD_TYPE=release \
+        --build-arg LLVM_VERSION=17 \
+        --build-arg MESA_VERSION=24.2.6 \
+        --build-arg VCS_REF=$(git rev-parse --short HEAD) \
+        --cache-from utensils/opengl \
+        --tag utensils/opengl \
+        --platform=linux/amd64 \
+        --progress=auto \
+        --file Dockerfile .
+
+      gradle check
+
+      docker run --rm -v ./:/src -i utensils/opengl "cd /src; gradle check"
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
