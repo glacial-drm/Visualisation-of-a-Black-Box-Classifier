@@ -1,6 +1,8 @@
 image: gradle:alpine
 
 before_script:
+  - apk add mesa-gl
+  - apk add glfw
   - GRADLE_USER_HOME="$(pwd)/.gradle"
   - export GRADLE_USER_HOME
 
