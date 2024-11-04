@@ -41,7 +41,6 @@ public class Shader {
         glAttachShader(id, fragmentShader);
         glLinkProgram(id);
 
-        System.out.println("TEST");
         // Check for errors
         try {
             validProgram = checkShaderProgram(id);

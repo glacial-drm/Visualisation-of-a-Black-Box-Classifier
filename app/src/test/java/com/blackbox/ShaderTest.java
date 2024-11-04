@@ -1,37 +1,35 @@
 package com.blackbox;
 
-import com.blackbox.graph.Canvas;
-import com.blackbox.renderer.Renderer;
 import com.blackbox.renderer.Shader;
-import com.huskerdev.openglfx.canvas.GLCanvas;
-import com.huskerdev.openglfx.canvas.GLProfile;
-import com.huskerdev.openglfx.lwjgl.LWJGLExecutor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.lwjgl.opengl.GL;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static java.sql.Types.NULL;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class ShaderTest {
+    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private final PrintStream originalOut = System.out;
+    private final PrintStream originalErr = System.err;
     Shader shader;
 
     @BeforeEach
-    void init(){
+    void init() {
         shader = new Shader();
         glfwInit();
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
     }
-
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
-    private final PrintStream originalErr = System.err;
 
     @BeforeEach
     public void setUpStreams() {
@@ -56,6 +54,7 @@ public class ShaderTest {
     void testMissingVertex() {
         assertFalse(shader.create("", "fragment.glsl"));
     }
+
     @DisplayName("create Shader missing Fragment")
     @Test
     void testMissingFragment() {

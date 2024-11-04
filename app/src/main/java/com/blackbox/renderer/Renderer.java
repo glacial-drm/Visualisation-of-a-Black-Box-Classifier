@@ -11,14 +11,10 @@ public class Renderer {
      * takes no data and returns no data
      * Handles clearing the screen, setting up buffers, creating shaders and rendering the science
      */
-    public void render(){
+    public void render() {
         clearScreen();
 
-        float[] vertices = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f,
-        };
+        float[] vertices = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f,};
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
@@ -39,17 +35,19 @@ public class Renderer {
 
     /**
      * Changes the viewport of the program
-     * @param width must be less than the screen width
+     *
+     * @param width  must be less than the screen width
      * @param height must be less than the screen height
      */
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         // Could check args are less than screen size
         sWidth = width;
         sHeight = height;
 
-        try{
+        try {
             glViewport(0, 0, sWidth, sHeight);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     /**
@@ -62,12 +60,16 @@ public class Renderer {
 
     // Getters and setter mostly used for testing
 
-    /** Gets the viewport width */
+    /**
+     * Gets the viewport width
+     */
     public int getWidth() {
         return sWidth;
     }
 
-    /** Gets the viewport height */
+    /**
+     * Gets the viewport height
+     */
     public int getHeight() {
         return sHeight;
     }
