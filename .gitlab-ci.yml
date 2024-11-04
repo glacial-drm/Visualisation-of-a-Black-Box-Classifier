@@ -1,14 +1,13 @@
-image: utensils/opengl:stable
-
-before_script:
-  - apk add --update gradle glfw
-  - GRADLE_USER_HOME="$(pwd)/.gradle"
-  - export GRADLE_USER_HOME
-
 build:
   stage: build
   tags: [ docker ]
-  script: gradle --build-cache assemble
+  image: gradle
+  script: 
+    - >
+      apk add --update gradle glfw
+      GRADLE_USER_HOME="$(pwd)/.gradle"
+      export GRADLE_USER_HOME
+      gradle --build-cache assemble
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
@@ -17,7 +16,6 @@ build:
       - .gradle
 
 test:
-  image: docker
   stage: test
   tags: [ docker ]
   script: 
@@ -35,8 +33,6 @@ test:
         --platform=linux/amd64 \
         --progress=auto \
         --file Dockerfile .
-
-      gradle check
 
       docker run --rm -v ./:/src -i utensils/opengl "cd /src; gradle check"
   cache:
