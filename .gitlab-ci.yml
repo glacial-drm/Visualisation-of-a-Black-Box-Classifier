@@ -22,11 +22,11 @@ test:
   script: 
     - |
       dockerd &
-      until [ -S /var/run/docker.sock ]
-      do
-        sleep 1
-      done
-      sleep 10
+      # until [ -S /var/run/docker.sock ]
+      # do
+      #   sleep 1
+      # done
+      sleep 120
 
       docker buildx build \
         --build-arg BASE_IMAGE=alpine:latest \
