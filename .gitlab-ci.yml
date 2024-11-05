@@ -28,6 +28,8 @@ test:
       # done
       sleep 120
 
+      unset DOCKER_HOST
+
       docker buildx build \
         --build-arg BASE_IMAGE=alpine:latest \
         --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
