@@ -29,7 +29,7 @@ FROM ${BASE_IMAGE} as builder
 # Install all needed build deps for Mesa3D
 ARG LLVM_VERSION=9
 RUN set -xe; \
-    apk add --no-cache \
+    apk add --no-cache --quiet \
         autoconf \
         automake \
         bison \
@@ -134,7 +134,7 @@ COPY --from=builder /usr/local /usr/local
 # Install runtime dependencies for Mesa and link xorg dri modules
 ARG LLVM_VERSION=9
 RUN set -xe; \
-    apk --update add --no-cache \
+    apk add --no-cache --quiet \
         mesa-utils \
         gradle \
         binutils \
