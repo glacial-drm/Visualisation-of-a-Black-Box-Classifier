@@ -21,30 +21,34 @@ test:
   image: docker:dind
   script: 
     - |
+      # Start docker
       dockerd &
+
+      # Wait until docker has started
       until [ -S /var/run/docker.sock ]
       do
         sleep 1
       done
       sleep 10
 
+      # Required for DinD (Docker-in-Docker)
       unset DOCKER_HOST
 
+      # Build the container
       docker buildx build \
         --build-arg BASE_IMAGE=alpine:latest \
-        --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
-        --build-arg BUILD_OPTIMIZATION=3 \
-        --build-arg BUILD_TYPE=release \
         --build-arg LLVM_VERSION=17 \
         --build-arg MESA_VERSION=24.2.6 \
-        --build-arg VCS_REF=$(git rev-parse --short HEAD) \
-        --cache-from utensils/opengl \
         --tag utensils/opengl \
-        --platform=linux/amd64 \
-        --progress=auto \
         --file Dockerfile .;
 
-      docker run --rm -v ./:/src -i utensils/opengl "cd /src; gradle check";
+      # Run the container
+      docker run --rm -v ./:/src -i utensils/opengl "
+        cd /src;
+        GRADLE_USER_HOME="$(pwd)/.gradle";
+        export GRADLE_USER_HOME;
+        gradle check;
+      ";
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
