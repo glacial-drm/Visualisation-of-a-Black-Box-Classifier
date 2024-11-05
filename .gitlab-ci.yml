@@ -22,11 +22,11 @@ test:
   script: 
     - |
       dockerd &
-      # until [ -S /var/run/docker.sock ]
-      # do
-      #   sleep 1
-      # done
-      sleep 120
+      until [ -S /var/run/docker.sock ]
+      do
+        sleep 1
+      done
+      sleep 10
 
       unset DOCKER_HOST
 
