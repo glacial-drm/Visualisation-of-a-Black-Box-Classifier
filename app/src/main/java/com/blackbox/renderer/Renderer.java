@@ -11,29 +11,27 @@ public class Renderer {
      * takes no data and returns no data
      * Handles clearing the screen, setting up buffers, creating shaders and rendering the science
      */
-    public void render(){
+    public void render() {
         clearScreen();
 
-        float[] vertices = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f,
+        float[] vertices = {-0.5f, 0.5f, 0f,//v0
+                -0.5f, -0.5f, 0f,//v1
+                0.5f, -0.5f, 0f,//v2
+                0.5f, 0.5f, 0f,//v3
         };
-        int vao = glGenVertexArrays();
-        glBindVertexArray(vao);
 
-        int vboId = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        int[] indices = {0, 1, 3,//top left triangle (v0, v1, v3)
+                3, 1, 2//bottom right triangle (v3, v1, v2)
+        };
+
 
         String vertexCode = """
                 #version 330 core
                 layout (location = 0) in vec3 aPos;
-                out vec3 colour;
+                
                 void main()
                 {
-                gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-                colour = aPos
+                gl_Position = aPos;
                 }
                 """;
 
@@ -45,8 +43,8 @@ public class Renderer {
                 #version 330 core
                 out vec4 FragColor;
                 in vec3 colour;
-                void main() {\
-                    FragColor = vec4(colour, 1.0f);\
+                void main() {
+                    FragColour = (1.0f, 0.0f, 0.0f, 1.0f);
                 }""";
 
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -62,18 +60,29 @@ public class Renderer {
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-        glEnableVertexAttribArray(0);
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        IndexBuffer indexBuffer = new IndexBuffer();
+        indexBuffer.bind();
+        indexBuffer.storeIndexData(indices);
+
+        VertexBuffer vertexBuffer = new VertexBuffer();
+        vertexBuffer.storeFloatData(vertices, 0, 3);
+
+        vertexArray.enableVertexAttrib(0);
+        glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
+        vertexArray.disableVertexAttrib();
+        vertexArray.unbind();
     }
 
     /**
      * Changes the viewport of the program
-     * @param width must be less than the screen width
+     *
+     * @param width  must be less than the screen width
      * @param height must be less than the screen height
      */
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         // Could check args are less than screen size
         sWidth = width;
         sHeight = height;
