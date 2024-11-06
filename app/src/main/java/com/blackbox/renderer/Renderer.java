@@ -14,23 +14,36 @@ public class Renderer {
     public void render() {
         clearScreen();
 
-        float[] vertices = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f,};
-        int vao = glGenVertexArrays();
-        glBindVertexArray(vao);
+        float[] vertices = {-0.5f, 0.5f, 0f,//v0
+                -0.5f, -0.5f, 0f,//v1
+                0.5f, -0.5f, 0f,//v2
+                0.5f, 0.5f, 0f,//v3
+        };
 
-        int vboId = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        int[] indices = {0, 1, 3,//top left triangle (v0, v1, v3)
+                3, 1, 2//bottom right triangle (v3, v1, v2)
+        };
+
 
 
         Shader shader = new Shader();
         boolean valid = shader.create("vertex.glsl", "fragment.glsl");
         shader.setActive();
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-        glEnableVertexAttribArray(0);
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        IndexBuffer indexBuffer = new IndexBuffer();
+        indexBuffer.bind();
+        indexBuffer.storeIndexData(indices);
+
+        VertexBuffer vertexBuffer = new VertexBuffer();
+        vertexBuffer.storeFloatData(vertices, 0, 3);
+
+        vertexArray.enableVertexAttrib(0);
+        glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
+        vertexArray.disableVertexAttrib();
+        vertexArray.unbind();
     }
 
     /**
