@@ -2,7 +2,6 @@ package com.blackbox.renderer;
 
 import org.lwjgl.BufferUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
@@ -20,7 +19,8 @@ public class Shader {
 
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
-     * @param vertexFileName expected to be in the src/main/shaders/vertex folder
+     *
+     * @param vertexFileName   expected to be in the src/main/shaders/vertex folder
      * @param fragmentFileName expected to be in the src/main/shaders/fragment folder
      */
     public boolean create(String vertexFileName, String fragmentFileName) {
@@ -48,7 +48,7 @@ public class Shader {
             System.err.println("Could not link program: " + e.getMessage());
         }
 
-        if(!validProgram){
+        if (!validProgram) {
             System.out.println("Could not link program but no error: " + id);
         }
 
@@ -58,8 +58,10 @@ public class Shader {
         return validProgram && validShaders;
     }
 
-    /** Set this shader program as the one of OpenGL to use */
-    public void setActive(){
+    /**
+     * Set this shader program as the one of OpenGL to use
+     */
+    public void setActive() {
         glUseProgram(id);
     }
 
@@ -68,6 +70,7 @@ public class Shader {
 
     /**
      * Checks if the shader compiled correctly
+     *
      * @param shader shader ID
      * @return true if successful
      * @throws IOException if the shader compilation failed
@@ -84,6 +87,7 @@ public class Shader {
 
     /**
      * Simple function to get the link status of the program
+     *
      * @param program takes in the program id
      * @return true if successful
      * @throws IOException if the program fails to link
@@ -100,8 +104,9 @@ public class Shader {
 
     /**
      * Reads in a file and returns its contents as a String
-     * @throws IOException if the file fails to read
+     *
      * @return file contents with new lines
+     * @throws IOException if the file fails to read
      */
     private String readFile(String fileName) throws IOException {
         String content = "";
@@ -119,7 +124,8 @@ public class Shader {
 
     /**
      * Function which calls for the reading of the shader, creates the shader and checks for errors
-     * @param fileName file type and path
+     *
+     * @param fileName   file type and path
      * @param shaderType type of shader EG GL_VERTEX_SHADER, GL_FRAGMENT_SHADER
      * @return int with openGL id for the shader
      * @throws IOException if the file fails to read or the shader compilation fails

@@ -12,8 +12,9 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class RendererTest {
     Renderer renderer;
+
     @BeforeEach
-    void init(){
+    void init() {
         glfwInit();
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
@@ -35,7 +36,6 @@ public class RendererTest {
         assertEquals(renderer.getWidth(), 600);
         assertEquals(renderer.getHeight(), 100);
     }
-
 
 
 }
