@@ -6,7 +6,7 @@ import java.awt.*;
 
 /** A base class which handles the underlying logic of objects that are rendered stores info
  * on position, rotation, scale and vertex data */
-public class primitive {
+public class Primitive {
     protected Vector3f position;
     protected Vector3f rotation;
     protected Vector3f scale;
@@ -14,6 +14,7 @@ public class primitive {
     protected int[] indices;
     protected Color color;
     protected PrimitiveTypes type;
+    protected int dimension;
 
     void move(float dx, float dy, float dz) {
         position.add(dx, dy, dz);

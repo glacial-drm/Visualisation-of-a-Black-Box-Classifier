@@ -1,5 +1,7 @@
 package com.blackbox.renderer;
 
+import com.blackbox.renderer.primitives.Disk;
+
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -14,17 +16,7 @@ public class Renderer {
     public void render() {
         clearScreen();
 
-        float[] vertices = {-0.5f, 0.5f, 0f,//v0
-                -0.5f, -0.5f, 0f,//v1
-                0.5f, -0.5f, 0f,//v2
-                0.5f, 0.5f, 0f,//v3
-        };
-
-        int[] indices = {0, 1, 3,//top left triangle (v0, v1, v3)
-                3, 1, 2//bottom right triangle (v3, v1, v2)
-        };
-
-
+        Disk d = new Disk();
 
         Shader shader = new Shader();
         boolean valid = shader.create("vertex.glsl", "fragment.glsl");
@@ -35,10 +27,10 @@ public class Renderer {
 
         IndexBuffer indexBuffer = new IndexBuffer();
         indexBuffer.bind();
-        indexBuffer.storeIndexData(indices);
+        indexBuffer.storeIndexData(d.getIndices());
 
         VertexBuffer vertexBuffer = new VertexBuffer();
-        vertexBuffer.storeFloatData(vertices, 0, 3);
+        vertexBuffer.storeFloatData(d.getVertices(), 0, d.getDimension());
 
         vertexArray.enableVertexAttrib(0);
         glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
@@ -59,7 +51,7 @@ public class Renderer {
 
         try {
             glViewport(0, 0, sWidth, sHeight);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
