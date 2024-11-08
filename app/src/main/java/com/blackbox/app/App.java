@@ -3,14 +3,18 @@
  */
 package com.blackbox.app;
 
+import com.blackbox.graph.Canvas;
+
 import javafx.application.Application;
 
 public class App {
     public static void main(String[] args) {
         Model model = new Model();
         Controller controller = new Controller(model);
-
         View.controller = controller;
+
+        Canvas.run(controller.eventQueue);
+
         Application.launch(View.class, args);
     }
 }
