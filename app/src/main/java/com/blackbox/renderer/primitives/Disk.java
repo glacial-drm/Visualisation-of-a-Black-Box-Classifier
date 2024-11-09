@@ -19,7 +19,7 @@ public class Disk extends Primitive {
         setUpIndices();
     }
 
-    public void create(Vector3f pos, float radius, Vector3f rot, Vector3f scale, Color color) {
+    public void create(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
         this.position = pos;
         this.radius = radius;
         this.rotation = rot;

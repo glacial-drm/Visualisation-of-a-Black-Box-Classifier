@@ -1,8 +1,10 @@
 package com.blackbox.renderer;
 
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +19,8 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
     private int id;
 
+    // TODO : Make this an abstract class and have child classes for each shader
+    private int transformMatrixLocation;
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
      *
@@ -66,7 +70,16 @@ public class Shader {
     }
 
     // Functions that handle sending data to the GPU
+    public void loadMatrixUniform(Matrix4f matrix) {
+        getUniformLocations();
 
+        FloatBuffer buf = BufferUtils.createFloatBuffer(16);
+        glUniformMatrix4fv(transformMatrixLocation, false, matrix.get(buf));
+    }
+
+    private void getUniformLocations(){
+        transformMatrixLocation = glGetUniformLocation(id, "transformMatrix");
+    }
 
     /**
      * Checks if the shader compiled correctly

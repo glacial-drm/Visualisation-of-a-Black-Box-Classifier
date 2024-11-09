@@ -1,6 +1,10 @@
 package com.blackbox.renderer;
 
 import com.blackbox.renderer.primitives.Disk;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+
+import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
@@ -17,10 +21,13 @@ public class Renderer {
         clearScreen();
 
         Disk d = new Disk();
+        d.create(new Vector3f(0,0,0), 1, new Vector3f(0,0,0), 1, Color.lightGray);
 
         Shader shader = new Shader();
         boolean valid = shader.create("vertex.glsl", "fragment.glsl");
         shader.setActive();
+
+        Camera camera = new Camera();
 
         VertexArray vertexArray = new VertexArray();
         vertexArray.bind();
@@ -31,6 +38,10 @@ public class Renderer {
 
         VertexBuffer vertexBuffer = new VertexBuffer();
         vertexBuffer.storeFloatData(d.getVertices(), 0, d.getDimension());
+        vertexBuffer.bind();
+
+        Matrix4f transformationMatrix = camera.createTransformMatrix(d.getPosition(), d.getRotation(), d.getScale());
+        shader.loadMatrixUniform(transformationMatrix);
 
         vertexArray.enableVertexAttrib(0);
         glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
