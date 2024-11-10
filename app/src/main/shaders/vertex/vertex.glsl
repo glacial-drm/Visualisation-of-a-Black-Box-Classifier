@@ -3,7 +3,8 @@
 layout (location = 0) in vec3 aPos;
 
 uniform mat4 transformMatrix;
+uniform mat4 projectionMatrix;
 
 void main() {
-    gl_Position = transformMatrix * vec4(aPos, 1.0);
+    gl_Position = projectionMatrix * transformMatrix * vec4(aPos, 1.0);
 }
