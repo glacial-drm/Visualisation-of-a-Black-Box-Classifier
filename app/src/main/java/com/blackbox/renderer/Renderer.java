@@ -1,10 +1,9 @@
 package com.blackbox.renderer;
 
 import com.blackbox.renderer.primitives.Disk;
+import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
@@ -21,7 +20,7 @@ public class Renderer {
         clearScreen();
 
         Disk d = new Disk();
-        d.create(new Vector3f(0,0,-1), 1, new Vector3f(0,0,0), 0.5f, Color.lightGray);
+        d.create(new Vector3f(0,0,-1), 1, new Vector3f(0,0,0), 0.5f, Color.ALICEBLUE);
 
         Shader shader = new Shader();
         boolean valid = shader.create("vertex.glsl", "fragment.glsl");

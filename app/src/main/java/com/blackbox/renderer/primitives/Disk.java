@@ -1,8 +1,7 @@
 package com.blackbox.renderer.primitives;
 
+import javafx.scene.paint.Color;
 import org.joml.Vector3f;
-
-import java.awt.*;
 
 public class Disk extends Primitive {
     private float radius;
@@ -12,13 +11,20 @@ public class Disk extends Primitive {
      * A disk is just a filled in circle given its proper name
      */
     public Disk() {
-        this.type = PrimitiveTypes.disk;
         this.dimension = 3;
 
-        setUpVertexs();
+        setUpVertexes();
         setUpIndices();
     }
 
+    /**
+     * Creates a new disk with the given parameters
+     * @param pos the center of the disk
+     * @param radius the 'size' of the circle
+     * @param rot rotation of the disk
+     * @param scale multiplier of the size
+     * @param color a JavaFx colour of the disk
+     */
     public void create(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
         this.position = pos;
         this.radius = radius;
@@ -27,7 +33,10 @@ public class Disk extends Primitive {
         this.color = color;
     }
 
-    private void setUpVertexs() {
+    /**
+     * The vertexes of the disk
+     */
+    private void setUpVertexes() {
         vertexData = new float[]{-0.5f, 0.5f, 0f,
                 -0.5f, -0.5f, 0f,
                 0.5f, -0.5f, 0f,
@@ -35,18 +44,33 @@ public class Disk extends Primitive {
         };
     }
 
+    /**
+     * The indices of the disk
+     */
     private void setUpIndices() {
         indices = new int[]{0, 1, 3, 3, 1, 2};
     }
 
+    /**
+     * Getter for the vertices
+     * @return vertexData
+     */
     public float[] getVertices() {
         return vertexData;
     }
 
+    /**
+     * getter for the indices
+     * @return indices
+     */
     public int[] getIndices() {
         return indices;
     }
 
+    /**
+     * getter for the dimension
+     * @return dimension
+     */
     public int getDimension() {
         return dimension;
     }
