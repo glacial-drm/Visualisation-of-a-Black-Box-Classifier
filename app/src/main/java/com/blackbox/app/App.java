@@ -13,8 +13,16 @@ public class App {
         Controller controller = new Controller(model);
         View.controller = controller;
 
-        Canvas.run(controller.eventQueue);
+        Thread canvasThread = Canvas.run(controller.eventQueue);
 
         Application.launch(View.class, args);
+
+        controller.stop();
+
+        try {
+            canvasThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Canvas thread was interrupted");
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.blackbox.graph;
 
 import com.blackbox.graph.events.CanvasEvent;
-import com.blackbox.graph.events.PointsLoaded;
+import com.blackbox.graph.events.*;
 import com.blackbox.renderer.Renderer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -21,6 +21,7 @@ public class Canvas {
     private long window;
     private final Renderer renderer = new Renderer();
     private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
+    private boolean running = true;
 
     private Canvas(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
         this.eventQueue = eventQueue;
@@ -78,7 +79,12 @@ public class Canvas {
      * Whether the app is currently running and should continue looping.
      */
     private boolean isRunning() {
-        return !glfwWindowShouldClose(window);
+        if (running) {
+            running = !glfwWindowShouldClose(window);
+            return running;
+        } else {
+            return running;
+        }
     }
 
     /**
@@ -104,6 +110,8 @@ public class Canvas {
             if (canvasEvent instanceof PointsLoaded) {
                 PointsLoaded pointsLoaded = (PointsLoaded) canvasEvent;
                 System.out.println(String.format("Received PointsLoaded event with data: %d", pointsLoaded.data));
+            } else if (canvasEvent instanceof StopEvent) {
+                running = false;
             }
         }
     }
@@ -116,6 +124,9 @@ public class Canvas {
         glfwDestroyWindow(window);
         glfwTerminate();
         glfwSetErrorCallback(null).free();
+
+        // Stop all threads
+        System.exit(0);
     }
 
     /**
@@ -123,8 +134,8 @@ public class Canvas {
      *
      * @param eventQueue To pass events into the created thread.
      */
-    public static void run(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
-        new Thread(() -> {
+    public static Thread run(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
+        Thread thread = new Thread(() -> {
             Canvas canvas = new Canvas(eventQueue);
 
             while (canvas.isRunning()) {
@@ -132,6 +143,10 @@ public class Canvas {
             }
 
             canvas.destroy();
-        }).start();
+        });
+
+        thread.start();
+
+        return thread;
     }
 }

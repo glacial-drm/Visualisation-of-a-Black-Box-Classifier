@@ -2,8 +2,7 @@ package com.blackbox.app;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.blackbox.graph.events.CanvasEvent;
-import com.blackbox.graph.events.PointsLoaded;
+import com.blackbox.graph.events.*;
 
 public class Controller {
     /** The model. */
@@ -32,6 +31,13 @@ public class Controller {
      */
     public void pointsLoaded(int data) {
         sendEvent(new PointsLoaded(data));
+    }
+
+    /**
+     * Send the {@link com.blackbox.graph.events.StopEvent StopEvent} event.
+     */
+    public void stop() {
+        sendEvent(new StopEvent());
     }
 
     Controller(Model model) {
