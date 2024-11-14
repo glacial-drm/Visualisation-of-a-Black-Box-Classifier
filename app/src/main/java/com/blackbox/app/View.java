@@ -61,7 +61,7 @@ public class View extends Application {
         GridPane classifierRegion = new GridPane();
         ComboBox<Text> classifierList = new ComboBox<Text>();
 
-        classifierRegion.add(new Text("Classifier Details:")., 0, 0);
+        classifierRegion.add(new Text("Classifier Details:"), 0, 0);
         classifierRegion.add(new Text("Chosen Classifier: "), 0, 1);
         classifierRegion.add(classifierList, 1, 1);
 
