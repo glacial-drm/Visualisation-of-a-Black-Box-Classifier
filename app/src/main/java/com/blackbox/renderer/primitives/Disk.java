@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 import org.joml.Vector3f;
 
 public class Disk extends Primitive {
+
     private float radius;
 
     /**
@@ -16,6 +17,7 @@ public class Disk extends Primitive {
         setUpVertexes();
         setUpIndices();
     }
+
 
     /**
      * Creates a new disk with the given parameters
@@ -73,5 +75,9 @@ public class Disk extends Primitive {
      */
     public int getDimension() {
         return dimension;
+    }
+
+    public float getRadius() {
+        return radius;
     }
 }

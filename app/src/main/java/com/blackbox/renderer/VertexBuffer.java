@@ -64,7 +64,6 @@ public class VertexBuffer {
             throw new IllegalArgumentException("data is not a multiple of dimension");
         }
 
-
         bind();
         FloatBuffer buf = addFloatData(data);
         glBufferData(GL_ARRAY_BUFFER, buf, GL_STATIC_DRAW);

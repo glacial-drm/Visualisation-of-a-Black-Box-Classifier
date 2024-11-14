@@ -27,7 +27,7 @@ public class Renderer {
         clearScreen();
 
         Disk d = new Disk();
-        d.create(new Vector3f(0, 0, -1), 1, new Vector3f(0, 0, 0), 0.5f, Color.ALICEBLUE);
+        d.create(new Vector3f(0, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED);
 
         Shader shader = new Shader();
         boolean valid = shader.create("vertex.glsl", "fragment.glsl");
@@ -42,7 +42,6 @@ public class Renderer {
 
         VertexBuffer vertexBuffer = new VertexBuffer();
         vertexBuffer.storeFloatData(d.getVertices(), 0, d.getDimension());
-        vertexBuffer.bind();
 
         Matrix4f transformationMatrix = Camera.createTransformMatrix(d.getPosition(), d.getRotation(), d.getScale());
 
@@ -51,6 +50,7 @@ public class Renderer {
         shader.loadViewMatrix(camera.getViewMatrix());
 
         vertexArray.enableVertexAttrib(0);
+        vertexArray.enableVertexAttrib(1);
         glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
         vertexArray.disableVertexAttrib();
         vertexArray.unbind();

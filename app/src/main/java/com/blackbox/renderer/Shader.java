@@ -1,6 +1,8 @@
 package com.blackbox.renderer;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class Shader {
     private int transformMatrixLocation;
     private int projectionMatrixLocation;
     private int viewMatrixLocation;
+
 
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
@@ -85,6 +88,7 @@ public class Shader {
     public void loadViewMatrix(Matrix4f matrix){
         loadMatrixUniform(matrix, viewMatrixLocation);
     }
+
 
     private void loadMatrixUniform(Matrix4f matrix, int loc) {
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
