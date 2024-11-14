@@ -20,7 +20,7 @@ public class Renderer {
         clearScreen();
 
         Disk d = new Disk();
-        d.create(new Vector3f(0,0,-1), 1, new Vector3f(0,0,0), 0.5f, Color.ALICEBLUE);
+        d.create(new Vector3f(0, 0, -1), 1, new Vector3f(0, 0, 0), 0.5f, Color.ALICEBLUE);
 
         Shader shader = new Shader();
         boolean valid = shader.create("vertex.glsl", "fragment.glsl");
@@ -39,7 +39,7 @@ public class Renderer {
         vertexBuffer.storeFloatData(d.getVertices(), 0, d.getDimension());
         vertexBuffer.bind();
 
-        Matrix4f transformationMatrix = camera.createTransformMatrix(d.getPosition(), d.getRotation(), d.getScale());
+        Matrix4f transformationMatrix = Camera.createTransformMatrix(d.getPosition(), d.getRotation(), d.getScale());
 
         shader.loadTransformMatrix(transformationMatrix);
         shader.loadProjectionMatrix(camera.getProjectionMatrix());

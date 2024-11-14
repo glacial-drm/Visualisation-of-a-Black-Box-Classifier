@@ -27,7 +27,7 @@ public class Camera {
      * @param scale float for resizing the object
      * @return Matrix4f transformationMatrix
      */
-    public Matrix4f createTransformMatrix(Vector3f translation, Vector3f rotation, float scale){
+    public static Matrix4f createTransformMatrix(Vector3f translation, Vector3f rotation, float scale){
         return new Matrix4f()
                 .translate(translation)
                 .rotate((float)Math.toRadians(rotation.x()), new Vector3f(1,0,0))
