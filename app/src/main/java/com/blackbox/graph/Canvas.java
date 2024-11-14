@@ -48,7 +48,7 @@ public class Canvas {
 
         // Hide window until its shown
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        window = glfwCreateWindow(300, 300, "Hello world", NULL, NULL);
+        window = glfwCreateWindow(300, 300, "Blackbox Graph", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create window");
         }
