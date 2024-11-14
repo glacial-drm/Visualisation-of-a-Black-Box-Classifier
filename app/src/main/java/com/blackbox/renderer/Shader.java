@@ -22,6 +22,7 @@ public class Shader {
     // TODO : Make this an abstract class and have child classes for each shader
     private int transformMatrixLocation;
     private int projectionMatrixLocation;
+    private int viewMatrixLocation;
 
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
@@ -81,6 +82,10 @@ public class Shader {
         loadMatrixUniform(matrix, projectionMatrixLocation);
     }
 
+    public void loadViewMatrix(Matrix4f matrix){
+        loadMatrixUniform(matrix, viewMatrixLocation);
+    }
+
     private void loadMatrixUniform(Matrix4f matrix, int loc) {
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
         glUniformMatrix4fv(loc, false, matrix.get(buf));
@@ -89,6 +94,7 @@ public class Shader {
     private void getUniformLocations(){
         transformMatrixLocation = glGetUniformLocation(id, "transformMatrix");
         projectionMatrixLocation = glGetUniformLocation(id, "projectionMatrix");
+        viewMatrixLocation = glGetUniformLocation(id, "viewMatrix");
     }
 
     /**

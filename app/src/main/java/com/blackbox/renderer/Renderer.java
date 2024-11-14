@@ -5,12 +5,19 @@ import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.util.Set;
+
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
     private int sWidth, sHeight;
     private Camera camera;
+    private Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
     /**
      * the main render loop
      * takes no data and returns no data
@@ -41,11 +48,16 @@ public class Renderer {
 
         shader.loadTransformMatrix(transformationMatrix);
         shader.loadProjectionMatrix(camera.getProjectionMatrix());
+        shader.loadViewMatrix(camera.getViewMatrix());
 
         vertexArray.enableVertexAttrib(0);
         glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
         vertexArray.disableVertexAttrib();
         vertexArray.unbind();
+    }
+
+    public Set<Integer> getMovementKeys(){
+        return moveKeys;
     }
 
     /**
@@ -85,5 +97,9 @@ public class Renderer {
      */
     public int getHeight() {
         return sHeight;
+    }
+
+    public void move(int key) {
+        camera.move(key);
     }
 }

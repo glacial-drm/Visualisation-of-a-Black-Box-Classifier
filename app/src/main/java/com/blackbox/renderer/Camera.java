@@ -3,9 +3,15 @@ package com.blackbox.renderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class Camera {
     private final Matrix4f projectionMatrix;
-    private final Matrix4f viewMatrix;
+    private Matrix4f viewMatrix;
+    private Vector3f position =  new Vector3f(0,0,0);;
+    private float yaw = 0;
+    private float pitch = 0;
+    private float roll = 0;
 
     /**
      * Sets up the projection and view matrix
@@ -17,7 +23,7 @@ public class Camera {
      */
     public Camera(float width, float height, float fov, float near, float far) {
         projectionMatrix = createProjectionMatrix(width, height, fov, near, far);
-        viewMatrix = new Matrix4f();
+        viewMatrix = createViewMatrix();
     }
 
     /**
@@ -60,6 +66,14 @@ public class Camera {
                 .m33(0);
     }
 
+    public Matrix4f createViewMatrix() {
+        return new Matrix4f()
+                .identity()
+                .rotate((float)Math.toRadians(pitch), new Vector3f(1, 0, 0))
+                .rotate((float)Math.toRadians(yaw), new Vector3f(0,1,0))
+                .translate(position);
+    }
+
     /**
      * getter for the projection matrix
      * @return projectionMatrix
@@ -74,5 +88,18 @@ public class Camera {
      */
     public Matrix4f getViewMatrix() {
         return viewMatrix;
+    }
+
+    public void move(int key) {
+        if(key == GLFW_KEY_W){
+            position.y += 0.02f;
+        } else if (key == GLFW_KEY_S) {
+            position.y -= 0.02f;
+        } else if (key == GLFW_KEY_A) {
+            position.x -= 0.02f;
+        } else if (key == GLFW_KEY_D) {
+            position.x += 0.02f;
+        }
+        viewMatrix = createViewMatrix();
     }
 }

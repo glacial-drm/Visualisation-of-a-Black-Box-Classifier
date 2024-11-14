@@ -75,6 +75,8 @@ public class Canvas {
         glfwSetKeyCallback(window, (_window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 glfwSetWindowShouldClose(window, true);
+            } else if (renderer.getMovementKeys().contains(key)) {
+                renderer.move(key);
             }
         });
     }
