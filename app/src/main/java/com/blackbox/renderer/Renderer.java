@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
     private int sWidth, sHeight;
-
+    private Camera camera;
     /**
      * the main render loop
      * takes no data and returns no data
@@ -25,8 +25,6 @@ public class Renderer {
         Shader shader = new Shader();
         boolean valid = shader.create("vertex.glsl", "fragment.glsl");
         shader.setActive();
-
-        Camera camera = new Camera(sWidth, sHeight, 70, 0, 100);
 
         VertexArray vertexArray = new VertexArray();
         vertexArray.bind();
@@ -61,10 +59,8 @@ public class Renderer {
         sWidth = width;
         sHeight = height;
 
-        try {
-            glViewport(0, 0, sWidth, sHeight);
-        } catch (Exception ignored) {
-        }
+        glViewport(0, 0, sWidth, sHeight);
+        camera = new Camera(sWidth, sHeight, 70, 0, 100);
     }
 
     /**
