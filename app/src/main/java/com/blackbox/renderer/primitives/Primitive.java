@@ -27,13 +27,17 @@ public abstract class Primitive {
     protected VertexBuffer vertexBuffer;
     protected IndexBuffer indexBuffer;
 
-    public Primitive(Vector3f pos, Vector3f rot, float scale, Color color) {
+    public Primitive(Vector3f pos, Vector3f rot, float scale, Color color, float[] VertexData, int[] indicesData) {
         this.position = pos;
         this.rotation = rot;
         this.scale = scale;
         this.color = color;
+        this.vertexData = VertexData;
+        this.indices = indicesData;
 
         attributes = new ArrayList<>();
+        initVertexArray();
+        initIndexBuffer();
     }
 
     /**
@@ -95,6 +99,25 @@ public abstract class Primitive {
      */
     public int getDimension() {
         return dimension;
+    }
+
+    /**
+     * Getter for the vertices
+     * @return vertexData
+     */
+    public float[] getVertices() {
+        return vertexData;
+    }
+
+    public void initVertexArray(){
+        vertexArray = new VertexArray();
+        vertexArray.bind();
+    }
+
+    public void initIndexBuffer(){
+        indexBuffer = new IndexBuffer();
+        indexBuffer.bind();
+        indexBuffer.storeIndexData(getIndices());
     }
 
     /**
