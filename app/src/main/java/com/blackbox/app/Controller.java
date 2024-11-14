@@ -10,8 +10,6 @@ public class Controller {
     /** The model. */
     private Model model;
 
-    private String[] menuList = {"File", "Edit", "View", "Tools", "Import", "Export", "Help"};
-
     /**
      * A message queue going to the {@link com.blackbox.graph.Canvas Canvas}.
      *
@@ -49,12 +47,13 @@ public class Controller {
     }
 
     /** Get the message. */
-    public String getMesssge() {
+    public String getMessage() {
         return model.message;
     }
 
     // Other getters
-    public String[] getMenuList() {return menuList;}
+    public String[] getMenuList() {return model.menuList;}
+    public String[] getFileList() {return model.fileList;}
 
     /**
      * gets the list of classifier names.
