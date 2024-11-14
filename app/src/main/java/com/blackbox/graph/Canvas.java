@@ -22,6 +22,8 @@ public class Canvas {
     private final Renderer renderer = new Renderer();
     private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
     private boolean running = true;
+    private final int width = 300;
+    private final int height = 300;
 
     private Canvas(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
         this.eventQueue = eventQueue;
@@ -48,7 +50,7 @@ public class Canvas {
 
         // Hide window until its shown
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        window = glfwCreateWindow(300, 300, "Blackbox Graph", NULL, NULL);
+        window = glfwCreateWindow(width, height, "Hello world", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create window");
         }
@@ -62,6 +64,8 @@ public class Canvas {
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
         });
+
+        renderer.resize(width, height);
     }
 
     /**
