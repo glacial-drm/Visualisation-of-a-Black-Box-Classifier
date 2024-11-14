@@ -20,6 +20,17 @@ public class Controller {
     public ConcurrentLinkedQueue<CanvasEvent> eventQueue = new ConcurrentLinkedQueue<>();
 
     /**
+     * Constructor for the Controller.
+     * @param model the model instance to work with
+     */
+    public Controller(Model model) {
+        this.model = model;
+
+        // Register a listener to update the view when the model changes
+        model.addChangeListener(voidParam -> onModelChanged());
+    }
+
+    /**
      * Send an event to the {@link com.blackbox.graph.Canvas Canvas}.
      *
      * @param event The event to send
@@ -35,10 +46,6 @@ public class Controller {
      */
     public void pointsLoaded(int data) {
         sendEvent(new PointsLoaded(data));
-    }
-
-    Controller(Model model) {
-        this.model = model;
     }
 
     /** Get the message. */
@@ -73,6 +80,19 @@ public class Controller {
         model.addClassifier(classifier);
     }
 
+    public void removeClassifier(String classifier) {
+        model.removeClassifier(classifier);
+    }
+
+    public void clearClassifiers() {
+        model.clearClassifiers();
+    }
+
+
+    public void setSelectedClassifier(String classifier) {
+        model.setSelectedClassifier(classifier);
+    }
+
     /**
      * gets navigation details for display in the navigation section.
      * @return a string with navigation instructions or information
@@ -80,7 +100,7 @@ public class Controller {
     public String getNavigationDetails(){
         return model.getNavigationDetails();
     }
-    
+
     /**
      * Sets new navigation details and notifies listeners.
      * @param navigationDetails the new navigation details as a String
@@ -88,4 +108,22 @@ public class Controller {
     public void setNavigationDetails(String navigationDetails) {
         model.setNavigationDetails(navigationDetails);
     }
+
+    /**
+     * Handle the selection of a classifier from the ComboBox.
+     * @param selectedClassifier the selected classifier name
+     */
+    public void onClassifierSelected(String selectedClassifier) {
+        System.out.println("Selected classifier: " + selectedClassifier);
+        // WOP
+    }
+
+    /**
+     * Responds to model changes.
+     */
+    private void onModelChanged() {
+        System.out.println("Model has changed. Notify the view to update components.");
+        // WOP
+    }
+
 }

@@ -19,6 +19,9 @@ public class Model {
     /** navigation details shown in the navigation section. */
     private String navigationDetails = "Navigate through points to classify data.";
 
+    /** Selected classifier name. */
+    private String selectedClassifier;
+
     private List<Consumer<Void>> changeListeners = new ArrayList<>();
 
 
@@ -45,6 +48,40 @@ public class Model {
      */
     public void addClassifier(String classifier) {
         this.classifiers.add(classifier);
+        notifyChangeListeners();
+    }
+
+    /**
+     * Removes a classifier from the list and notifies listeners.
+     * @param classifier the classifier name to remove
+     */
+    public void removeClassifier(String classifier) {
+        this.classifiers.remove(classifier);
+        notifyChangeListeners();
+    }
+
+    /**
+     * Clears all classifiers and notifies listeners.
+     */
+    public void clearClassifiers() {
+        this.classifiers.clear();
+        notifyChangeListeners();
+    }
+
+    /**
+     * Gets the currently selected classifier.
+     * @return the selected classifier name as a String
+     */
+    public String getSelectedClassifier() {
+        return selectedClassifier;
+    }
+
+    /**
+     * Sets the selected classifier and notifies listeners.
+     * @param selectedClassifier the classifier name to set as selected
+     */
+    public void setSelectedClassifier(String selectedClassifier) {
+        this.selectedClassifier = selectedClassifier;
         notifyChangeListeners();
     }
 
