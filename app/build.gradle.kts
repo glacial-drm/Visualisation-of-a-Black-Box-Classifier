@@ -102,16 +102,4 @@ javafx {
 application {
     // Define the main class for the application.
     mainClass = "com.blackbox.app.App"
-
-    applicationDefaultJvmArgs = listOf(
-        "--add-opens", "javafx.base/com.sun.javafx=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/com.sun.prism=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/com.sun.prism.es2=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/com.sun.javafx.scene.layout=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED",
-        "--add-opens", "javafx.graphics/javafx.scene.image=ALL-UNNAMED",
-    )
 }
