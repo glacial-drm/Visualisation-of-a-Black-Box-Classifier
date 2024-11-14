@@ -1,7 +1,13 @@
 package com.blackbox.renderer.primitives;
 
+import com.blackbox.renderer.IndexBuffer;
+import com.blackbox.renderer.VertexArray;
+import com.blackbox.renderer.VertexBuffer;
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A base class which handles the underlying logic of objects that are rendered stores info
@@ -15,6 +21,16 @@ public abstract class Primitive {
     protected int[] indices;
     protected Color color;
     protected int dimension;
+    protected ArrayList<Integer> attributes;
+    protected PrimitiveTypes type;
+
+    protected VertexArray vertexArray;
+    protected VertexBuffer vertexBuffer;
+    protected IndexBuffer indexBuffer;
+
+    public Primitive(){
+        attributes = new ArrayList<>();
+    }
 
     /** Getter for the position */
     public Vector3f getPosition() {
@@ -28,6 +44,28 @@ public abstract class Primitive {
     /** Getter for the scale */
     public float getScale() {
         return scale;
+    }
+
+    public void enableAttributes() {
+        vertexArray.bind();
+        indexBuffer.bind();
+
+        for(int attribute : attributes) {
+            vertexArray.enableVertexAttrib(attribute);
+        }
+    }
+
+    public void disable() {
+        vertexArray.disableVertexAttrib();
+        vertexArray.unbind();
+    }
+
+    public int getIndexCount() {
+        return indexBuffer.getCount();
+    }
+
+    public PrimitiveTypes getType() {
+        return type;
     }
 
     /** Getter for the indices */

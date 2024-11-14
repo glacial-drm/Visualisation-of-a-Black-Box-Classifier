@@ -12,6 +12,7 @@ public class Camera {
     private float yaw = 0;
     private float pitch = 0;
     private float roll = 0;
+    private boolean viewChaged = false;
 
     /**
      * Sets up the projection and view matrix
@@ -67,6 +68,7 @@ public class Camera {
     }
 
     public Matrix4f createViewMatrix() {
+        viewChaged = true;
         return new Matrix4f()
                 .identity()
                 .rotate((float)Math.toRadians(pitch), new Vector3f(1, 0, 0))
@@ -101,5 +103,13 @@ public class Camera {
             position.x += 0.02f;
         }
         viewMatrix = createViewMatrix();
+    }
+
+    public boolean isViewChanged() {
+        return viewChaged;
+    }
+
+    public void resetViewChanged() {
+        viewChaged = false;
     }
 }

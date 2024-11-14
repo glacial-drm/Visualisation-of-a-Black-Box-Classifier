@@ -78,14 +78,17 @@ public class Shader {
 
     // Functions that handle sending data to the GPU
     public void loadTransformMatrix(Matrix4f matrix){
+        setActive();
         loadMatrixUniform(matrix, transformMatrixLocation);
     }
 
     public void loadProjectionMatrix(Matrix4f matrix){
+        setActive();
         loadMatrixUniform(matrix, projectionMatrixLocation);
     }
 
     public void loadViewMatrix(Matrix4f matrix){
+        setActive();
         loadMatrixUniform(matrix, viewMatrixLocation);
     }
 

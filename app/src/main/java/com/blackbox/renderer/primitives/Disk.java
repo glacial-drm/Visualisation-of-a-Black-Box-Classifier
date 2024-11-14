@@ -1,7 +1,12 @@
 package com.blackbox.renderer.primitives;
 
+import com.blackbox.renderer.IndexBuffer;
+import com.blackbox.renderer.VertexArray;
+import com.blackbox.renderer.VertexBuffer;
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;
+
+import java.util.List;
 
 public class Disk extends Primitive {
 
@@ -12,10 +17,13 @@ public class Disk extends Primitive {
      * A disk is just a filled in circle given its proper name
      */
     public Disk() {
+        super();
         this.dimension = 3;
+        this.type = PrimitiveTypes.DISK;
 
         setUpVertexes();
         setUpIndices();
+        setUpBuffers();
     }
 
 
@@ -44,6 +52,19 @@ public class Disk extends Primitive {
                 0.5f, -0.5f, 0f,
                 0.5f, 0.5f, 0f,
         };
+    }
+
+    private void setUpBuffers(){
+        vertexArray = new VertexArray();
+        vertexArray.bind();
+
+        indexBuffer = new IndexBuffer();
+        indexBuffer.bind();
+        indexBuffer.storeIndexData(getIndices());
+
+        vertexBuffer = new VertexBuffer();
+        vertexBuffer.storeFloatData(getVertices(), 0, getDimension());
+        attributes.add(0);
     }
 
     /**

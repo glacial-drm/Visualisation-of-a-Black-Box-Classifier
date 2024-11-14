@@ -66,6 +66,7 @@ public class Canvas {
         });
 
         renderer.resize(width, height);
+        renderer.init();
     }
 
     /**

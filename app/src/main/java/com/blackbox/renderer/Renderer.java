@@ -1,10 +1,14 @@
 package com.blackbox.renderer;
 
 import com.blackbox.renderer.primitives.Disk;
+import com.blackbox.renderer.primitives.Primitive;
+import com.blackbox.renderer.primitives.PrimitiveTypes;
 import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -17,43 +21,66 @@ import static org.lwjgl.opengl.GL30.*;
 public class Renderer {
     private int sWidth, sHeight;
     private Camera camera;
-    private Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
+    private final Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
+    private HashMap<PrimitiveTypes, Shader> shaders = new HashMap<PrimitiveTypes, Shader>();
+
     /**
      * the main render loop
      * takes no data and returns no data
      * Handles clearing the screen, setting up buffers, creating shaders and rendering the science
      */
+    public void init(){
+        initShaders();
+        uploadProjectionMatrix();
+        uploadViewMatrix();
+    }
+
+    private void uploadProjectionMatrix(){
+        for (Shader shader : shaders.values()) {
+            shader.loadProjectionMatrix(camera.getProjectionMatrix());
+        }
+    }
+
+    private void uploadViewMatrix(){
+        for (Shader shader : shaders.values()) {
+            shader.loadViewMatrix(camera.getViewMatrix());
+        }
+    }
+
+    private void initShaders(){
+        // Load the disk shader
+        Shader diskShader = new Shader();
+        diskShader.create("vertex.glsl", "fragment.glsl");
+        shaders.put(PrimitiveTypes.DISK, diskShader);
+    }
+
     public void render() {
         clearScreen();
+        checkViewUpdate();
 
+        ArrayList<Disk> disks = new ArrayList<Disk>();
         Disk d = new Disk();
         d.create(new Vector3f(0, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED);
+        disks.add(d);
 
-        Shader shader = new Shader();
-        boolean valid = shader.create("vertex.glsl", "fragment.glsl");
-        shader.setActive();
+        Disk d2 = new Disk();
+        d2.create(new Vector3f(1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED);
+        disks.add(d2);
 
-        VertexArray vertexArray = new VertexArray();
-        vertexArray.bind();
+        for(Primitive obj : disks) {
+            Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
+            shaders.get(obj.getType()).loadTransformMatrix(transformationMatrix);
+            obj.enableAttributes();
+            glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
+            obj.disable();
+        }
+    }
 
-        IndexBuffer indexBuffer = new IndexBuffer();
-        indexBuffer.bind();
-        indexBuffer.storeIndexData(d.getIndices());
-
-        VertexBuffer vertexBuffer = new VertexBuffer();
-        vertexBuffer.storeFloatData(d.getVertices(), 0, d.getDimension());
-
-        Matrix4f transformationMatrix = Camera.createTransformMatrix(d.getPosition(), d.getRotation(), d.getScale());
-
-        shader.loadTransformMatrix(transformationMatrix);
-        shader.loadProjectionMatrix(camera.getProjectionMatrix());
-        shader.loadViewMatrix(camera.getViewMatrix());
-
-        vertexArray.enableVertexAttrib(0);
-        vertexArray.enableVertexAttrib(1);
-        glDrawElements(GL_TRIANGLES, indexBuffer.getCount(), GL_UNSIGNED_INT, 0);
-        vertexArray.disableVertexAttrib();
-        vertexArray.unbind();
+    private void checkViewUpdate() {
+        if(camera.isViewChanged()){
+            uploadViewMatrix();
+            camera.resetViewChanged();
+        }
     }
 
     public Set<Integer> getMovementKeys(){
@@ -73,6 +100,7 @@ public class Renderer {
 
         glViewport(0, 0, sWidth, sHeight);
         camera = new Camera(sWidth, sHeight, 70, 0, 100);
+        uploadProjectionMatrix();
     }
 
     /**
