@@ -1,8 +1,10 @@
 package com.blackbox.renderer;
 
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +18,10 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class Shader {
     private int id;
+
+    // TODO : Make this an abstract class and have child classes for each shader
+    private int transformMatrixLocation;
+    private int projectionMatrixLocation;
 
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
@@ -54,6 +60,7 @@ public class Shader {
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
+        getUniformLocations();
 
         return validProgram && validShaders;
     }
@@ -66,7 +73,23 @@ public class Shader {
     }
 
     // Functions that handle sending data to the GPU
+    public void loadTransformMatrix(Matrix4f matrix){
+        loadMatrixUniform(matrix, transformMatrixLocation);
+    }
 
+    public void loadProjectionMatrix(Matrix4f matrix){
+        loadMatrixUniform(matrix, projectionMatrixLocation);
+    }
+
+    private void loadMatrixUniform(Matrix4f matrix, int loc) {
+        FloatBuffer buf = BufferUtils.createFloatBuffer(16);
+        glUniformMatrix4fv(loc, false, matrix.get(buf));
+    }
+
+    private void getUniformLocations(){
+        transformMatrixLocation = glGetUniformLocation(id, "transformMatrix");
+        projectionMatrixLocation = glGetUniformLocation(id, "projectionMatrix");
+    }
 
     /**
      * Checks if the shader compiled correctly
