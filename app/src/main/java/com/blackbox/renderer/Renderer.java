@@ -23,6 +23,7 @@ public class Renderer {
     private Camera camera;
     private final Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
     private HashMap<PrimitiveTypes, Shader> shaders = new HashMap<PrimitiveTypes, Shader>();
+    private ArrayList<Primitive> objects = new ArrayList<Primitive>();
 
     /**
      * the main render loop
@@ -33,6 +34,38 @@ public class Renderer {
         initShaders();
         uploadProjectionMatrix();
         uploadViewMatrix();
+        loadJunkData();
+    }
+
+    public void render() {
+        clearScreen();
+        checkViewUpdate();
+
+        for(Primitive obj : objects) {
+            Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
+            shaders.get(obj.getType()).loadTransformMatrix(transformationMatrix);
+            obj.enableAttributes();
+            glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
+            obj.disable();
+        }
+    }
+
+    // Function made until the sampler can pass through points
+    private void loadJunkData(){
+        Disk d = new Disk();
+        d.create(new Vector3f(0, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLUE);
+        objects.add(d);
+
+        Disk d2 = new Disk();
+        d2.create(new Vector3f(1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED);
+        objects.add(d2);
+    }
+
+    private void checkViewUpdate() {
+        if(camera.isViewChanged()){
+            uploadViewMatrix();
+            camera.resetViewChanged();
+        }
     }
 
     private void uploadProjectionMatrix(){
@@ -52,35 +85,6 @@ public class Renderer {
         Shader diskShader = new Shader();
         diskShader.create("vertex.glsl", "fragment.glsl");
         shaders.put(PrimitiveTypes.DISK, diskShader);
-    }
-
-    public void render() {
-        clearScreen();
-        checkViewUpdate();
-
-        ArrayList<Disk> disks = new ArrayList<Disk>();
-        Disk d = new Disk();
-        d.create(new Vector3f(0, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED);
-        disks.add(d);
-
-        Disk d2 = new Disk();
-        d2.create(new Vector3f(1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED);
-        disks.add(d2);
-
-        for(Primitive obj : disks) {
-            Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
-            shaders.get(obj.getType()).loadTransformMatrix(transformationMatrix);
-            obj.enableAttributes();
-            glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
-            obj.disable();
-        }
-    }
-
-    private void checkViewUpdate() {
-        if(camera.isViewChanged()){
-            uploadViewMatrix();
-            camera.resetViewChanged();
-        }
     }
 
     public Set<Integer> getMovementKeys(){
