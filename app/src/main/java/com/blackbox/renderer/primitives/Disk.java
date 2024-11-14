@@ -41,6 +41,7 @@ public class Disk extends Primitive {
         this.rotation = rot;
         this.scale = scale;
         this.color = color;
+        System.out.println(color.getRed() + " " + color.getGreen() + " " + color.getBlue());
     }
 
     /**

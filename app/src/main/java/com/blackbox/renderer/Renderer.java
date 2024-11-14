@@ -44,6 +44,9 @@ public class Renderer {
         for(Primitive obj : objects) {
             Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
             shaders.get(obj.getType()).loadTransformMatrix(transformationMatrix);
+            shaders.get(obj.getType()).loadColour(obj.getColour());
+
+
             obj.enableAttributes();
             glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
             obj.disable();

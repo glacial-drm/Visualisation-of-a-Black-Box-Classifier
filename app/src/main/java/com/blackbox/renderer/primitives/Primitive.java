@@ -7,7 +7,6 @@ import javafx.scene.paint.Color;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A base class which handles the underlying logic of objects that are rendered stores info
@@ -28,20 +27,27 @@ public abstract class Primitive {
     protected VertexBuffer vertexBuffer;
     protected IndexBuffer indexBuffer;
 
-    public Primitive(){
+    public Primitive() {
         attributes = new ArrayList<>();
     }
 
-    /** Getter for the position */
+    /**
+     * Getter for the position
+     */
     public Vector3f getPosition() {
         return position;
     }
-    /** Getter the rotation */
+
+    /**
+     * Getter the rotation
+     */
     public Vector3f getRotation() {
         return rotation;
     }
 
-    /** Getter for the scale */
+    /**
+     * Getter for the scale
+     */
     public float getScale() {
         return scale;
     }
@@ -50,7 +56,7 @@ public abstract class Primitive {
         vertexArray.bind();
         indexBuffer.bind();
 
-        for(int attribute : attributes) {
+        for (int attribute : attributes) {
             vertexArray.enableVertexAttrib(attribute);
         }
     }
@@ -68,27 +74,41 @@ public abstract class Primitive {
         return type;
     }
 
-    /** Getter for the indices */
+    public Vector3f getColour() {
+        return new Vector3f((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue());
+    }
+
+    /**
+     * Getter for the indices
+     */
     public int[] getIndices() {
         return indices;
     }
 
-    /** getter for the dimension */
+    /**
+     * getter for the dimension
+     */
     public int getDimension() {
         return dimension;
     }
 
-    /** moves the object */
+    /**
+     * moves the object
+     */
     void move(float dx, float dy, float dz) {
         position.add(dx, dy, dz);
     }
 
-    /** rotates the object */
+    /**
+     * rotates the object
+     */
     void rotate(float dx, float dy, float dz) {
         rotation.add(dx, dy, dz);
     }
 
-    /** scales the object */
+    /**
+     * scales the object
+     */
     void scale(float inc) {
         scale += inc;
     }

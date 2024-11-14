@@ -26,7 +26,7 @@ public class Shader {
     private int projectionMatrixLocation;
     private int viewMatrixLocation;
 
-
+    private int colourLocation;
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
      *
@@ -92,6 +92,13 @@ public class Shader {
         loadMatrixUniform(matrix, viewMatrixLocation);
     }
 
+    public void loadColour(Vector3f colour){
+        loadVector3d(colourLocation, colour);
+    }
+
+    private void loadVector3d(int location, Vector3f vector) {
+        glUniform3f(location, vector.x, vector.y, vector.z);
+    }
 
     private void loadMatrixUniform(Matrix4f matrix, int loc) {
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
@@ -102,6 +109,8 @@ public class Shader {
         transformMatrixLocation = glGetUniformLocation(id, "transformMatrix");
         projectionMatrixLocation = glGetUniformLocation(id, "projectionMatrix");
         viewMatrixLocation = glGetUniformLocation(id, "viewMatrix");
+
+        colourLocation = glGetUniformLocation(id, "colour");
     }
 
     /**
