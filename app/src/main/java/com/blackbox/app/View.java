@@ -39,7 +39,6 @@ public class View extends Application {
         for(int i = 0; i < controller.getFileList().length; i++){
             menuBar.getMenus().get(0).getItems().add(i, new MenuItem(controller.getFileList()[i]));
         }
-
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             fc.showOpenDialog(primaryStage);
         });
@@ -62,8 +61,9 @@ public class View extends Application {
         GridPane classifierRegion = new GridPane();
         ComboBox<Text> classifierList = new ComboBox<Text>();
 
-        classifierRegion.add(new Text("Classifier:"), 0, 0);
-        classifierRegion.add(classifierList, 1, 0);
+        classifierRegion.add(new Text("Classifier Details:")., 0, 0);
+        classifierRegion.add(new Text("Chosen Classifier: "), 0, 1);
+        classifierRegion.add(classifierList, 1, 1);
 
         classifierRegion.setMinWidth(200);
         classifierRegion.setMaxWidth(200);
@@ -96,11 +96,11 @@ public class View extends Application {
         GridPane grid = new GridPane();
         grid.add(classifierRegion, 0, 0/*, 0, 2*/);
         //grid.add(canvas, 1, 0, 2, 1);
-        grid.add(outputRegion, 1, 2);
-        grid.add(navigationRegion, 2, 2);
+        grid.add(outputRegion, 1, 0);
+        grid.add(navigationRegion, 2, 0);
 
         // Container
-        VBox container = new VBox(menuBar, grid, button);
+        VBox container = new VBox(menuBar, grid/*, button*/);
         container.setPadding(new Insets(8));
         container.setSpacing(16);
 
