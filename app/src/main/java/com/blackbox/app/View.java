@@ -13,6 +13,8 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 public class View extends Application {
     /** The controller. */
     static Controller controller;
@@ -29,7 +31,6 @@ public class View extends Application {
         }
 
         // "File" Menu
-
         FileChooser fc = new FileChooser();
         fc.setTitle("Select Classifier");
         fc.getExtensionFilters().addAll(
@@ -40,7 +41,8 @@ public class View extends Application {
             menuBar.getMenus().get(0).getItems().add(i, new MenuItem(controller.getFileList()[i]));
         }
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
-            fc.showOpenDialog(primaryStage);
+            File newClassifier = fc.showOpenDialog(primaryStage);
+            // Either use name taken from imported file, or have user write new name (with character limit)
         });
 
 
@@ -94,13 +96,12 @@ public class View extends Application {
 
         // Adding sections to grid
         GridPane grid = new GridPane();
-        grid.add(classifierRegion, 0, 0/*, 0, 2*/);
-        //grid.add(canvas, 1, 0, 2, 1);
+        grid.add(classifierRegion, 0, 0);
         grid.add(outputRegion, 1, 0);
         grid.add(navigationRegion, 2, 0);
 
         // Container
-        VBox container = new VBox(menuBar, grid/*, button*/);
+        VBox container = new VBox(menuBar, grid);
         container.setPadding(new Insets(8));
         container.setSpacing(16);
 
