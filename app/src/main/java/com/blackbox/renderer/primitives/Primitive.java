@@ -27,7 +27,12 @@ public abstract class Primitive {
     protected VertexBuffer vertexBuffer;
     protected IndexBuffer indexBuffer;
 
-    public Primitive() {
+    public Primitive(Vector3f pos, Vector3f rot, float scale, Color color) {
+        this.position = pos;
+        this.rotation = rot;
+        this.scale = scale;
+        this.color = color;
+
         attributes = new ArrayList<>();
     }
 

@@ -11,41 +11,40 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
+    private final Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
     private int sWidth, sHeight;
     private Camera camera;
-    private final Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
-    private HashMap<PrimitiveTypes, Shader> shaders = new HashMap<PrimitiveTypes, Shader>();
-    private ArrayList<Primitive> objects = new ArrayList<Primitive>();
+    private final HashMap<PrimitiveTypes, Shader> shaders = new HashMap<PrimitiveTypes, Shader>();
+    private final ArrayList<Primitive> objects = new ArrayList<Primitive>();
 
-    /**
-     * the main render loop
-     * takes no data and returns no data
-     * Handles clearing the screen, setting up buffers, creating shaders and rendering the science
-     */
-    public void init(){
+
+    public void init() {
         initShaders();
         uploadProjectionMatrix();
         uploadViewMatrix();
         loadJunkData();
     }
 
+    /**
+     * the main render loop
+     * takes no data and returns no data
+     * Handles clearing the screen, uploading uniforms and rendering objects
+     */
     public void render() {
         clearScreen();
         checkViewUpdate();
 
-        for(Primitive obj : objects) {
-            Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
-            shaders.get(obj.getType()).loadTransformMatrix(transformationMatrix);
-            shaders.get(obj.getType()).loadColour(obj.getColour());
+        for (Primitive obj : objects) {
+            Shader shader = shaders.get(obj.getType());
 
+            Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
+            shader.loadTransformMatrix(transformationMatrix);
+            shader.loadColour(obj.getColour());
 
             obj.enableAttributes();
             glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
@@ -54,43 +53,40 @@ public class Renderer {
     }
 
     // Function made until the sampler can pass through points
-    private void loadJunkData(){
-        Disk d = new Disk();
-        d.create(new Vector3f(0, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLUE);
-        objects.add(d);
-
-        Disk d2 = new Disk();
-        d2.create(new Vector3f(1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED);
-        objects.add(d2);
+    private void loadJunkData() {
+        objects.add(new Disk(new Vector3f(0, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLUE));
+        objects.add(new Disk(new Vector3f(1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED));
+        objects.add(new Disk(new Vector3f(-1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.GREEN));
+        objects.add(new Disk(new Vector3f(-2.1f, 2.4f, -5f), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLACK));
     }
 
     private void checkViewUpdate() {
-        if(camera.isViewChanged()){
+        if (camera.isViewChanged()) {
             uploadViewMatrix();
             camera.resetViewChanged();
         }
     }
 
-    private void uploadProjectionMatrix(){
+    private void uploadProjectionMatrix() {
         for (Shader shader : shaders.values()) {
             shader.loadProjectionMatrix(camera.getProjectionMatrix());
         }
     }
 
-    private void uploadViewMatrix(){
+    private void uploadViewMatrix() {
         for (Shader shader : shaders.values()) {
             shader.loadViewMatrix(camera.getViewMatrix());
         }
     }
 
-    private void initShaders(){
+    private void initShaders() {
         // Load the disk shader
         Shader diskShader = new Shader();
         diskShader.create("vertex.glsl", "fragment.glsl");
         shaders.put(PrimitiveTypes.DISK, diskShader);
     }
 
-    public Set<Integer> getMovementKeys(){
+    public Set<Integer> getMovementKeys() {
         return moveKeys;
     }
 

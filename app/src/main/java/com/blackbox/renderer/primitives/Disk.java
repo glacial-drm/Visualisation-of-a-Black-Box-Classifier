@@ -16,8 +16,9 @@ public class Disk extends Primitive {
      * Constructor for the disk class and sets the object to be a disk. <br>
      * A disk is just a filled in circle given its proper name
      */
-    public Disk() {
-        super();
+    public Disk(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
+        super(pos, rot, scale, color);
+        this.radius = radius;
         this.dimension = 3;
         this.type = PrimitiveTypes.DISK;
 
@@ -35,13 +36,8 @@ public class Disk extends Primitive {
      * @param scale multiplier of the size
      * @param color a JavaFx colour of the disk
      */
-    public void create(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
-        this.position = pos;
-        this.radius = radius;
-        this.rotation = rot;
-        this.scale = scale;
-        this.color = color;
-        System.out.println(color.getRed() + " " + color.getGreen() + " " + color.getBlue());
+    public void create() {
+
     }
 
     /**
