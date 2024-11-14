@@ -7,13 +7,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.util.ArrayList;
 
 public class View extends Application {
     /** The controller. */
@@ -22,13 +20,30 @@ public class View extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Test title
-        primaryStage.setTitle(controller.getMesssge());
+        primaryStage.setTitle(controller.getMessage());
 
         // Menu Bar
         MenuBar menuBar = new MenuBar();
         for(int i = 0; i < controller.getMenuList().length; i++){
             menuBar.getMenus().add(i, new Menu(controller.getMenuList()[i]));
         }
+
+        // "File" Menu
+
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Select Classifier");
+        fc.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("ONNX Files", "*.ONNX")
+        );
+
+        for(int i = 0; i < controller.getFileList().length; i++){
+            menuBar.getMenus().get(0).getItems().add(i, new MenuItem(controller.getFileList()[i]));
+        }
+
+        menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
+            fc.showOpenDialog(primaryStage);
+        });
+
 
         // Canvas (Graph section)
         Region canvas = Canvas.createCanvas(controller.eventQueue);
@@ -80,7 +95,7 @@ public class View extends Application {
         // Adding sections to grid
         GridPane grid = new GridPane();
         grid.add(classifierRegion, 0, 0/*, 0, 2*/);
-        grid.add(canvas, 1, 0, 2, 1);
+        //grid.add(canvas, 1, 0, 2, 1);
         grid.add(outputRegion, 1, 2);
         grid.add(navigationRegion, 2, 2);
 

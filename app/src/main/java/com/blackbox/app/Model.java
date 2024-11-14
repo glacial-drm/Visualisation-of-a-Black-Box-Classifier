@@ -13,6 +13,9 @@ public class Model {
     /** The message. (window title)*/
     public String message = "BlackBox";
 
+    public String[] menuList = {"File", "Edit", "View", "Tools", "Help"};
+    public String[] fileList = {"Import Classifier", "Export (placeholder)"};
+
     /** List of classifier names available in the ComboBox. */
     private List<String> classifiers = Arrays.asList("Classifier A", "Classifier B", "Classifier C");
 
