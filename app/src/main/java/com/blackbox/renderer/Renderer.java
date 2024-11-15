@@ -44,7 +44,6 @@ public class Renderer {
      */
     public void render() {
         clearScreen();
-        checkViewUpdate();
 
         for (Primitive obj : objects) {
             Shader shader = shaders.get(obj.getType());
@@ -66,18 +65,7 @@ public class Renderer {
         objects.add(new Disk(new Vector3f(-1.5f, 0, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.GREEN));
         objects.add(new Disk(new Vector3f(-2.1f, 2.4f, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLACK));
     }
-
-    /**
-     * Check to see if the view matrix has been updated and if so sends the new
-     * view matrix to the GPU
-     */
-    private void checkViewUpdate() {
-        if (camera.getViewChanged()) {
-            uploadViewMatrix();
-            camera.resetViewChanged();
-        }
-    }
-
+    
     /** Uploads the projection matrix to all the shaders */
     private void uploadProjectionMatrix() {
         for (Shader shader : shaders.values()) {
@@ -154,5 +142,6 @@ public class Renderer {
     /** Calls the {@link com.blackbox.renderer.Camera move function with the given key */
     public void move(int key) {
         camera.move(key);
+        uploadViewMatrix();
     }
 }
