@@ -19,7 +19,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class Canvas {
     private long window;
-    private final Renderer renderer = new Renderer();
+    private Renderer renderer;
     private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
     private boolean running = true;
     private final int width = 300;
@@ -61,12 +61,10 @@ public class Canvas {
         glfwShowWindow(window);
         GL.createCapabilities();
 
+        renderer = new Renderer(width, height);
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
         });
-
-        renderer.resize(width, height);
-        renderer.init();
     }
 
     /**

@@ -22,8 +22,11 @@ public class Renderer {
     private final HashMap<PrimitiveTypes, Shader> shaders = new HashMap<PrimitiveTypes, Shader>();
     private final ArrayList<Primitive> objects = new ArrayList<Primitive>();
 
-
-    public void init() {
+    /**
+     * Function which should be called anytime after the
+     */
+    public Renderer(int width, int height) {
+        resize(width, height);
         initShaders();
         uploadProjectionMatrix();
         uploadViewMatrix();
@@ -54,14 +57,14 @@ public class Renderer {
 
     // Function made until the sampler can pass through points
     private void loadJunkData() {
-        objects.add(new Disk(new Vector3f(0, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLUE));
-        objects.add(new Disk(new Vector3f(1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED));
-        objects.add(new Disk(new Vector3f(-1.5f, 0, -5), 0.5f, new Vector3f(0, 0, 0), 1f, Color.GREEN));
-        objects.add(new Disk(new Vector3f(-2.1f, 2.4f, -5f), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLACK));
+        objects.add(new Disk(new Vector3f(0, 0, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLUE));
+        objects.add(new Disk(new Vector3f(1.5f, 0, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED));
+        objects.add(new Disk(new Vector3f(-1.5f, 0, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.GREEN));
+        objects.add(new Disk(new Vector3f(-2.1f, 2.4f, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLACK));
     }
 
     private void checkViewUpdate() {
-        if (camera.isViewChanged()) {
+        if (camera.getViewChanged()) {
             uploadViewMatrix();
             camera.resetViewChanged();
         }

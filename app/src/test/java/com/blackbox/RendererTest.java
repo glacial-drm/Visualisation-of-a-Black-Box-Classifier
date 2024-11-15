@@ -19,13 +19,13 @@ public class RendererTest {
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
-        renderer = new Renderer();
+        renderer = new Renderer(300, 300);
     }
 
     @DisplayName("Create renderer object")
     @Test
     void testCreateRenderer() {
-        Renderer r = new Renderer();
+        Renderer r = new Renderer(200, 200);
     }
 
     @DisplayName("Check renderer resize")

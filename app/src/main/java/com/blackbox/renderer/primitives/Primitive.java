@@ -18,7 +18,7 @@ public abstract class Primitive {
     protected float scale;
     protected float[] vertexData;
     protected int[] indices;
-    protected Color color;
+    protected Color colour;
     protected int dimension;
     protected ArrayList<Integer> attributes;
     protected PrimitiveTypes type;
@@ -27,11 +27,23 @@ public abstract class Primitive {
     protected VertexBuffer vertexBuffer;
     protected IndexBuffer indexBuffer;
 
-    public Primitive(Vector3f pos, Vector3f rot, float scale, Color color, float[] VertexData, int[] indicesData) {
+    /**
+     * Sets up the primitve by setting needed variables and creating
+     * a {@link com.blackbox.renderer.VertexArray vertex array} and
+     * a {@link com.blackbox.renderer.VertexArray index buffer}
+     * for the primitve
+     * @param pos position of the primitive in world space
+     * @param rot rotation of the primitive
+     * @param scale size multiple
+     * @param colour JavaFx colour
+     * @param VertexData float[] of vertices in 2D or 3D format
+     * @param indicesData int[] of indices
+     */
+    public Primitive(Vector3f pos, Vector3f rot, float scale, Color colour, float[] VertexData, int[] indicesData) {
         this.position = pos;
         this.rotation = rot;
         this.scale = scale;
-        this.color = color;
+        this.colour = colour;
         this.vertexData = VertexData;
         this.indices = indicesData;
 
@@ -61,6 +73,11 @@ public abstract class Primitive {
         return scale;
     }
 
+    /**
+     * Binds the {@link com.blackbox.renderer.VertexArray vertex array} and
+     * {@link com.blackbox.renderer.VertexArray index buffer}
+     * then enables all used attributes
+     */
     public void enableAttributes() {
         vertexArray.bind();
         indexBuffer.bind();
@@ -70,21 +87,30 @@ public abstract class Primitive {
         }
     }
 
+    /**
+     * Disables the attributes and the {@link com.blackbox.renderer.VertexArray vertex array}
+     */
     public void disable() {
         vertexArray.disableVertexAttrib();
         vertexArray.unbind();
     }
 
+    /**
+     * Gets the number of indices
+     * @return int indexBuffer count
+     */
     public int getIndexCount() {
         return indexBuffer.getCount();
     }
 
+    /** Gets the {@link com.blackbox.renderer.primitives.PrimitiveTypes primitve type} */
     public PrimitiveTypes getType() {
         return type;
     }
 
+    /** Gets and converts it to a {@link org.joml.Vector3f vector3f}*/
     public Vector3f getColour() {
-        return new Vector3f((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue());
+        return new Vector3f((float) colour.getRed(), (float) colour.getGreen(), (float) colour.getBlue());
     }
 
     /**
@@ -109,11 +135,13 @@ public abstract class Primitive {
         return vertexData;
     }
 
-    public void initVertexArray(){
+    /** Creates and binds {@link com.blackbox.renderer.VertexArray vertex array */
+     public void initVertexArray(){
         vertexArray = new VertexArray();
         vertexArray.bind();
     }
 
+    /** Creates a {@link com.blackbox.renderer.IndexBuffer indices buffer} ,binds and stores indices */
     public void initIndexBuffer(){
         indexBuffer = new IndexBuffer();
         indexBuffer.bind();

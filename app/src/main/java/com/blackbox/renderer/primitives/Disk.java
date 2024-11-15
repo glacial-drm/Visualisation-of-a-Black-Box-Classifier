@@ -12,7 +12,6 @@ public class Disk extends Primitive {
 
     /**
      * Creates a new disk with the given parameters and sets up the VertexArray, VertexBuffer and IndexBuffer
-     *
      * @param pos    the center of the disk
      * @param radius the 'size' of the circle
      * @param rot    rotation of the disk
@@ -28,13 +27,18 @@ public class Disk extends Primitive {
         setUpVertexBuffer();
     }
 
+    /**
+     * Creates the {@link com.blackbox.renderer.VertexBuffer vertex buffer}
+     * stores the vertex data in the vertex buffer
+     * and adds the attribute to the attribute list
+     */
     private void setUpVertexBuffer() {
         vertexBuffer = new VertexBuffer();
         vertexBuffer.storeFloatData(getVertices(), 0, getDimension());
         attributes.add(0);
     }
 
-
+    /** Getter for the radius of the circle */
     public float getRadius() {
         return radius;
     }
