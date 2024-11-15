@@ -23,7 +23,12 @@ public class Renderer {
     private final ArrayList<Primitive> objects = new ArrayList<Primitive>();
 
     /**
-     * Function which should be called anytime after the
+     * Resizes the window to the given size <br>
+     * initialise the shaders and creates there shader programs <br>
+     * Uploads the projection and view matrix
+     *
+     * @param width size of screen
+     * @param height size of screen
      */
     public Renderer(int width, int height) {
         resize(width, height);
@@ -35,7 +40,6 @@ public class Renderer {
 
     /**
      * the main render loop
-     * takes no data and returns no data
      * Handles clearing the screen, uploading uniforms and rendering objects
      */
     public void render() {
@@ -63,6 +67,10 @@ public class Renderer {
         objects.add(new Disk(new Vector3f(-2.1f, 2.4f, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLACK));
     }
 
+    /**
+     * Check to see if the view matrix has been updated and if so sends the new
+     * view matrix to the GPU
+     */
     private void checkViewUpdate() {
         if (camera.getViewChanged()) {
             uploadViewMatrix();
@@ -70,18 +78,25 @@ public class Renderer {
         }
     }
 
+    /** Uploads the projection matrix to all the shaders */
     private void uploadProjectionMatrix() {
         for (Shader shader : shaders.values()) {
             shader.loadProjectionMatrix(camera.getProjectionMatrix());
         }
     }
 
+    /** Uploads the view matrix to all the shaders */
     private void uploadViewMatrix() {
         for (Shader shader : shaders.values()) {
             shader.loadViewMatrix(camera.getViewMatrix());
         }
     }
 
+    /**
+     * Loads in the shaders from thier files and stores them in a hashmap with key of
+     * {@link com.blackbox.renderer.primitives.PrimitiveTypes primitve type} and value as the new
+     * {@link com.blackbox.renderer.Shader shader}
+     */
     private void initShaders() {
         // Load the disk shader
         Shader diskShader = new Shader();
@@ -89,9 +104,6 @@ public class Renderer {
         shaders.put(PrimitiveTypes.DISK, diskShader);
     }
 
-    public Set<Integer> getMovementKeys() {
-        return moveKeys;
-    }
 
     /**
      * Changes the viewport of the program
@@ -133,6 +145,13 @@ public class Renderer {
         return sHeight;
     }
 
+    /** Returns all the valid GLFW keys for movement W,A,S,D*/
+    public Set<Integer> getMovementKeys() {
+        return moveKeys;
+    }
+
+    // TODO: Make it work with multiple keys and state which keys are active
+    /** Calls the {@link com.blackbox.renderer.Camera move function with the given key */
     public void move(int key) {
         camera.move(key);
     }

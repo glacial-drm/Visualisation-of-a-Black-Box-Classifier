@@ -50,7 +50,6 @@ public class VertexArray {
 
     /**
      * Clears the memory allocated on the gpu
-     *
      * @return true if nothing fails
      */
     public boolean delete() {
