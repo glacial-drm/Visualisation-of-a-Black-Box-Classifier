@@ -13,5 +13,8 @@ public class OnnxModel {
         this.environment = OrtEnvironment.getEnvironment();
         this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
     }
-
+    public void endSession() throws OrtException {
+        
+        session.close();
+    }
 }
