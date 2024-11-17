@@ -63,6 +63,8 @@ dependencies {
 
     implementation(libs.openglfx.lib)
     implementation(libs.openglfx.lwjgl)
+
+    implementation(libs.onnxruntime)
 }
 
 testing {
