@@ -31,8 +31,8 @@ public class Renderer {
      * @param height size of screen
      */
     public Renderer(int width, int height) {
-        resize(width, height);
         initShaders();
+        resize(width, height);
         uploadProjectionMatrix();
         uploadViewMatrix();
         loadJunkData();
@@ -44,7 +44,6 @@ public class Renderer {
      */
     public void render() {
         clearScreen();
-
         for (Primitive obj : objects) {
             Shader shader = shaders.get(obj.getType());
 
@@ -76,7 +75,7 @@ public class Renderer {
     /** Uploads the view matrix to all the shaders */
     private void uploadViewMatrix() {
         for (Shader shader : shaders.values()) {
-            shader.loadMatrixUniform("viewMatrix", camera.getViewMatrix());
+           shader.loadMatrixUniform("viewMatrix", camera.getViewMatrix());
         }
     }
 
@@ -100,6 +99,7 @@ public class Renderer {
      * @param height must be less than the screen height
      */
     public void resize(int width, int height) {
+        System.out.println("RESIZE");
         // Could check args are less than screen size
         sWidth = width;
         sHeight = height;

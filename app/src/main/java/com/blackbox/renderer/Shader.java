@@ -116,7 +116,7 @@ public class Shader {
      */
     private boolean checkShader(int shader) throws IOException {
         if(glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE){
-            System.err.println("Could not compile shader: " + glGetShaderInfoLog(shader));
+            System.err.println("[RENDERER] Could not link shader program: " + glGetShaderInfoLog(shader));
             return false;
         }
         return true;
@@ -130,11 +130,9 @@ public class Shader {
      * @throws IOException if the program fails to link
      */
     private boolean checkShaderProgram(int program) throws IOException {
-        IntBuffer buf = BufferUtils.createIntBuffer(1);
-        glGetShaderiv(program, GL_LINK_STATUS, buf);
-
-        if (buf.get() != 0) {
-            throw new RuntimeException("Failed to link program with ID: " + program);
+        if (glGetShaderi(program, GL_LINK_STATUS) == GL_FALSE) {
+            System.err.println("[RENDERER] Could not compile shader program: " + glGetProgramInfoLog(program));
+            return false;
         }
         return true;
     }
@@ -146,7 +144,7 @@ public class Shader {
      * @throws IOException if the file fails to read
      */
     private String readFile(String fileName) throws IOException {
-        String content = "";
+        String content;
 
         Path filePath = Paths.get("src/main/shaders/" + fileName);
 
