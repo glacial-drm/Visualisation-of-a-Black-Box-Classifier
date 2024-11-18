@@ -42,13 +42,6 @@ public class View extends Application {
         });
 
 
-        // Canvas (Graph section)
-        Region canvas = Canvas.createCanvas(controller.eventQueue);
-        canvas.setMinWidth(200);
-        canvas.setMaxWidth(200);
-        canvas.setMinHeight(200);
-        canvas.setMaxHeight(200);
-
         // Test button to load points
         Button button = new Button("PointsLoaded");
         button.onActionProperty().set(event -> {

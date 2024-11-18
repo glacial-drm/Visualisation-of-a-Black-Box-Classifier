@@ -52,10 +52,6 @@ public class Controller {
         sendEvent(new StopEvent());
     }
 
-    Controller(Model model) {
-        this.model = model;
-    }
-
     /** Get the message. */
     public String getMessage() {
         return model.message;
