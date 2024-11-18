@@ -20,15 +20,8 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class Shader {
     private int id;
-
     private final HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
 
-    // TODO : Make this an abstract class and have child classes for each shader
-    private int transformMatrixLocation;
-    private int projectionMatrixLocation;
-    private int viewMatrixLocation;
-
-    private int colourLocation;
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
      *
@@ -53,13 +46,7 @@ public class Shader {
         glAttachShader(id, fragmentShader);
         glLinkProgram(id);
 
-        // Check for errors
-
         validProgram = checkShaderProgram(id);
-
-        if (!validProgram) {
-            System.out.println("Could not link program but no error: " + id);
-        }
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
@@ -74,19 +61,32 @@ public class Shader {
         glUseProgram(id);
     }
 
-
+    /**
+     * Loads a vector 3 into GPU memory
+     * @param name uniform name in the shader
+     * @param vector a 3d vector of floating point values
+     */
     public void loadVector3d(String name, Vector3f vector) {
         checkUniformLocation(name);
         glUniform3f(uniformLocations.get(name), vector.x, vector.y, vector.z);
     }
 
-
+    /**
+     * Loads a 4x4 Matrix of floats into GPU memory
+     * @param name uniform name in the shader
+     * @param matrix 4x4 matrix of floats
+     */
     public void loadMatrixUniform(String name, Matrix4f matrix) {
         checkUniformLocation(name);
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.get(buf));
     }
 
+    /**
+     * Sets the shader to active and then checks if the uniformLocation is know
+     * if not then it gets it from the GPU
+     * @param name uniform name in shader
+     */
     private void checkUniformLocation(String name) {
         setActive();
         if(!uniformLocations.containsKey(name)) {
@@ -94,6 +94,11 @@ public class Shader {
         }
     }
 
+    /**
+     *  Gets the uniform location from the shader <br>
+     *  will print to std.err if name is not found
+     * @param name uniform name in shader
+     */
     private void getUniformLocations(String name) {
         int location = glGetUniformLocation(id, name);
 
@@ -106,25 +111,20 @@ public class Shader {
 
     /**
      * Checks if the shader compiled correctly
-     *
      * @param shader shader ID
-     * @return true if successful
-     * @throws IOException if the shader compilation failed
      */
-    private boolean checkShader(int shader) throws IOException {
+    private void checkShader(int shader) {
         if(glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE){
             System.err.println("[RENDERER] Could not link shader program: " + glGetShaderInfoLog(shader));
-            return false;
         }
-        return true;
     }
 
     /**
-     * Simple function to get the link status of the program
+     * Function that checks if the shader linked successfully by checking the link status
+     * and checking the validation of the program
      *
      * @param program takes in the program id
      * @return true if successful
-     * @throws IOException if the program fails to link
      */
     private boolean checkShaderProgram(int program) {
         if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
@@ -175,7 +175,7 @@ public class Shader {
         glShaderSource(shader, shaderCode);
         glCompileShader(shader);
 
-        Boolean compileSuc = checkShader(shader);
+        checkShader(shader);
 
         return shader;
     }
