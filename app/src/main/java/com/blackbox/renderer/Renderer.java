@@ -2,7 +2,6 @@ package com.blackbox.renderer;
 
 import com.blackbox.renderer.primitives.Disk;
 import com.blackbox.renderer.primitives.Primitive;
-import com.blackbox.renderer.primitives.PrimitiveTypes;
 import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -19,7 +18,7 @@ public class Renderer {
     private final Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
     private int sWidth, sHeight;
     private Camera camera;
-    private final HashMap<PrimitiveTypes, Shader> shaders = new HashMap<PrimitiveTypes, Shader>();
+    private final HashMap<Class<?>, Shader> shaders = new HashMap<Class<?>, Shader>();
     private final ArrayList<Primitive> objects = new ArrayList<Primitive>();
 
     /**
@@ -45,7 +44,7 @@ public class Renderer {
     public void render() {
         clearScreen();
         for (Primitive obj : objects) {
-            Shader shader = shaders.get(obj.getType());
+            Shader shader = shaders.get(obj.getClass());
 
             Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
             shader.loadMatrixUniform("transformMatrix", transformationMatrix);
@@ -81,14 +80,14 @@ public class Renderer {
 
     /**
      * Loads in the shaders from their files and stores them in a hashmap with key of
-     * {@link com.blackbox.renderer.primitives.PrimitiveTypes primitve type} and value as the new
+     * {@link com.blackbox.renderer.primitives.Primitive primitve type} and value as the new
      * {@link Shader shader}
      */
     private void initShaders() {
         // Load the disk shader
         Shader diskShader = new Shader();
         diskShader.create("vertex.glsl", "fragment.glsl");
-        shaders.put(PrimitiveTypes.DISK, diskShader);
+        shaders.put(Disk.class, diskShader);
     }
 
 
@@ -99,8 +98,6 @@ public class Renderer {
      * @param height must be less than the screen height
      */
     public void resize(int width, int height) {
-        System.out.println("RESIZE");
-        // Could check args are less than screen size
         sWidth = width;
         sHeight = height;
 

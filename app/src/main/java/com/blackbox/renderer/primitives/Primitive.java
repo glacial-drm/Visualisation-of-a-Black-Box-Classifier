@@ -21,7 +21,6 @@ public abstract class Primitive {
     protected Color colour;
     protected int dimension;
     protected ArrayList<Integer> attributes;
-    protected PrimitiveTypes type;
 
     protected VertexArray vertexArray;
     protected VertexBuffer vertexBuffer;
@@ -46,8 +45,8 @@ public abstract class Primitive {
         this.colour = colour;
         this.vertexData = VertexData;
         this.indices = indicesData;
-
         attributes = new ArrayList<>();
+
         initVertexArray();
         initIndexBuffer();
     }
@@ -101,11 +100,6 @@ public abstract class Primitive {
      */
     public int getIndexCount() {
         return indexBuffer.getCount();
-    }
-
-    /** Gets the {@link com.blackbox.renderer.primitives.PrimitiveTypes primitve type} */
-    public PrimitiveTypes getType() {
-        return type;
     }
 
     /** Gets and converts it to a {@link org.joml.Vector3f vector3f}*/

@@ -54,11 +54,8 @@ public class Shader {
         glLinkProgram(id);
 
         // Check for errors
-        try {
-            validProgram = checkShaderProgram(id);
-        } catch (IOException e) {
-            System.err.println("Could not link program: " + e.getMessage());
-        }
+
+        validProgram = checkShaderProgram(id);
 
         if (!validProgram) {
             System.out.println("Could not link program but no error: " + id);
@@ -129,10 +126,16 @@ public class Shader {
      * @return true if successful
      * @throws IOException if the program fails to link
      */
-    private boolean checkShaderProgram(int program) throws IOException {
-        if (glGetShaderi(program, GL_LINK_STATUS) == GL_FALSE) {
-            System.err.println("[RENDERER] Could not compile shader program: " + glGetProgramInfoLog(program));
+    private boolean checkShaderProgram(int program) {
+        if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
+            System.err.println("Link error: " + glGetProgramInfoLog(program));
             return false;
+        } else {
+            glValidateProgram(program);
+            if (glGetProgrami(program, GL_VALIDATE_STATUS) == GL_FALSE) {
+                System.err.println("Validation error: " + glGetProgramInfoLog(program));
+                return false;
+            }
         }
         return true;
     }

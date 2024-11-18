@@ -22,7 +22,6 @@ public class Disk extends Primitive {
         super(pos, rot, scale, color, indexData, indicesData);
         this.radius = radius;
         this.dimension = 3;
-        this.type = PrimitiveTypes.DISK;
 
         setUpVertexBuffer();
     }
