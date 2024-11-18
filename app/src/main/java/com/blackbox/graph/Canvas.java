@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.opengl.GL33.*;
 
 /**
  * The graph container, handles GLFW, the window, user input, and the renderer.
@@ -60,6 +61,9 @@ public class Canvas {
         glfwSwapInterval(1);
         glfwShowWindow(window);
         GL.createCapabilities();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         renderer = new Renderer(width, height);
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
