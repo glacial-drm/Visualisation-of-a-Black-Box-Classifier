@@ -22,6 +22,12 @@ public class Shader {
     private int id;
     private final HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
 
+    private boolean worldBased;
+
+    public Shader(boolean worldBased) {
+        this.worldBased = worldBased;
+    }
+
     /**
      * Gets vertex and fragment code and then compiles them to openGL shaders
      *
@@ -178,5 +184,9 @@ public class Shader {
         checkShader(shader);
 
         return shader;
+    }
+
+    public boolean isWorldBased() {
+        return worldBased;
     }
 }

@@ -44,12 +44,7 @@ public class Renderer {
     public void render() {
         clearScreen();
         for (Primitive obj : objects) {
-            Shader shader = shaders.get(obj.getClass());
-
-            Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
-            shader.loadMatrixUniform("transformMatrix", transformationMatrix);
-            shader.loadVector3d("colour", obj.getColour());
-
+            obj.uploadUniforms(camera, shaders.get(obj.getClass()));
             obj.enableAttributes();
             glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
             obj.disable();
@@ -67,14 +62,16 @@ public class Renderer {
     /** Uploads the projection matrix to all the shaders */
     private void uploadProjectionMatrix() {
         for (Shader shader : shaders.values()) {
-            shader.loadMatrixUniform("projectionMatrix", camera.getProjectionMatrix());
+            if(shader.isWorldBased())
+                shader.loadMatrixUniform("projectionMatrix", camera.getProjectionMatrix());
         }
     }
 
     /** Uploads the view matrix to all the shaders */
     private void uploadViewMatrix() {
         for (Shader shader : shaders.values()) {
-           shader.loadMatrixUniform("viewMatrix", camera.getViewMatrix());
+            if(shader.isWorldBased())
+                shader.loadMatrixUniform("viewMatrix", camera.getViewMatrix());
         }
     }
 
@@ -85,7 +82,7 @@ public class Renderer {
      */
     private void initShaders() {
         // Load the disk shader
-        Shader diskShader = new Shader();
+        Shader diskShader = new Shader(true);
         diskShader.create("vertex.glsl", "fragment.glsl");
         shaders.put(Disk.class, diskShader);
     }
