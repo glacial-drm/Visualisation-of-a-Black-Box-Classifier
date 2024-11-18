@@ -54,9 +54,8 @@ public class VertexBuffer {
      * @param data      array of floating point values
      * @param attribute relates to the shader in
      * @param dimension between 1 and 4 for how the GPU should understand the data
-     * @return true if no errors
      */
-    public boolean storeFloatData(float[] data, int attribute, int dimension) {
+    public void storeFloatData(float[] data, int attribute, int dimension) {
         if ((dimension <= 0) || (dimension > 4)) {
             throw new IllegalArgumentException("dimension must be between 1 and 4");
         }
@@ -64,21 +63,18 @@ public class VertexBuffer {
             throw new IllegalArgumentException("data is not a multiple of dimension");
         }
 
-
         bind();
         FloatBuffer buf = addFloatData(data);
         glBufferData(GL_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
         glVertexAttribPointer(attribute, dimension, GL_FLOAT, false, 0, 0);
         unbind();
-
-        return true;
     }
 
     /**
      * Preps the FloatBuffer for sending to the GPU
      *
      * @param data floating point values of data
-     * @return true if no error
+     * @return FloatBuffer of the data
      */
     private FloatBuffer addFloatData(float[] data) {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);

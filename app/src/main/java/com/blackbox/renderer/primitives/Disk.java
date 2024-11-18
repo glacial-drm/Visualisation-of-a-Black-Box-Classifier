@@ -1,77 +1,45 @@
 package com.blackbox.renderer.primitives;
 
+import com.blackbox.renderer.VertexBuffer;
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;
 
 public class Disk extends Primitive {
-    private float radius;
+
+    private final float radius;
+    private static final float[] indexData = new float[]{-0.5f, 0.5f, 0f, -0.5f, -0.5f, 0f, 0.5f, -0.5f, 0f, 0.5f, 0.5f, 0f,};
+    private static final int[] indicesData = new int[]{0, 1, 3, 3, 1, 2};
 
     /**
-     * Constructor for the disk class and sets the object to be a disk. <br>
-     * A disk is just a filled in circle given its proper name
-     */
-    public Disk() {
-        this.dimension = 3;
-
-        setUpVertexes();
-        setUpIndices();
-    }
-
-    /**
-     * Creates a new disk with the given parameters
-     * @param pos the center of the disk
+     * Creates a new disk with the given parameters and sets up the VertexArray, VertexBuffer and IndexBuffer
+     * @param pos    the center of the disk
      * @param radius the 'size' of the circle
-     * @param rot rotation of the disk
-     * @param scale multiplier of the size
-     * @param color a JavaFx colour of the disk
+     * @param rot    rotation of the disk
+     * @param scale  multiplier of the size
+     * @param color  a JavaFx colour of the disk
      */
-    public void create(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
-        this.position = pos;
+    public Disk(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
+        super(pos, rot, scale, color, indexData, indicesData);
         this.radius = radius;
-        this.rotation = rot;
-        this.scale = scale;
-        this.color = color;
+        this.dimension = 3;
+        this.type = PrimitiveTypes.DISK;
+
+        setUpVertexBuffer();
     }
 
     /**
-     * The vertexes of the disk
+     * Creates the {@link com.blackbox.renderer.VertexBuffer vertex buffer}
+     * stores the vertex data in the vertex buffer
+     * and adds the attribute to the attribute list
      */
-    private void setUpVertexes() {
-        vertexData = new float[]{-0.5f, 0.5f, 0f,
-                -0.5f, -0.5f, 0f,
-                0.5f, -0.5f, 0f,
-                0.5f, 0.5f, 0f,
-        };
+    private void setUpVertexBuffer() {
+        vertexBuffer = new VertexBuffer();
+        vertexBuffer.storeFloatData(getVertices(), 0, getDimension());
+        attributes.add(0);
     }
 
-    /**
-     * The indices of the disk
-     */
-    private void setUpIndices() {
-        indices = new int[]{0, 1, 3, 3, 1, 2};
-    }
-
-    /**
-     * Getter for the vertices
-     * @return vertexData
-     */
-    public float[] getVertices() {
-        return vertexData;
-    }
-
-    /**
-     * getter for the indices
-     * @return indices
-     */
-    public int[] getIndices() {
-        return indices;
-    }
-
-    /**
-     * getter for the dimension
-     * @return dimension
-     */
-    public int getDimension() {
-        return dimension;
+    /** Getter for the radius of the circle */
+    public float getRadius() {
+        return radius;
     }
 }
