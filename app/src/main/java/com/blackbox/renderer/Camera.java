@@ -8,10 +8,11 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Camera {
     private final Matrix4f projectionMatrix;
     private Matrix4f viewMatrix;
-    private Vector3f position =  new Vector3f(0,0,0);;
+    private Vector3f position =  new Vector3f(0,0,-10);;
     private float yaw = 0;
     private float pitch = 0;
     private float roll = 0;
+    private boolean viewChanged = false;
 
     /**
      * Sets up the projection and view matrix
@@ -33,7 +34,7 @@ public class Camera {
      * @param scale float for resizing the object
      * @return Matrix4f transformationMatrix
      */
-    public static Matrix4f createTransformMatrix(Vector3f translation, Vector3f rotation, float scale){
+    public static Matrix4f createTransformMatrix(Vector3f translation, Vector3f rotation, float scale) {
         return new Matrix4f()
                 .translate(translation)
                 .rotate((float)Math.toRadians(rotation.x()), new Vector3f(1,0,0))
@@ -66,11 +67,17 @@ public class Camera {
                 .m33(0);
     }
 
+    /**
+     * Creates a view matrix based on the cameras position, pitch, yaw and roll
+     * @return Matrix4f which is a viewMatrix
+     */
     public Matrix4f createViewMatrix() {
+        viewChanged = true;
         return new Matrix4f()
                 .identity()
                 .rotate((float)Math.toRadians(pitch), new Vector3f(1, 0, 0))
                 .rotate((float)Math.toRadians(yaw), new Vector3f(0,1,0))
+                .rotate((float)Math.toRadians(roll), new Vector3f(0,0,1))
                 .translate(position);
     }
 
@@ -90,6 +97,11 @@ public class Camera {
         return viewMatrix;
     }
 
+    /**
+     * Handles moving the camera by changing the position which effects the
+     * view matrix
+     * @param key a GLFW_KEY input
+     */
     public void move(int key) {
         if(key == GLFW_KEY_W){
             position.y += 0.02f;
@@ -101,5 +113,15 @@ public class Camera {
             position.x += 0.02f;
         }
         viewMatrix = createViewMatrix();
+    }
+
+    /** Getter for the viewChanged */
+    public boolean getViewChanged() {
+        return viewChanged;
+    }
+
+    /** Set viewChanged to false */
+    public void resetViewChanged() {
+        viewChanged = false;
     }
 }
