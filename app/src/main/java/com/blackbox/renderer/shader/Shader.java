@@ -1,7 +1,6 @@
-package com.blackbox.renderer;
+package com.blackbox.renderer.shader;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
@@ -11,6 +10,7 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -20,6 +20,8 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class Shader {
     private int id;
+
+    private HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
 
     // TODO : Make this an abstract class and have child classes for each shader
     private int transformMatrixLocation;
@@ -64,7 +66,6 @@ public class Shader {
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
-        getUniformLocations();
 
         return validProgram && validShaders;
     }
@@ -76,41 +77,31 @@ public class Shader {
         glUseProgram(id);
     }
 
-    // Functions that handle sending data to the GPU
-    public void loadTransformMatrix(Matrix4f matrix){
+
+    public void loadVector3d(String name, Vector3f vector) {
         setActive();
-        loadMatrixUniform(matrix, transformMatrixLocation);
+        checkUniformLocation(name);
+        glUniform3f(uniformLocations.get(name), vector.x, vector.y, vector.z);
     }
 
-    public void loadProjectionMatrix(Matrix4f matrix){
+
+    public void loadMatrixUniform(String name, Matrix4f matrix) {
         setActive();
-        loadMatrixUniform(matrix, projectionMatrixLocation);
-    }
-
-    public void loadViewMatrix(Matrix4f matrix){
-        setActive();
-        loadMatrixUniform(matrix, viewMatrixLocation);
-    }
-
-    public void loadColour(Vector3f colour){
-        loadVector3d(colourLocation, colour);
-    }
-
-    private void loadVector3d(int location, Vector3f vector) {
-        glUniform3f(location, vector.x, vector.y, vector.z);
-    }
-
-    private void loadMatrixUniform(Matrix4f matrix, int loc) {
+        checkUniformLocation(name);
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
-        glUniformMatrix4fv(loc, false, matrix.get(buf));
+        glUniformMatrix4fv(uniformLocations.get(name), false, matrix.get(buf));
     }
 
-    private void getUniformLocations(){
-        transformMatrixLocation = glGetUniformLocation(id, "transformMatrix");
-        projectionMatrixLocation = glGetUniformLocation(id, "projectionMatrix");
-        viewMatrixLocation = glGetUniformLocation(id, "viewMatrix");
+    private void checkUniformLocation(String name) {
+        if(!uniformLocations.containsKey(name)) {
+            getUniformLocations(name);
+        }
+    }
 
-        colourLocation = glGetUniformLocation(id, "colour");
+    private void getUniformLocations(String name) {
+        // TODO: Check in case the uniform doesn't exist
+        int location = glGetUniformLocation(id, name);
+        uniformLocations.put(name, location);
     }
 
     /**

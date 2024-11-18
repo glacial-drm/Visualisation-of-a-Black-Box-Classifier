@@ -3,6 +3,7 @@ package com.blackbox.renderer;
 import com.blackbox.renderer.primitives.Disk;
 import com.blackbox.renderer.primitives.Primitive;
 import com.blackbox.renderer.primitives.PrimitiveTypes;
+import com.blackbox.renderer.shader.Shader;
 import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -49,8 +50,8 @@ public class Renderer {
             Shader shader = shaders.get(obj.getType());
 
             Matrix4f transformationMatrix = Camera.createTransformMatrix(obj.getPosition(), obj.getRotation(), obj.getScale());
-            shader.loadTransformMatrix(transformationMatrix);
-            shader.loadColour(obj.getColour());
+            shader.loadMatrixUniform("transformMatrix", transformationMatrix);
+            shader.loadVector3d("colour", obj.getColour());
 
             obj.enableAttributes();
             glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
@@ -69,21 +70,21 @@ public class Renderer {
     /** Uploads the projection matrix to all the shaders */
     private void uploadProjectionMatrix() {
         for (Shader shader : shaders.values()) {
-            shader.loadProjectionMatrix(camera.getProjectionMatrix());
+            shader.loadMatrixUniform("projectionMatrix", camera.getProjectionMatrix());
         }
     }
 
     /** Uploads the view matrix to all the shaders */
     private void uploadViewMatrix() {
         for (Shader shader : shaders.values()) {
-            shader.loadViewMatrix(camera.getViewMatrix());
+            shader.loadMatrixUniform("viewMatrix", camera.getViewMatrix());
         }
     }
 
     /**
-     * Loads in the shaders from thier files and stores them in a hashmap with key of
+     * Loads in the shaders from their files and stores them in a hashmap with key of
      * {@link com.blackbox.renderer.primitives.PrimitiveTypes primitve type} and value as the new
-     * {@link com.blackbox.renderer.Shader shader}
+     * {@link Shader shader}
      */
     private void initShaders() {
         // Load the disk shader
