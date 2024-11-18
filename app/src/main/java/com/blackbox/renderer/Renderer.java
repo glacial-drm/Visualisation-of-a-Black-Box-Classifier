@@ -3,7 +3,6 @@ package com.blackbox.renderer;
 import com.blackbox.renderer.primitives.Disk;
 import com.blackbox.renderer.primitives.Primitive;
 import com.blackbox.renderer.primitives.PrimitiveTypes;
-import com.blackbox.renderer.shader.Shader;
 import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

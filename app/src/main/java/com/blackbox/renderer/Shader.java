@@ -1,4 +1,4 @@
-package com.blackbox.renderer.shader;
+package com.blackbox.renderer;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
     private int id;
 
-    private HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
 
     // TODO : Make this an abstract class and have child classes for each shader
     private int transformMatrixLocation;
@@ -79,28 +79,31 @@ public class Shader {
 
 
     public void loadVector3d(String name, Vector3f vector) {
-        setActive();
         checkUniformLocation(name);
         glUniform3f(uniformLocations.get(name), vector.x, vector.y, vector.z);
     }
 
 
     public void loadMatrixUniform(String name, Matrix4f matrix) {
-        setActive();
         checkUniformLocation(name);
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.get(buf));
     }
 
     private void checkUniformLocation(String name) {
+        setActive();
         if(!uniformLocations.containsKey(name)) {
             getUniformLocations(name);
         }
     }
 
     private void getUniformLocations(String name) {
-        // TODO: Check in case the uniform doesn't exist
         int location = glGetUniformLocation(id, name);
+
+        if(location == -1) {
+            System.err.println("Could not find uniform location: " + name);
+        }
+
         uniformLocations.put(name, location);
     }
 
@@ -111,12 +114,10 @@ public class Shader {
      * @return true if successful
      * @throws IOException if the shader compilation failed
      */
-    private Boolean checkShader(int shader) throws IOException {
-        IntBuffer buf = BufferUtils.createIntBuffer(1);
-        glGetShaderiv(shader, GL_COMPILE_STATUS, buf);
-
-        if (buf.get() <= 0) {
-            throw new RuntimeException("Failed to compile shader with ID: " + shader);
+    private boolean checkShader(int shader) throws IOException {
+        if(glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE){
+            System.err.println("Could not compile shader: " + glGetShaderInfoLog(shader));
+            return false;
         }
         return true;
     }
