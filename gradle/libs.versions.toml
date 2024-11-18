@@ -11,8 +11,10 @@ jacoco = "0.8.12"
 javafx-plugin = "0.1.0"
 javafx-lib = "23.0.1"
 joml = "1.10.7"
-lwjgl = "3.3.4"
-openglfx = "4.0.5"
+# For now this is pinned at 3.3.1
+# 3.3.2 updates GLFW to 3.4, which enables Wayland by default
+# This doesn't work on some devices, for an unknown reason
+lwjgl = "3.3.1"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
@@ -22,8 +24,6 @@ lwjgl-lib = { group = "org.lwjgl", name = "lwjgl" }
 # List of modules can be found here: https://www.lwjgl.org/customize
 lwjgl-opengl = { group = "org.lwjgl", name = "lwjgl-opengl" }
 lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw" }
-openglfx-lib = { group = "com.huskerdev", name = "openglfx", version.ref = "openglfx" }
-openglfx-lwjgl = { group = "com.huskerdev", name = "openglfx-lwjgl", version.ref = "openglfx" }
 
 [plugins]
 javafx-plugin = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }

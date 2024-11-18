@@ -10,4 +10,5 @@ bin
 .project
 .classpath
 .settings/
-
+.vscode
+.idea
