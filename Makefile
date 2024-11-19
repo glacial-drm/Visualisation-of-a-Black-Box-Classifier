@@ -14,10 +14,20 @@ build:
 		--tag $(TAG) \
 		--file Dockerfile .
 
-upload: build
-	docker tag $(TAG) $(PUBLISH_TAG)
+login:
 	docker login "$(REGISTRY)" \
 		--username "$(REGISTRY_USER)" \
 		--password "$(REGISTRY_PASSWD)"
+
+upload: build login
+	docker tag $(TAG) $(PUBLISH_TAG)
 	docker image push $(PUBLISH_TAG)
+
+test: login
+	docker run --rm -v ./:/src -i "$(REGISTRY)/$(REGISTRY_USER)/$(TAG)" " \
+		cd /src; \
+		GRADLE_USER_HOME="$(shell pwd)/.gradle"; \
+		export GRADLE_USER_HOME; \
+		gradle check; \
+	"
 
