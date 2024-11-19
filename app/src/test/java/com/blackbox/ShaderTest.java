@@ -24,7 +24,7 @@ public class ShaderTest {
 
     @BeforeEach
     void init() {
-        shader = new Shader(true);
+        shader = new Shader();
         glfwInit();
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
