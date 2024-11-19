@@ -6,11 +6,6 @@ REGISTRY_PASSWD ?= password
 TAG = utensils/opengl
 PUBLISH_TAG = $(REGISTRY)/$(REGISTRY_USER)/$(TAG)
 
-test:
-	echo "$(REGISTRY)"
-	echo "$(REGISTRY_USER)"
-	echo "$(REGISTRY_PASSWD)"
-
 build:
 	docker buildx build \
 		--build-arg BASE_IMAGE=alpine:latest \
