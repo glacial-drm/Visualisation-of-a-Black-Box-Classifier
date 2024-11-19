@@ -91,6 +91,10 @@ tasks.jacocoTestReport {
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
+        // This is used in docker and CI CD as the default segfaults
+        if (System.getenv("ENFORCE_VENDOR") == "1") {
+            vendor = JvmVendorSpec.ORACLE
+        }
     }
 }
 

@@ -135,6 +135,11 @@ COPY --from=builder /usr/local /usr/local
 ARG LLVM_VERSION=9
 RUN set -xe; \
     apk add --no-cache --quiet \
+        # Compat libraries to run things expecting glibc
+        # Required due to issue in gradle/foojay-toolchains
+        # https://github.com/gradle/foojay-toolchains/issues/5#issuecomment-2037862837
+        # This may halt alpine upgrades as apparently doesn't work in later versions
+        gcompat \
         gradle \
         binutils \
         expat \

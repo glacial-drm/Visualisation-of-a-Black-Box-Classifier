@@ -41,6 +41,7 @@ test: login
 	docker run --rm -v ./:/src -i "$(REGISTRY)/$(REGISTRY_USER)/$(TAG)" " \
 		cd /src; \
 		export GRADLE_USER_HOME="/src/.gradle"; \
+		export ENFORCE_VENDOR=1; \
 		gradle check; \
 	"
 
