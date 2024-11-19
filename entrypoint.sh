@@ -40,10 +40,13 @@ else
 
 	# Execute passed command.
 	sh -c "$@"
+	status=$?
 
 	trap "echo 'Stopping'; kill -SIGTERM $Xvfb_pid" SIGINT SIGTERM
 	# Wait for process to end.
 	kill $Xvfb_pid
 	echo "Waiting for Xvfb (PID: $Xvfb_pid) to shut down..."
 	wait $Xvfb_pid
+
+	exit $status
 fi

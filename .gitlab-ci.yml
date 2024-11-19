@@ -1,13 +1,34 @@
 build:
   stage: build
   tags: [ docker ]
-  image: alpine:latest
+  image: docker:dind
   script: 
-    - >
-      apk add --update gradle;
-      GRADLE_USER_HOME="$(pwd)/.gradle";
-      export GRADLE_USER_HOME;
-      gradle --build-cache assemble;
+    - |
+      # Start docker
+      dockerd &
+
+      # Wait until docker has started
+      until [ -S /var/run/docker.sock ]
+      do
+        sleep 1
+      done
+      sleep 10
+
+      # Required for DinD (Docker-in-Docker)
+      unset DOCKER_HOST
+
+      # Build the container
+      docker login "$REGISTRY" \
+        --username "$REGISTRY_USER" \
+        --password "$REGISTRY_PASSWD";
+
+      # Run the container
+      docker run --rm -v ./:/src -i "$REGISTRY/$REGISTRY_USER/$TAG" "
+        cd /src;
+        export GRADLE_USER_HOME="$(pwd)/.gradle";
+        export ENFORCE_VENDOR=1;
+        gradle build;
+      ";
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
