@@ -1,7 +1,10 @@
 package com.blackbox.renderer.primitives;
 
+import com.blackbox.renderer.Camera;
+import com.blackbox.renderer.Shader;
 import com.blackbox.renderer.VertexBuffer;
 import javafx.scene.paint.Color;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class Disk extends Primitive {
@@ -22,7 +25,6 @@ public class Disk extends Primitive {
         super(pos, rot, scale, color, indexData, indicesData);
         this.radius = radius;
         this.dimension = 3;
-        this.type = PrimitiveTypes.DISK;
 
         setUpVertexBuffer();
     }
@@ -32,10 +34,18 @@ public class Disk extends Primitive {
      * stores the vertex data in the vertex buffer
      * and adds the attribute to the attribute list
      */
-    private void setUpVertexBuffer() {
+    @Override
+    protected void setUpVertexBuffer() {
         vertexBuffer = new VertexBuffer();
         vertexBuffer.storeFloatData(getVertices(), 0, getDimension());
         attributes.add(0);
+    }
+
+    @Override
+    public void uploadUniforms(Camera camera, Shader shader) {
+        Matrix4f transformationMatrix = Camera.createTransformMatrix(getPosition(), getRotation(), getScale());
+        shader.loadMatrixUniform("transformMatrix", transformationMatrix);
+        shader.loadVector3d("colour", getColour());
     }
 
     /** Getter for the radius of the circle */

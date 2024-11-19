@@ -1,8 +1,6 @@
 package com.blackbox.renderer.primitives;
 
-import com.blackbox.renderer.IndexBuffer;
-import com.blackbox.renderer.VertexArray;
-import com.blackbox.renderer.VertexBuffer;
+import com.blackbox.renderer.*;
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;
 
@@ -21,17 +19,16 @@ public abstract class Primitive {
     protected Color colour;
     protected int dimension;
     protected ArrayList<Integer> attributes;
-    protected PrimitiveTypes type;
 
     protected VertexArray vertexArray;
     protected VertexBuffer vertexBuffer;
     protected IndexBuffer indexBuffer;
 
     /**
-     * Sets up the primitve by setting needed variables and creating
+     * Sets up the primitive by setting needed variables and creating
      * a {@link com.blackbox.renderer.VertexArray vertex array} and
      * a {@link com.blackbox.renderer.VertexArray index buffer}
-     * for the primitve
+     * for the primitive
      * @param pos position of the primitive in world space
      * @param rot rotation of the primitive
      * @param scale size multiple
@@ -46,8 +43,8 @@ public abstract class Primitive {
         this.colour = colour;
         this.vertexData = VertexData;
         this.indices = indicesData;
-
         attributes = new ArrayList<>();
+
         initVertexArray();
         initIndexBuffer();
     }
@@ -103,11 +100,6 @@ public abstract class Primitive {
         return indexBuffer.getCount();
     }
 
-    /** Gets the {@link com.blackbox.renderer.primitives.PrimitiveTypes primitve type} */
-    public PrimitiveTypes getType() {
-        return type;
-    }
-
     /** Gets and converts it to a {@link org.joml.Vector3f vector3f}*/
     public Vector3f getColour() {
         return new Vector3f((float) colour.getRed(), (float) colour.getGreen(), (float) colour.getBlue());
@@ -147,6 +139,16 @@ public abstract class Primitive {
         indexBuffer.bind();
         indexBuffer.storeIndexData(getIndices());
     }
+
+    /**
+     * Uploads all the need uniforms to the GPU
+     * @param camera the renderer camera
+     * @param shader the shader of the object
+     */
+    public abstract void uploadUniforms(Camera camera, Shader shader);
+
+    protected abstract void setUpVertexBuffer();
+
 
     /**
      * moves the object
