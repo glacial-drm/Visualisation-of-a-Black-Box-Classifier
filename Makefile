@@ -7,6 +7,8 @@ TAG = utensils/opengl
 PUBLISH_TAG = $(REGISTRY)/$(REGISTRY_USER)/$(TAG)
 
 build:
+	@echo -e "===== Building Docker image =====\n"
+
 	docker buildx build \
 		--build-arg BASE_IMAGE=alpine:latest \
 		--build-arg LLVM_VERSION=17 \
@@ -14,20 +16,34 @@ build:
 		--tag $(TAG) \
 		--file Dockerfile .
 
+	@echo -e "\n\n"
+
 login:
+	@echo -e "===== Logging into Docker registry =====\n"
+
 	docker login "$(REGISTRY)" \
 		--username "$(REGISTRY_USER)" \
 		--password "$(REGISTRY_PASSWD)"
 
+	@echo -e "\n\n"
+
 upload: build login
+	@echo -e "===== Uploading Docker image =====\n"
+
 	docker tag $(TAG) $(PUBLISH_TAG)
 	docker image push $(PUBLISH_TAG)
 
+	@echo -e "\n\n"
+
 test: login
+	@echo -e "===== Running gradle tests in Docker =====\n"
+
 	docker run --rm -v ./:/src -i "$(REGISTRY)/$(REGISTRY_USER)/$(TAG)" " \
 		cd /src; \
 		GRADLE_USER_HOME="$(shell pwd)/.gradle"; \
 		export GRADLE_USER_HOME; \
 		gradle check; \
 	"
+
+	@echo -e "\n\n"
 
