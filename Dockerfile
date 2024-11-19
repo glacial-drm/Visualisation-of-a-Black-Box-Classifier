@@ -24,7 +24,7 @@
 
 # Base Docker Image
 ARG BASE_IMAGE=alpine:3.12
-FROM ${BASE_IMAGE} as builder
+FROM ${BASE_IMAGE} AS builder
 
 # Install all needed build deps for Mesa3D
 ARG LLVM_VERSION=9
@@ -135,7 +135,11 @@ COPY --from=builder /usr/local /usr/local
 ARG LLVM_VERSION=9
 RUN set -xe; \
     apk add --no-cache --quiet \
-        mesa-utils \
+        # Compat libraries to run things expecting glibc
+        # Required due to issue in gradle/foojay-toolchains
+        # https://github.com/gradle/foojay-toolchains/issues/5#issuecomment-2037862837
+        # This may halt alpine upgrades as apparently doesn't work in later versions
+        gcompat \
         gradle \
         binutils \
         expat \

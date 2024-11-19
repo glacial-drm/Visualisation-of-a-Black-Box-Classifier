@@ -35,18 +35,15 @@ test:
       unset DOCKER_HOST
 
       # Build the container
-      docker buildx build \
-        --build-arg BASE_IMAGE=alpine:latest \
-        --build-arg LLVM_VERSION=17 \
-        --build-arg MESA_VERSION=24.2.6 \
-        --tag utensils/opengl \
-        --file Dockerfile .;
+      docker login "$REGISTRY" \
+        --username "$REGISTRY_USER" \
+        --password "$REGISTRY_PASSWD";
 
       # Run the container
-      docker run --rm -v ./:/src -i utensils/opengl "
+      docker run --rm -v ./:/src -i "$REGISTRY/$REGISTRY_USER/$TAG" "
         cd /src;
-        GRADLE_USER_HOME="$(pwd)/.gradle";
-        export GRADLE_USER_HOME;
+        export GRADLE_USER_HOME="$(pwd)/.gradle";
+        export ENFORCE_VENDOR=1;
         gradle check;
       ";
   cache:

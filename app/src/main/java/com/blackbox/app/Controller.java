@@ -49,7 +49,9 @@ public class Controller {
      * Send the {@link com.blackbox.graph.events.StopEvent StopEvent} event.
      */
     public void stop() {
-        sendEvent(new StopEvent());
+        // Called with true to also kill this thread
+        // May be changed in the future when windows can be open independently.
+        sendEvent(new StopEvent(true));
     }
 
     /** Get the message. */
