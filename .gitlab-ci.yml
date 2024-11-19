@@ -42,8 +42,7 @@ test:
       # Run the container
       docker run --rm -v ./:/src -i "$REGISTRY/$REGISTRY_USER/$TAG" "
         cd /src;
-        GRADLE_USER_HOME="$(pwd)/.gradle";
-        export GRADLE_USER_HOME;
+        export GRADLE_USER_HOME="$(pwd)/.gradle";
         gradle check;
       ";
   cache:
