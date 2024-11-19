@@ -40,7 +40,7 @@ test: login
 
 	docker run --rm -v ./:/src -i "$(REGISTRY)/$(REGISTRY_USER)/$(TAG)" " \
 		cd /src; \
-		GRADLE_USER_HOME="$(shell pwd)/.gradle"; \
+		GRADLE_USER_HOME="/src/.gradle"; \
 		export GRADLE_USER_HOME; \
 		gradle check; \
 	"
