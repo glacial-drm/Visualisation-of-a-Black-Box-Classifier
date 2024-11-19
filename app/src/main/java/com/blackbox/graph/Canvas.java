@@ -102,12 +102,12 @@ public class Canvas {
      * Whether the app is currently running and should continue looping.
      */
     private boolean isRunning() {
-        if (running) {
-            running = !glfwWindowShouldClose(window);
-            return running;
-        } else {
-            return running;
+        if (running && glfwWindowShouldClose(window)) {
+            running = false;
+            stopEvent = new StopEvent(true);
         }
+
+        return running;
     }
 
     /**
