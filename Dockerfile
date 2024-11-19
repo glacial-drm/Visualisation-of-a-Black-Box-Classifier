@@ -24,7 +24,7 @@
 
 # Base Docker Image
 ARG BASE_IMAGE=alpine:3.12
-FROM ${BASE_IMAGE} as builder
+FROM ${BASE_IMAGE} AS builder
 
 # Install all needed build deps for Mesa3D
 ARG LLVM_VERSION=9
