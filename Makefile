@@ -15,6 +15,7 @@ build:
 		--build-arg MESA_VERSION=24.2.6 \
 		--tag $(TAG) \
 		--file Dockerfile .
+	docker tag $(TAG) $(PUBLISH_TAG)
 
 	@echo -e "\n\n"
 
@@ -30,7 +31,6 @@ login:
 upload: build login
 	@echo -e "===== Uploading Docker image =====\n"
 
-	docker tag $(TAG) $(PUBLISH_TAG)
 	docker image push $(PUBLISH_TAG)
 
 	@echo -e "\n\n"
