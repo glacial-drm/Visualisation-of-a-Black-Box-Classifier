@@ -22,7 +22,15 @@ public class Canvas {
     private long window;
     private Renderer renderer;
     private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
+
+    /** Whether to keep running. */
     private boolean running = true;
+    /**
+     * The stop event given when quitting.
+     * Stored as it has options about how to quit.
+     */
+    private StopEvent stopEvent = null;
+
     private final int width = 300;
     private final int height = 300;
 
@@ -119,8 +127,9 @@ public class Canvas {
             if (canvasEvent instanceof PointsLoaded) {
                 PointsLoaded pointsLoaded = (PointsLoaded) canvasEvent;
                 System.out.println(String.format("Received PointsLoaded event with data: %d", pointsLoaded.data));
-            } else if (canvasEvent instanceof StopEvent) {
+            } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
+                stopEvent = event;
             }
         }
     }
@@ -134,8 +143,10 @@ public class Canvas {
         glfwTerminate();
         glfwSetErrorCallback(null).free();
 
-        // Stop all threads
-        System.exit(0);
+        if (stopEvent.quitAllThreads) {
+            // Stop all threads
+            System.exit(0);
+        }
     }
 
     /**

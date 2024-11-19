@@ -23,7 +23,8 @@ public class CanvasTest {
 
     @AfterEach
     void cleanup() {
-        eventQueue.add(new StopEvent());
+        // Don't quit all other threads (this would include JUnit)
+        eventQueue.add(new StopEvent(false));
 
         try {
             thread.join();
