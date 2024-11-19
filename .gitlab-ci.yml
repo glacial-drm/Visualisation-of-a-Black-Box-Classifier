@@ -7,7 +7,7 @@ build:
       apk add --update gradle;
       GRADLE_USER_HOME="$(pwd)/.gradle";
       export GRADLE_USER_HOME;
-      gradle --build-cache assemble;
+      gradle --build-cache build;
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
