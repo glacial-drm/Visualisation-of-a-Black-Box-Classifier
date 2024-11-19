@@ -135,7 +135,6 @@ COPY --from=builder /usr/local /usr/local
 ARG LLVM_VERSION=9
 RUN set -xe; \
     apk add --no-cache --quiet \
-        mesa-utils \
         gradle \
         binutils \
         expat \
