@@ -7,6 +7,7 @@ public class InputHandler {
     private static final HashMap<Integer, Boolean> mouseInput = new HashMap<>();
     private static double mouseX, mouseY;
     private static double originalMouseX, originalMouseY;
+    private static double xOffSet, yOffSet;
 
     public static double getMouseX() {
         return mouseX;
@@ -69,5 +70,17 @@ public class InputHandler {
 
     public static void setOriginalMouseY(double originalMouseY) {
         InputHandler.originalMouseY = originalMouseY;
+    }
+
+    public static void incYOffSet(double yOffSet) {
+        InputHandler.yOffSet += yOffSet;
+    }
+
+    public static void incXOffSet(double xOffSet) {
+        InputHandler.xOffSet += xOffSet;
+    }
+
+    public static double getYOffSet() {
+        return InputHandler.yOffSet;
     }
 }

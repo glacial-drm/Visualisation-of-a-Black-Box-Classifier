@@ -127,13 +127,30 @@ public class Camera {
         } else {
             moved = keyboardMovement();
         }
+
+        // Mouse zoom
+        moved = mouseZoom();
+
         if (moved)
             viewMatrix = createViewMatrix();
         return moved;
     }
 
+    private boolean mouseZoom() {
+        // Zoom
+        float zoom = (float)InputHandler.getYOffSet();
+        System.out.println(zoom);
+        if(zoom != 0){
+            position.z = Math.clamp(zoom, -100.0f, -2.0f);
+            return true;
+        }
+        return false;
+    }
+
     private boolean mouseMovement() {
         boolean moved = false;
+
+        // Movement
         float dx = (float) (InputHandler.getOriginalMouseX() - InputHandler.getMouseX());
         float dy = (float) (InputHandler.getOriginalMouseY() - InputHandler.getMouseY());
 
@@ -149,6 +166,7 @@ public class Camera {
             position.y -= ((dy-10.0f) * sensitivity);
             moved = true;
         }
+
 
         return moved;
     }
@@ -168,6 +186,14 @@ public class Camera {
         }
         if (InputHandler.getKeyState('D')) {
             position.x += moveSpeed;
+            return true;
+        }
+        if (InputHandler.getKeyState('Q')) {
+            position.z -= moveSpeed;
+            return true;
+        }
+        if (InputHandler.getKeyState('E')) {
+            position.z += moveSpeed;
             return true;
         }
         return false;

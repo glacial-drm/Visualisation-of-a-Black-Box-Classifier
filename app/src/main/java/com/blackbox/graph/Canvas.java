@@ -115,6 +115,11 @@ public class Canvas {
             InputHandler.setMouseX(xpos);
             InputHandler.setMouseY(ypos);
         });
+
+        glfwSetScrollCallback(window, (_window, xOffSet, yOffSet) -> {
+            InputHandler.incXOffSet(xOffSet);
+            InputHandler.incYOffSet(yOffSet);
+        });
     }
 
     /**
