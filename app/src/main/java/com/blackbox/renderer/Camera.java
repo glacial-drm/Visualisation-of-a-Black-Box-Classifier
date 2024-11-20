@@ -5,6 +5,8 @@ import com.blackbox.graph.Input.MouseInputNames;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import java.util.Map;
+
 public class Camera {
     private Matrix4f projectionMatrix;
     private Matrix4f viewMatrix;
@@ -123,13 +125,11 @@ public class Camera {
 
         // Enable mouse movement
         if (InputHandler.getMouseState(MouseInputNames.LEFT_CLICK)) {
-            moved = mouseMovement();
+            moved = mouseMovement() || mouseZoom();
         } else {
             moved = keyboardMovement();
         }
 
-        // Mouse zoom
-        moved = mouseZoom();
 
         if (moved)
             viewMatrix = createViewMatrix();
@@ -139,7 +139,6 @@ public class Camera {
     private boolean mouseZoom() {
         // Zoom
         float zoom = (float)InputHandler.getYOffSet();
-        System.out.println(zoom);
         if(zoom != 0){
             position.z = Math.clamp(zoom, -100.0f, -2.0f);
             return true;
@@ -166,37 +165,27 @@ public class Camera {
             position.y -= ((dy-10.0f) * sensitivity);
             moved = true;
         }
-
-
         return moved;
     }
 
     private boolean keyboardMovement() {
-        if (InputHandler.getKeyState('W')) {
-            position.y += moveSpeed;
-            return true;
+        boolean moved = false;
+        Map<Character, Runnable> actions = Map.of(
+                'W', () -> position.y += moveSpeed,
+                'S', () -> position.y -= moveSpeed,
+                'A', () -> position.x -= moveSpeed,
+                'D', () -> position.x += moveSpeed,
+                'Q', () -> position.z -= moveSpeed,
+                'E', () -> position.z += moveSpeed
+        );
+
+        for (Map.Entry<Character, Runnable> action : actions.entrySet()) {
+            if (InputHandler.getKeyState(action.getKey())) {
+                action.getValue().run();
+                moved = true;
+            }
         }
-        if (InputHandler.getKeyState('S')) {
-            position.y -= moveSpeed;
-            return true;
-        }
-        if (InputHandler.getKeyState('A')) {
-            position.x -= moveSpeed;
-            return true;
-        }
-        if (InputHandler.getKeyState('D')) {
-            position.x += moveSpeed;
-            return true;
-        }
-        if (InputHandler.getKeyState('Q')) {
-            position.z -= moveSpeed;
-            return true;
-        }
-        if (InputHandler.getKeyState('E')) {
-            position.z += moveSpeed;
-            return true;
-        }
-        return false;
+        return moved;
     }
     /** Getter for the viewChanged */
     public boolean getViewChanged() {
