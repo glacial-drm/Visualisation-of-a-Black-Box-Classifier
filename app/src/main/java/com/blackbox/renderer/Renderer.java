@@ -130,7 +130,6 @@ public class Renderer {
         return sHeight;
     }
 
-    // TODO: Make it work with multiple keys and state which keys are active
     /** Calls the {@link com.blackbox.renderer.Camera move function with the given key */
     public void move() {
         if(camera.move()){

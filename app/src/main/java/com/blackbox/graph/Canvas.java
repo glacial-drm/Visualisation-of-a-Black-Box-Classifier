@@ -103,10 +103,17 @@ public class Canvas {
 
         glfwSetMouseButtonCallback(window, (_window, button, action, mods) -> {
             if(action == GLFW_PRESS) {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 InputHandler.mouseDown(button);
             } else if (action == GLFW_RELEASE) {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                 InputHandler.mouseUp(button);
             }
+        });
+
+        glfwSetCursorPosCallback(window, (_window, xpos, ypos) -> {
+            InputHandler.setMouseX(xpos);
+            InputHandler.setMouseY(ypos);
         });
     }
 
