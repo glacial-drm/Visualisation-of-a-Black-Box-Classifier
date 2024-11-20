@@ -1,6 +1,7 @@
 package com.blackbox.renderer;
 
-import com.blackbox.graph.InputHandler;
+import com.blackbox.graph.Input.InputHandler;
+import com.blackbox.graph.Input.MouseInputNames;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -110,6 +111,10 @@ public class Camera {
      */
     public boolean move() {
         boolean moved = false;
+
+        if(InputHandler.getMouseState(MouseInputNames.LEFT_CLICK)){
+            System.out.println("LEFT CLICK DOWN");
+        }
 
         if(InputHandler.getKeyState('W')){
             position.y += moveSpeed;

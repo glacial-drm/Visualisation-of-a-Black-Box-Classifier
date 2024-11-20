@@ -1,5 +1,6 @@
 package com.blackbox.graph;
 
+import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.*;
 import com.blackbox.renderer.Renderer;
@@ -101,7 +102,11 @@ public class Canvas {
         });
 
         glfwSetMouseButtonCallback(window, (_window, button, action, mods) -> {
-            System.out.println(button);
+            if(action == GLFW_PRESS) {
+                InputHandler.mouseDown(button);
+            } else if (action == GLFW_RELEASE) {
+                InputHandler.mouseUp(button);
+            }
         });
     }
 
