@@ -15,7 +15,6 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
-    private final Set<Integer> moveKeys = Set.of(GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D);
     private int sWidth, sHeight;
     private Camera camera;
     private final HashMap<Class<?>, Shader> shaders = new HashMap<Class<?>, Shader>();
@@ -43,6 +42,8 @@ public class Renderer {
      */
     public void render() {
         clearScreen();
+        move();
+
         for (Primitive obj : objects) {
             obj.uploadUniforms(camera, shaders.get(obj.getClass()));
             obj.enableAttributes();
@@ -99,7 +100,9 @@ public class Renderer {
         sHeight = height;
 
         glViewport(0, 0, sWidth, sHeight);
-        camera = new Camera(sWidth, sHeight, 70, 0, 100);
+
+        camera = (camera != null) ? camera.resize(sWidth, sHeight) : new Camera(sWidth, sHeight, 70, 0, 100);
+
         uploadProjectionMatrix();
     }
 
@@ -127,15 +130,11 @@ public class Renderer {
         return sHeight;
     }
 
-    /** Returns all the valid GLFW keys for movement W,A,S,D*/
-    public Set<Integer> getMovementKeys() {
-        return moveKeys;
-    }
-
     // TODO: Make it work with multiple keys and state which keys are active
     /** Calls the {@link com.blackbox.renderer.Camera move function with the given key */
-    public void move(int key) {
-        camera.move(key);
-        uploadViewMatrix();
+    public void move() {
+        if(camera.move()){
+            uploadViewMatrix();
+        }
     }
 }

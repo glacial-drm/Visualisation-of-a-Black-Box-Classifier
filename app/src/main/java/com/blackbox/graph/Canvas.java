@@ -80,6 +80,7 @@ public class Canvas {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         renderer = new Renderer(width, height);
+
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
         });
@@ -92,9 +93,15 @@ public class Canvas {
         glfwSetKeyCallback(window, (_window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 glfwSetWindowShouldClose(window, true);
-            } else if (renderer.getMovementKeys().contains(key)) {
-                renderer.move(key);
+            } else if(action == GLFW_PRESS) {
+                InputHandler.keyDown((char)key);
+            } else if (action == GLFW_RELEASE) {
+                InputHandler.keyUp((char)key);
             }
+        });
+
+        glfwSetMouseButtonCallback(window, (_window, button, action, mods) -> {
+            System.out.println(button);
         });
     }
 

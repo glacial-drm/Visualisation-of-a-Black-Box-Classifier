@@ -1,18 +1,21 @@
 package com.blackbox.renderer;
 
+import com.blackbox.graph.InputHandler;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import static org.lwjgl.glfw.GLFW.*;
-
 public class Camera {
-    private final Matrix4f projectionMatrix;
+    private Matrix4f projectionMatrix;
     private Matrix4f viewMatrix;
     private Vector3f position =  new Vector3f(0,0,-10);;
     private float yaw = 0;
     private float pitch = 0;
     private float roll = 0;
     private boolean viewChanged = false;
+    private float moveSpeed = 0.2f;
+    private float fov;
+    private float near;
+    private float far;
 
     /**
      * Sets up the projection and view matrix
@@ -23,6 +26,10 @@ public class Camera {
      * @param far how far objects should be to still be rendered
      */
     public Camera(float width, float height, float fov, float near, float far) {
+        this.fov = fov;
+        this.near = near;
+        this.far = far;
+
         projectionMatrix = createProjectionMatrix(width, height, fov, near, far);
         viewMatrix = createViewMatrix();
     }
@@ -100,19 +107,29 @@ public class Camera {
     /**
      * Handles moving the camera by changing the position which effects the
      * view matrix
-     * @param key a GLFW_KEY input
      */
-    public void move(int key) {
-        if(key == GLFW_KEY_W){
-            position.y += 0.02f;
-        } else if (key == GLFW_KEY_S) {
-            position.y -= 0.02f;
-        } else if (key == GLFW_KEY_A) {
-            position.x -= 0.02f;
-        } else if (key == GLFW_KEY_D) {
-            position.x += 0.02f;
+    public boolean move() {
+        boolean moved = false;
+
+        if(InputHandler.getKeyState('W')){
+            position.y += moveSpeed;
+            moved = true;
         }
-        viewMatrix = createViewMatrix();
+        if (InputHandler.getKeyState('S')) {
+            position.y -= moveSpeed;
+            moved = true;
+        }
+        if (InputHandler.getKeyState('A')) {
+            position.x -= moveSpeed;
+            moved = true;
+        }
+        if (InputHandler.getKeyState('D')) {
+            position.x += moveSpeed;
+            moved = true;
+        }
+        if(moved)
+            viewMatrix = createViewMatrix();
+        return moved;
     }
 
     /** Getter for the viewChanged */
@@ -123,5 +140,10 @@ public class Camera {
     /** Set viewChanged to false */
     public void resetViewChanged() {
         viewChanged = false;
+    }
+
+    public Camera resize(int width, int height) {
+        projectionMatrix = createProjectionMatrix(width, height, fov, near, far);
+        return this;
     }
 }
