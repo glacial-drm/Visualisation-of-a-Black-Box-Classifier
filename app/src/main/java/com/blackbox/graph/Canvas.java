@@ -118,7 +118,7 @@ public class Canvas {
 
         glfwSetScrollCallback(window, (_window, xOffSet, yOffSet) -> {
             InputHandler.incXOffSet(xOffSet);
-            InputHandler.incYOffSet(yOffSet);
+            InputHandler.incZoom(yOffSet);
         });
     }
 

@@ -10,8 +10,8 @@ import java.util.Map;
 public class Camera {
     private Matrix4f projectionMatrix;
     private Matrix4f viewMatrix;
-    private Vector3f position = new Vector3f(0, 0, -10);
-    ;
+    private Vector3f position = new Vector3f(0, 0, (float)InputHandler.getZoom());
+
     private float yaw = 0;
     private float pitch = 0;
     private float roll = 0;
@@ -35,7 +35,7 @@ public class Camera {
         this.fov = fov;
         this.near = near;
         this.far = far;
-        this.sensitivity = 0.005f;
+        this.sensitivity = 0.01f;
 
         projectionMatrix = createProjectionMatrix(width, height, fov, near, far);
         viewMatrix = createViewMatrix();
@@ -125,9 +125,10 @@ public class Camera {
 
         // Enable mouse movement
         if (InputHandler.getMouseState(MouseInputNames.LEFT_CLICK)) {
-            moved = mouseMovement() || mouseZoom();
+            mouseMovement();
+            moved = true;
         } else {
-            moved = keyboardMovement();
+            moved = keyboardMovement() || mouseZoom();
         }
 
 
@@ -138,45 +139,43 @@ public class Camera {
 
     private boolean mouseZoom() {
         // Zoom
-        float zoom = (float)InputHandler.getYOffSet();
-        if(zoom != 0){
-            position.z = Math.clamp(zoom, -100.0f, -2.0f);
+        float zoom = (float)InputHandler.getZoom();
+        if(zoom != 0) {
+            // Account for the camera being perspective for now
+            // Speeds up zooming further away from the origin
+            position.z = -(float)Math.pow(-zoom, 1.5) * 0.8f;
             return true;
         }
         return false;
     }
 
-    private boolean mouseMovement() {
-        boolean moved = false;
-
+    private void mouseMovement() {
         // Movement
         float dx = (float) (InputHandler.getOriginalMouseX() - InputHandler.getMouseX());
         float dy = (float) (InputHandler.getOriginalMouseY() - InputHandler.getMouseY());
 
-        dx = Math.clamp(dx, -100, 100);
-        dy = Math.clamp(dy, -100, 100);
+        InputHandler.setOriginalMouseX(InputHandler.getMouseX());
+        InputHandler.setOriginalMouseY(InputHandler.getMouseY());
 
-        if(Math.abs(dx) > 10){
-            position.x += ((dx-10.0f) * sensitivity);
-            moved = true;
-        }
-
-        if(Math.abs(dy) > 10){
-            position.y -= ((dy-10.0f) * sensitivity);
-            moved = true;
-        }
-        return moved;
+        position.x -= dx * sensitivity;
+        position.y += dy * sensitivity;
     }
 
     private boolean keyboardMovement() {
         boolean moved = false;
         Map<Character, Runnable> actions = Map.of(
-                'W', () -> position.y += moveSpeed,
-                'S', () -> position.y -= moveSpeed,
-                'A', () -> position.x -= moveSpeed,
-                'D', () -> position.x += moveSpeed,
-                'Q', () -> position.z -= moveSpeed,
-                'E', () -> position.z += moveSpeed
+            'W', () -> position.y -= moveSpeed,
+            'S', () -> position.y += moveSpeed,
+            'A', () -> position.x += moveSpeed,
+            'D', () -> position.x -= moveSpeed,
+            'Q', () -> {
+                InputHandler.incZoom(-moveSpeed);
+                position.z = (float)InputHandler.getZoom();
+            },
+            'E', () -> {
+                InputHandler.incZoom(moveSpeed);
+                position.z = (float)InputHandler.getZoom();
+            }
         );
 
         for (Map.Entry<Character, Runnable> action : actions.entrySet()) {
