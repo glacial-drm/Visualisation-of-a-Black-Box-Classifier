@@ -20,22 +20,37 @@ public class OnnxModel {
     }
 
     //Method to close session.
-    public void endSession() throws OrtException {
-
-        session.close();
-        environment.close();
+    public void endSession(){
+        try {
+            session.close();
+            environment.close();
+        }
+        catch (Exception e){
+            //e.printStackTrace();
+        }
     }
 
     //Method to retrieve the number of features in the loaded model.
-    public int getNumInputFeatures() throws OrtException {
-
-        Map<String, NodeInfo> inputInfo = session.getInputInfo();
-        return inputInfo.size();
+    public int getNumInputFeatures(){
+        try{
+            Map<String, NodeInfo> inputInfo = session.getInputInfo();
+            return inputInfo.size();
+        }
+        catch (Exception e){
+            //e.printStackTrace();
+        }
+        return 0;
     }
 
     //Method to return names of inputs
-    public List<String> getInputNames() throws OrtException {
-        Map<String, NodeInfo> inputInfo = session.getInputInfo();
-        return new ArrayList<>(inputInfo.keySet());
+    public List<String> getInputNames(){
+        try{
+            Map<String, NodeInfo> inputInfo = session.getInputInfo();
+            return new ArrayList<>(inputInfo.keySet());
+        }
+        catch (Exception e){
+            //e.printStackTrace();
+        }
+        return null;
     }
 }
