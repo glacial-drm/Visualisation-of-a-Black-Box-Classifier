@@ -1,5 +1,6 @@
 package com.blackbox.graph;
 
+import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.*;
 import com.blackbox.renderer.Renderer;
@@ -80,6 +81,7 @@ public class Canvas {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         renderer = new Renderer(width, height);
+
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
         });
@@ -92,9 +94,31 @@ public class Canvas {
         glfwSetKeyCallback(window, (_window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 glfwSetWindowShouldClose(window, true);
-            } else if (renderer.getMovementKeys().contains(key)) {
-                renderer.move(key);
+            } else if(action == GLFW_PRESS) {
+                InputHandler.keyDown((char)key);
+            } else if (action == GLFW_RELEASE) {
+                InputHandler.keyUp((char)key);
             }
+        });
+
+        glfwSetMouseButtonCallback(window, (_window, button, action, mods) -> {
+            if(action == GLFW_PRESS) {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                InputHandler.mouseDown(button);
+            } else if (action == GLFW_RELEASE) {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                InputHandler.mouseUp(button);
+            }
+        });
+
+        glfwSetCursorPosCallback(window, (_window, xpos, ypos) -> {
+            InputHandler.setMouseX(xpos);
+            InputHandler.setMouseY(ypos);
+        });
+
+        glfwSetScrollCallback(window, (_window, xOffSet, yOffSet) -> {
+            InputHandler.incXOffSet(xOffSet);
+            InputHandler.incZoom(yOffSet);
         });
     }
 
