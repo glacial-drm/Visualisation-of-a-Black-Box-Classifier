@@ -60,6 +60,7 @@ dependencies {
     runtimeOnly(variantOf(libs.lwjgl.lib) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.opengl) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.glfw) { classifier(lwjglNatives) })
+    implementation(libs.onnxruntime)
 }
 
 testing {
