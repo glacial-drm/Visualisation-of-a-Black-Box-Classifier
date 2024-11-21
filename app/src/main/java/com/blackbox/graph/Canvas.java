@@ -1,68 +1,178 @@
 package com.blackbox.graph;
 
-import javafx.scene.layout.Region;
-
-import static org.lwjgl.opengl.GL11.*;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import com.blackbox.graph.events.CanvasEvent;
-import com.blackbox.graph.events.PointsLoaded;
-import com.huskerdev.openglfx.canvas.GLCanvas;
-import com.huskerdev.openglfx.canvas.GLCanvasAnimator;
-import com.huskerdev.openglfx.canvas.GLProfile;
-import com.huskerdev.openglfx.lwjgl.LWJGLExecutor;
+import com.blackbox.graph.events.*;
+import com.blackbox.renderer.Renderer;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
 
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+import static org.lwjgl.opengl.GL33.*;
+
+/**
+ * The graph container, handles GLFW, the window, user input, and the renderer.
+ *
+ * Should only be used with the static {@link com.blackbox.graph.Canvas#run Canvas.run} method.
+ * This ensures all operations are run on a single thread, which is required for GLFW.
+ */
 public class Canvas {
+    private long window;
+    private Renderer renderer;
+    private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
+
+    /** Whether to keep running. */
+    private boolean running = true;
     /**
-     * Create a {@link com.huskerdev.openglfx.canvas.GLCanvas GLCanvas}.
-     *
-     * @return: {@link javafx.scene.layout.Region Region}
-     *          to abstract away {@link com.huskerdev.openglfx.canvas.GLCanvas GLCanvas}
+     * The stop event given when quitting.
+     * Stored as it has options about how to quit.
      */
-    public static Region createCanvas(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
-        GLCanvas canvas = new GLCanvas(
-            LWJGLExecutor.LWJGL_MODULE,
-            GLProfile.Core,
-            // flipY
-            false,
-            // msaa
-            0,
-            // fxaa
-            false
-        );
-        canvas.setAnimator(new GLCanvasAnimator(60.0));
+    private StopEvent stopEvent = null;
 
-        canvas.addOnInitEvent(event -> {
-            System.out.println("init");
-        });
-        canvas.addOnReshapeEvent(event -> {
-            System.out.println("reshape");
-        });
-        canvas.addOnRenderEvent(event -> {
-            // Check event queue
-            while (!eventQueue.isEmpty()) {
-                // Get an event
-                CanvasEvent canvasEvent = eventQueue.poll();
-                if (canvasEvent == null) { break; }
+    private final int width = 300;
+    private final int height = 300;
 
-                // Process event
-                if (canvasEvent instanceof PointsLoaded) {
-                    PointsLoaded pointsLoaded = (PointsLoaded)canvasEvent;
-                    System.out.println(String.format("Received PointsLoaded event with data: %d", pointsLoaded.data));
-                }
+    private Canvas(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
+        this.eventQueue = eventQueue;
+
+        init();
+        registerInput();
+    }
+
+    /**
+     * Initialise the canvas.
+     *
+     * This sets up GLFW and opens the window.
+     */
+    private void init() {
+        // Setup logger
+        GLFWErrorCallback.createPrint(System.err).set();
+
+        // Setup GLFW
+        if (!glfwInit()) {
+            throw new RuntimeException("Failed to initialise GLFW");
+        }
+
+        // Create window
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
+
+
+        // Hide window until its shown
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
+        window = glfwCreateWindow(width, height, "Hello world", NULL, NULL);
+        if (window == NULL) {
+            throw new RuntimeException("Failed to create window");
+        }
+
+        glfwMakeContextCurrent(window);
+        // Enable V-Sync
+        glfwSwapInterval(1);
+        glfwShowWindow(window);
+        GL.createCapabilities();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        renderer = new Renderer(width, height);
+        glfwSetWindowSizeCallback(window, (_window, width, height) -> {
+            renderer.resize(width, height);
+        });
+    }
+
+    /**
+     * Register callbacks to respond to user input.
+     */
+    private void registerInput() {
+        glfwSetKeyCallback(window, (_window, key, scancode, action, mods) -> {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                glfwSetWindowShouldClose(window, true);
+            } else if (renderer.getMovementKeys().contains(key)) {
+                renderer.move(key);
+            }
+        });
+    }
+
+    /**
+     * Whether the app is currently running and should continue looping.
+     */
+    private boolean isRunning() {
+        if (running && glfwWindowShouldClose(window)) {
+            running = false;
+            stopEvent = new StopEvent(true);
+        }
+
+        return running;
+    }
+
+    /**
+     * The main application loop.
+     *
+     * Does the rendering and responds to events.
+     */
+    private void loop() {
+        renderer.render();
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+
+        // Check event queue
+        while (!eventQueue.isEmpty()) {
+            // Get an event
+            CanvasEvent canvasEvent = eventQueue.poll();
+            if (canvasEvent == null) {
+                break;
             }
 
-            // Do rendering
-            glClearColor(255f, (float)Math.random() % 255f, 0f, 1f);
+            // Process event
+            if (canvasEvent instanceof PointsLoaded) {
+                PointsLoaded pointsLoaded = (PointsLoaded) canvasEvent;
+                System.out.println(String.format("Received PointsLoaded event with data: %d", pointsLoaded.data));
+            } else if (canvasEvent instanceof StopEvent event) {
+                running = false;
+                stopEvent = event;
+            }
+        }
+    }
 
-            // clear the framebuffer
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        });
-        canvas.addOnDisposeEvent(event -> {
-            System.out.println("dispose");
+    /**
+     * Cleanup LWJGL and GLFW.
+     */
+    private void destroy() {
+        glfwFreeCallbacks(window);
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
+
+        if (stopEvent.quitAllThreads) {
+            // Stop all threads
+            System.exit(0);
+        }
+    }
+
+    /**
+     * Run the Canvas in a new thread.
+     *
+     * @param eventQueue To pass events into the created thread.
+     */
+    public static Thread run(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
+        Thread thread = new Thread(() -> {
+            Canvas canvas = new Canvas(eventQueue);
+
+            while (canvas.isRunning()) {
+                canvas.loop();
+            }
+
+            canvas.destroy();
         });
 
-        return canvas;
+        thread.start();
+
+        return thread;
     }
 }

@@ -3,14 +3,26 @@
  */
 package com.blackbox.app;
 
+import com.blackbox.graph.Canvas;
+
 import javafx.application.Application;
 
 public class App {
     public static void main(String[] args) {
         Model model = new Model();
         Controller controller = new Controller(model);
-
         View.controller = controller;
+
+        Thread canvasThread = Canvas.run(controller.eventQueue);
+
         Application.launch(View.class, args);
+
+        controller.stop();
+
+        try {
+            canvasThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Canvas thread was interrupted");
+        }
     }
 }
