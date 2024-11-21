@@ -180,23 +180,18 @@ public class Canvas {
     }
 
     /**
-     * Run the Canvas in a new thread.
+     * Run the Canvas, taking over this thread.
+     * Will quit all other threads when quitting.
      *
      * @param eventQueue To pass events into the created thread.
      */
-    public static Thread run(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
-        Thread thread = new Thread(() -> {
-            Canvas canvas = new Canvas(eventQueue);
+    public static void run(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
+        Canvas canvas = new Canvas(eventQueue);
 
-            while (canvas.isRunning()) {
-                canvas.loop();
-            }
+        while (canvas.isRunning()) {
+            canvas.loop();
+        }
 
-            canvas.destroy();
-        });
-
-        thread.start();
-
-        return thread;
+        canvas.destroy();
     }
 }

@@ -13,25 +13,14 @@ import com.blackbox.graph.events.*;
 
 public class CanvasTest {
     ConcurrentLinkedQueue<CanvasEvent> eventQueue;
-    Thread thread;
 
     @BeforeEach
     void init() {
         eventQueue = new ConcurrentLinkedQueue<>();
-        thread = Canvas.run(eventQueue);
     }
 
     @AfterEach
     void cleanup() {
-        // Don't quit all other threads (this would include JUnit)
-        eventQueue.add(new StopEvent(false));
-
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Canvas thread was interrupted");
-        }
-
         eventQueue = null;
     }
 
@@ -42,6 +31,8 @@ public class CanvasTest {
      */
     @Test
     void testStartStop() {
+        eventQueue.add(new StopEvent(false));
+        Canvas.run(eventQueue);
         assertTrue(true);
     }
 
@@ -52,6 +43,8 @@ public class CanvasTest {
     @Test
     void testPointsLoaded() {
         eventQueue.add(new PointsLoaded(1));
+        eventQueue.add(new StopEvent(false));
+        Canvas.run(eventQueue);
         assertTrue(true);
     }
 }
