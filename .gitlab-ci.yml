@@ -1,77 +1,36 @@
+default:
+  tags: [ docker ]
+  image: $REGISTRY/$REGISTRY_USER/$TAG
+
 build:
   stage: build
-  tags: [ docker ]
-  image: docker:dind
   script: 
     - |
-      # Start docker
-      dockerd &
-
-      # Wait until docker has started
-      until [ -S /var/run/docker.sock ]
-      do
-        sleep 1
-      done
-      sleep 10
-
-      # Required for DinD (Docker-in-Docker)
-      unset DOCKER_HOST
-
-      # Build the container
-      docker login "$REGISTRY" \
-        --username "$REGISTRY_USER" \
-        --password "$REGISTRY_PASSWD";
-
-      # Run the container
-      docker run --rm -v ./:/src -i "$REGISTRY/$REGISTRY_USER/$TAG" "
-        cd /src;
-        export GRADLE_USER_HOME="$(pwd)/.gradle";
-        export ENFORCE_VENDOR=1;
-        gradle build;
-      ";
+      export GRADLE_USER_HOME="$(pwd)/.gradle";
+      export ENFORCE_VENDOR=1;
+      # Build all the code including tests, without running the tests
+      gradle build testClasses -x test;
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
     paths:
-      - build
+      - app/build
       - .gradle
 
 test:
   stage: test
-  tags: [ docker ]
-  image: docker:dind
+  image: $REGISTRY/$REGISTRY_USER/$TAG
   script: 
     - |
-      # Start docker
-      dockerd &
-
-      # Wait until docker has started
-      until [ -S /var/run/docker.sock ]
-      do
-        sleep 1
-      done
-      sleep 10
-
-      # Required for DinD (Docker-in-Docker)
-      unset DOCKER_HOST
-
-      # Build the container
-      docker login "$REGISTRY" \
-        --username "$REGISTRY_USER" \
-        --password "$REGISTRY_PASSWD";
-
-      # Run the container
-      docker run --rm -v ./:/src -i "$REGISTRY/$REGISTRY_USER/$TAG" "
-        cd /src;
-        export GRADLE_USER_HOME="$(pwd)/.gradle";
-        export ENFORCE_VENDOR=1;
-        gradle check;
-      ";
+      export GRADLE_USER_HOME="$(pwd)/.gradle";
+      export ENFORCE_VENDOR=1;
+      # Run all the tests
+      gradle check;
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: pull
     paths:
-      - build
+      - app/build
       - .gradle
   artifacts:
     when: always
