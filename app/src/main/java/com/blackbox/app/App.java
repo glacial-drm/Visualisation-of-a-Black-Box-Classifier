@@ -9,18 +9,24 @@ import javafx.application.Application;
 
 public class App {
     public static void main(String[] args) {
+        // Setup MVC
         Model model = new Model();
         Controller controller = new Controller(model);
         View.controller = controller;
 
-        Thread canvasThread = Canvas.run(controller.eventQueue);
+        // Start JavaFX thread
+        Thread javafxThread = new Thread(() -> {
+            Application.launch(View.class, args);
+            controller.stop();
+        });
+        javafxThread.start();
 
-        Application.launch(View.class, args);
+        // Run Canvas
+        Canvas.run(controller.eventQueue);
 
-        controller.stop();
-
+        // Wait for JavaFX to exit
         try {
-            canvasThread.join();
+            javafxThread.join();
         } catch (InterruptedException e) {
             throw new RuntimeException("Canvas thread was interrupted");
         }
