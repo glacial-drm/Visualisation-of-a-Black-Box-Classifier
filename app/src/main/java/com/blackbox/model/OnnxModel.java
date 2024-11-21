@@ -9,10 +9,14 @@ public class OnnxModel {
     private OrtSession session;
 
     //Constructor takes in file path of onnx file and creates environment.
-    public OnnxModel(String filePath) throws OrtException {
-
-        this.environment = OrtEnvironment.getEnvironment();
-        this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
+    public OnnxModel(String filePath){
+        try {
+            this.environment = OrtEnvironment.getEnvironment();
+            this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
+        }
+        catch (Exception e) {
+            //e.printStackTrace();
+        }
     }
 
     //Method to close session.
