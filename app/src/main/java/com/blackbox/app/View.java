@@ -40,12 +40,6 @@ public class View extends Application {
         for(int i = 0; i < controller.getFileList().length; i++){
             menuBar.getMenus().get(0).getItems().add(i, new MenuItem(controller.getFileList()[i]));
         }
-        menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
-            File newClassifier = fc.showOpenDialog(primaryStage);
-            // Either use name taken from imported file, or have user write new name (with character limit)
-            // Write it to the dropdown to store it for later usage (during the same instance of the program)
-        });
-
 
         // Canvas (Graph section)
         Region canvas = Canvas.createCanvas(controller.eventQueue);
@@ -63,6 +57,13 @@ public class View extends Application {
         // Classifier Section
         GridPane classifierRegion = new GridPane();
         ComboBox<Text> classifierList = new ComboBox<Text>();
+
+        // Adding ONNX to ComboBox
+        menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
+            File newClassifier = fc.showOpenDialog(primaryStage);
+            // Text should be used as key
+            classifierList.getItems().add(new Text(newClassifier.getName()));
+        });
 
         classifierRegion.add(new Text("Classifier Details:"), 0, 0);
         classifierRegion.add(new Text("Chosen Classifier: "), 0, 1);
