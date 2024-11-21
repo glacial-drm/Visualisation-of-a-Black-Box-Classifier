@@ -57,12 +57,12 @@ public class View extends Application {
         // Classifier Section
         GridPane classifierRegion = new GridPane();
         ComboBox<Text> classifierList = new ComboBox<Text>();
-
+        classifierList.setPlaceholder(new Label("File -> Import Classifier"));
         // Adding ONNX to ComboBox
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             File newClassifier = fc.showOpenDialog(primaryStage);
-            // Text should be used as key
-            classifierList.getItems().add(new Text(newClassifier.getName()));
+            // Text should be used as key to actual ONNX file
+            classifierList.getItems().add(new Text(newClassifier.getName().split("\\.")[0]));
         });
 
         classifierRegion.add(new Text("Classifier Details:"), 0, 0);
