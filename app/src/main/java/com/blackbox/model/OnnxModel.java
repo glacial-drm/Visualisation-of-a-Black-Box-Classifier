@@ -1,6 +1,7 @@
 package com.blackbox.model;
 
 import ai.onnxruntime.*;
+import java.util.*;
 
 public class OnnxModel {
 
@@ -18,5 +19,19 @@ public class OnnxModel {
     public void endSession() throws OrtException {
 
         session.close();
+        environment.close();
+    }
+
+    //Method to retrieve the number of features in the loaded model.
+    public int getNumInputFeatures() throws OrtException {
+
+        Map<String, NodeInfo> inputInfo = session.getInputInfo();
+        return inputInfo.size();
+    }
+
+    //Method to return names of inputs
+    public List<String> getInputNames() throws OrtException {
+        Map<String, NodeInfo> inputInfo = session.getInputInfo();
+        return new ArrayList<>(inputInfo.keySet());
     }
 }
