@@ -43,6 +43,7 @@ public class View extends Application {
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             File newClassifier = fc.showOpenDialog(primaryStage);
             // Either use name taken from imported file, or have user write new name (with character limit)
+            // Write it to the dropdown to store it for later usage (during the same instance of the program)
         });
 
 
