@@ -1,5 +1,6 @@
 package com.blackbox.app;
 
+import com.blackbox.model.OnnxModel;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -52,6 +53,7 @@ public class View extends Application {
         // Adding ONNX to ComboBox
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             File newClassifier = fc.showOpenDialog(primaryStage);
+            OnnxModel onnx = new OnnxModel(newClassifier.getPath());
             // Text should be used as key to actual ONNX file
             classifierList.getItems().add(new Text(newClassifier.getName().split("\\.")[0]));
         });
