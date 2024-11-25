@@ -19,6 +19,12 @@ public class OnnxModel {
         }
     }
 
+    //Method to return the session
+    public OrtSession getSession() {
+        return this.session;
+    }
+
+
     //Method to close session.
     public void endSession(){
         try {
