@@ -141,9 +141,7 @@ public class Camera {
         // Zoom
         float zoom = (float)InputHandler.getZoom();
         if(zoom != 0) {
-            // Account for the camera being perspective for now
-            // Speeds up zooming further away from the origin
-            position.z = -(float)Math.pow(-zoom, 1.5) * 0.8f;
+            position.z = zoom;
             return true;
         }
         return false;
