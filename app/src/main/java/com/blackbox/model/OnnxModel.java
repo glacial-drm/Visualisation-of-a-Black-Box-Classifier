@@ -59,4 +59,39 @@ public class OnnxModel {
         }
         return null;
     }
+
+    //Method to return input types
+    public List<String> getInputtypes(){
+        List<String> inputTypes = new ArrayList<>();
+        try{
+            Map<String, NodeInfo> inputInfo = session.getInputInfo();
+            for (NodeInfo nodeInfo : inputInfo.values()){
+                if (nodeInfo.getInfo() instanceof TensorInfo){
+                    TensorInfo tensorInfo = (TensorInfo) nodeInfo.getInfo();
+                    inputTypes.add(tensorInfo.type.name());
+                }
+            }
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        return inputTypes;
+    }
+
+    //Method to return the shape of the expected input data.
+    public List<long[]> getInputShapes(){
+        List<long[]> shapes = new ArrayList<>();
+        try {
+            Map<String, NodeInfo> inputInfo = session.getInputInfo();
+            for (NodeInfo nodeInfo : inputInfo.values()) {
+                if (nodeInfo.getInfo() instanceof TensorInfo) {
+                    TensorInfo tensorInfo = (TensorInfo) nodeInfo.getInfo();
+                    shapes.add(tensorInfo.getShape());
+                }
+            }
+        } catch (Exception e) {
+           // e.printStackTrace();
+        }
+        return shapes;
+    }
 }
