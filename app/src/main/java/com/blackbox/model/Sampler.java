@@ -20,7 +20,7 @@ public class Sampler {
     Each of which contains the coordinates (feature1 and feature2), as well as the label
     given to it by the model.
     * */
-    public List<pointData> sampleBC(float[][] data) {
+    public List<PointData> sampleBC(float[][] data) {
         try {
             //Checking the model has input features, otherwise returns null.
             List<String> inputNames = onnxModel.getInputNames();
@@ -59,7 +59,7 @@ public class Sampler {
                                 long[] labelData = (long[]) tensor.getValue();
 
                                 //Use DataCombination to create a list of points from labelData
-                                List<pointData> combinedData = DataCombination.combineData(data, labelData);
+                                List<PointData> combinedData = DataCombination.combineData(data, labelData);
 
                                 //close tensor
                                 inputTensor.close();
