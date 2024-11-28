@@ -18,6 +18,7 @@ public class OnnxModel {
     public OnnxModel(String filePath) {
         try {
             this.environment = OrtEnvironment.getEnvironment();
+            environment.setTelemetry(false);
             this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
         } catch (Exception e) {
             //e.printStackTrace();
