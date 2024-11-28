@@ -8,7 +8,7 @@ import ai.onnxruntime.TensorInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 import java.io.FileNotFoundException;
 
 public class OnnxModel {
@@ -16,7 +16,7 @@ public class OnnxModel {
     private OrtEnvironment environment;
     private OrtSession session;
 
-    //Constructor takes in file path of onnx file and creates environment.
+    // Create the environment from a path to an ONNX file.
     public OnnxModel(String filePath) throws FileNotFoundException {
         try {
             this.environment = OrtEnvironment.getEnvironment();
@@ -27,13 +27,12 @@ public class OnnxModel {
         }
     }
 
-    //Method to return the session
+    // Get the session.
     public OrtSession getSession() {
         return this.session;
     }
 
-
-    //Method to close session.
+    // Close the session.
     public void endSession() {
         try {
             session.close();
@@ -43,58 +42,55 @@ public class OnnxModel {
         }
     }
 
-    //Method to retrieve the number of features in the loaded model.
+    // Get the number of features.
     public int getNumInputFeatures() {
         try {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return inputInfo.size();
         } catch (Exception e) {
             e.printStackTrace();
+            return 0;
         }
-        return 0;
     }
 
-    //Method to return names of inputs
+    // Get the input names.
     public List<String> getInputNames() {
         try {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return new ArrayList<>(inputInfo.keySet());
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
-    //Method to return input types
+    // Get the tensor info.
+    public List<TensorInfo> getTensorInfos() {
+        Map<String, NodeInfo> inputInfo;
+        try {
+            inputInfo = session.getInputInfo();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return inputInfo.values().stream()
+            .filter(nodeInfo -> nodeInfo.getInfo() instanceof TensorInfo)
+            .map(tensorInfo -> (TensorInfo)tensorInfo.getInfo())
+            .collect(Collectors.toList());
+    }
+
+    // Get the input types.
     public List<String> getInputTypes() {
-        List<String> inputTypes = new ArrayList<>();
-        try {
-            Map<String, NodeInfo> inputInfo = session.getInputInfo();
-            for (NodeInfo nodeInfo : inputInfo.values()) {
-                if (nodeInfo.getInfo() instanceof TensorInfo tensorInfo) {
-                    inputTypes.add(tensorInfo.type.name());
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return inputTypes;
+        return getTensorInfos().stream()
+            .map(tensorInfo -> tensorInfo.type.name())
+            .collect(Collectors.toList());
     }
 
-    //Method to return the shape of the expected input data.
+    // Get the shape of the input data.
     public List<long[]> getInputShapes() {
-        List<long[]> shapes = new ArrayList<>();
-        try {
-            Map<String, NodeInfo> inputInfo = session.getInputInfo();
-            for (NodeInfo nodeInfo : inputInfo.values()) {
-                if (nodeInfo.getInfo() instanceof TensorInfo tensorInfo) {
-                    shapes.add(tensorInfo.getShape());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return shapes;
+        return getTensorInfos().stream()
+            .map(tensorInfo -> tensorInfo.getShape())
+            .collect(Collectors.toList());
     }
 }
