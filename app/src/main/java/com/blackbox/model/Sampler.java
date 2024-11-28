@@ -1,11 +1,14 @@
 package com.blackbox.model;
 
 import ai.onnxruntime.*;
-import java.util.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class Sampler {
 
-    private OnnxModel onnxModel;
+    private final OnnxModel onnxModel;
 
     //Constructor
     public Sampler(OnnxModel onnxModel) {
@@ -18,7 +21,7 @@ public class Sampler {
     given to it by the model.
     * */
     public List<pointData> sampleBC(float[][] data) {
-        try{
+        try {
             //Checking the model has input features, otherwise returns null.
             List<String> inputNames = onnxModel.getInputNames();
             if (inputNames == null || inputNames.isEmpty()) {
@@ -34,14 +37,13 @@ public class Sampler {
 
             //Run model
             OrtSession session = onnxModel.getSession();
-            try (OrtSession.Result outputs = session.run(Collections.singletonMap(inputName, inputTensor))){
+            try (OrtSession.Result outputs = session.run(Collections.singletonMap(inputName, inputTensor))) {
 
                 //Loop through the outputs, recording the name and value at each.
-                for (Map.Entry<String, OnnxValue> entry : outputs){
+                for (Map.Entry<String, OnnxValue> entry : outputs) {
                     String outputName = entry.getKey();
                     OnnxValue value = entry.getValue();
-                    if(value instanceof OnnxTensor){
-                        OnnxTensor tensor = (OnnxTensor) value;
+                    if (value instanceof OnnxTensor tensor) {
 
                         /*
                         Check shape and data type of tensor, for labels the shape should be
@@ -50,14 +52,14 @@ public class Sampler {
 
                         //Check shape
                         long[] shape = tensor.getInfo().getShape();
-                        if(shape.length == 1){
-                            TensorInfo tensorInfo = (TensorInfo) tensor.getInfo();
+                        if (shape.length == 1) {
+                            TensorInfo tensorInfo = tensor.getInfo();
                             //Check data type
-                            if(tensorInfo.type == OnnxJavaType.INT64 || tensorInfo.type == OnnxJavaType.INT32){
+                            if (tensorInfo.type == OnnxJavaType.INT64 || tensorInfo.type == OnnxJavaType.INT32) {
                                 long[] labelData = (long[]) tensor.getValue();
 
                                 //Use DataCombination to create a list of points from labelData
-                                List<pointData> combinedData = DataCombination.combineData(data,labelData);
+                                List<pointData> combinedData = DataCombination.combineData(data, labelData);
 
                                 //close tensor
                                 inputTensor.close();
@@ -65,7 +67,7 @@ public class Sampler {
                                 //return list
                                 return combinedData;
                             }
-                         }
+                        }
                     }
                 }
             }

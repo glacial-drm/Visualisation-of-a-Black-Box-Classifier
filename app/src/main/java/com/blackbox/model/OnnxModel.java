@@ -1,7 +1,13 @@
 package com.blackbox.model;
 
-import ai.onnxruntime.*;
-import java.util.*;
+import ai.onnxruntime.NodeInfo;
+import ai.onnxruntime.OrtEnvironment;
+import ai.onnxruntime.OrtSession;
+import ai.onnxruntime.TensorInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class OnnxModel {
 
@@ -9,12 +15,11 @@ public class OnnxModel {
     private OrtSession session;
 
     //Constructor takes in file path of onnx file and creates environment.
-    public OnnxModel(String filePath){
+    public OnnxModel(String filePath) {
         try {
             this.environment = OrtEnvironment.getEnvironment();
             this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //e.printStackTrace();
         }
     }
@@ -26,48 +31,44 @@ public class OnnxModel {
 
 
     //Method to close session.
-    public void endSession(){
+    public void endSession() {
         try {
             session.close();
             environment.close();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //e.printStackTrace();
         }
     }
 
     //Method to retrieve the number of features in the loaded model.
-    public int getNumInputFeatures(){
-        try{
+    public int getNumInputFeatures() {
+        try {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return inputInfo.size();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //e.printStackTrace();
         }
         return 0;
     }
 
     //Method to return names of inputs
-    public List<String> getInputNames(){
-        try{
+    public List<String> getInputNames() {
+        try {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return new ArrayList<>(inputInfo.keySet());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             //e.printStackTrace();
         }
         return null;
     }
 
     //Method to return input types
-    public List<String> getInputtypes(){
+    public List<String> getInputtypes() {
         List<String> inputTypes = new ArrayList<>();
-        try{
+        try {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
-            for (NodeInfo nodeInfo : inputInfo.values()){
-                if (nodeInfo.getInfo() instanceof TensorInfo){
-                    TensorInfo tensorInfo = (TensorInfo) nodeInfo.getInfo();
+            for (NodeInfo nodeInfo : inputInfo.values()) {
+                if (nodeInfo.getInfo() instanceof TensorInfo tensorInfo) {
                     inputTypes.add(tensorInfo.type.name());
                 }
             }
@@ -79,18 +80,17 @@ public class OnnxModel {
     }
 
     //Method to return the shape of the expected input data.
-    public List<long[]> getInputShapes(){
+    public List<long[]> getInputShapes() {
         List<long[]> shapes = new ArrayList<>();
         try {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             for (NodeInfo nodeInfo : inputInfo.values()) {
-                if (nodeInfo.getInfo() instanceof TensorInfo) {
-                    TensorInfo tensorInfo = (TensorInfo) nodeInfo.getInfo();
+                if (nodeInfo.getInfo() instanceof TensorInfo tensorInfo) {
                     shapes.add(tensorInfo.getShape());
                 }
             }
         } catch (Exception e) {
-           // e.printStackTrace();
+            // e.printStackTrace();
         }
         return shapes;
     }
