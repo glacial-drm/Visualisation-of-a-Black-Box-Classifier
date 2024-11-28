@@ -83,6 +83,9 @@ public class InputHandler {
     }
 
     public static double getZoom() {
-        return InputHandler.zoom;
+        // Account for the camera being perspective for now
+        // Speeds up zooming further away from the origin
+        // position.z = -(float)Math.pow(-zoom, 1.5) * 0.8f;
+        return -Math.pow(-InputHandler.zoom, 1.5) * 0.8;
     }
 }
