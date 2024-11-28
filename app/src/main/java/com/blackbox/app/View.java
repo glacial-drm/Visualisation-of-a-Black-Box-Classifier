@@ -13,6 +13,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class View extends Application {
     /** The controller. */
@@ -50,11 +51,18 @@ public class View extends Application {
         GridPane classifierRegion = new GridPane();
         ComboBox<Text> classifierList = new ComboBox<Text>();
         classifierList.setPlaceholder(new Label("File -> Import Classifier"));
+
+        ArrayList<OnnxModel> onnxList = new ArrayList<OnnxModel>();
+
         // Adding ONNX to ComboBox
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             File newClassifier = fc.showOpenDialog(primaryStage);
-            OnnxModel onnx = new OnnxModel(newClassifier.getPath());
-            // Text should be used as key to actual ONNX file
+            onnxList.add(new OnnxModel(newClassifier.getPath()));
+
+            /*
+            Text should be used as key to actual ONNX file (use an array of the files (they contain both references
+            to the file and key))
+             */
             classifierList.getItems().add(new Text(newClassifier.getName().split("\\.")[0]));
         });
 
