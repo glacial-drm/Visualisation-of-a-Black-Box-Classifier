@@ -36,7 +36,7 @@ public class OnnxModel {
             session.close();
             environment.close();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -46,7 +46,7 @@ public class OnnxModel {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return inputInfo.size();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
         return 0;
     }
@@ -57,7 +57,7 @@ public class OnnxModel {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return new ArrayList<>(inputInfo.keySet());
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
@@ -74,7 +74,7 @@ public class OnnxModel {
             }
 
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
         return inputTypes;
     }
@@ -90,7 +90,7 @@ public class OnnxModel {
                 }
             }
         } catch (Exception e) {
-            // e.printStackTrace();
+            e.printStackTrace();
         }
         return shapes;
     }
