@@ -31,7 +31,7 @@ public class View extends Application {
         FileChooser fc = new FileChooser();
         fc.setTitle("Select Classifier");
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("ONNX Files", "*.ONNX")
+                new FileChooser.ExtensionFilter("ONNX Files", "*.onnx")
         );
 
         for(int i = 0; i < controller.getFileList().length; i++){
