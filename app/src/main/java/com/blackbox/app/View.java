@@ -1,12 +1,10 @@
 package com.blackbox.app;
 
-import com.blackbox.model.OnnxModel;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -40,12 +38,6 @@ public class View extends Application {
             menuBar.getMenus().get(0).getItems().add(i, new MenuItem(controller.getFileList()[i]));
         }
 
-        // Test button to load points
-        Button button = new Button("PointsLoaded");
-        button.onActionProperty().set(event -> {
-            controller.pointsLoaded(3);
-        });
-
         // Classifier Section
         GridPane classifierRegion = new GridPane();
         ComboBox<Text> classifierList = new ComboBox<Text>();
@@ -53,11 +45,7 @@ public class View extends Application {
         // Adding ONNX to ComboBox
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             File newClassifier = fc.showOpenDialog(primaryStage);
-            try {
-                OnnxModel onnx = new OnnxModel(newClassifier.getPath());
-            } catch (Exception err) {
-                System.err.println("ONNX file not found");
-            }
+            controller.runSampler(newClassifier.getPath());
             // Text should be used as key to actual ONNX file
             classifierList.getItems().add(new Text(newClassifier.getName().split("\\.")[0]));
         });
