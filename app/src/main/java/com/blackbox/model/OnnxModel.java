@@ -66,7 +66,7 @@ public class OnnxModel {
     }
 
     //Method to return input types
-    public List<String> getInputtypes() {
+    public List<String> getInputTypes() {
         List<String> inputTypes = new ArrayList<>();
         try {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
