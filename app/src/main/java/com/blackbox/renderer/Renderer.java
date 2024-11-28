@@ -1,5 +1,6 @@
 package com.blackbox.renderer;
 
+import com.blackbox.model.PointData;
 import com.blackbox.renderer.primitives.Disk;
 import com.blackbox.renderer.primitives.Primitive;
 import javafx.scene.paint.Color;
@@ -33,7 +34,6 @@ public class Renderer {
         resize(width, height);
         uploadProjectionMatrix();
         uploadViewMatrix();
-        loadJunkData();
     }
 
     /**
@@ -52,12 +52,15 @@ public class Renderer {
         }
     }
 
-    // Function made until the sampler can pass through points
-    private void loadJunkData() {
-        objects.add(new Disk(new Vector3f(0, 0, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLUE));
-        objects.add(new Disk(new Vector3f(1.5f, 0, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.RED));
-        objects.add(new Disk(new Vector3f(-1.5f, 0, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.GREEN));
-        objects.add(new Disk(new Vector3f(-2.1f, 2.4f, 0), 0.5f, new Vector3f(0, 0, 0), 1f, Color.BLACK));
+    /**
+     * Add a point.
+     * Will be coloured either red or blue depending on the label.
+     * For now has a fixed radius.
+     */
+    public void addPoint(PointData point) {
+        Vector3f position = new Vector3f(point.feature1, point.feature2, 0);
+        Color color = point.label == 1 ? Color.RED : Color.BLUE;
+        objects.add(new Disk(position, 0.5f, new Vector3f(0, 0, 0), 0.1f, color));
     }
     
     /** Uploads the projection matrix to all the shaders */

@@ -155,12 +155,7 @@ public class Canvas {
 
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
-                System.out.println(String.format(
-                    "Received PointsLoaded event: %f %f %d",
-                    pointsLoaded.point.feature1,
-                    pointsLoaded.point.feature2,
-                    pointsLoaded.point.label
-                ));
+                renderer.addPoint(pointsLoaded.point);
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;
