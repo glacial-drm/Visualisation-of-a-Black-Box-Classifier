@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.blackbox.graph.Canvas;
 import com.blackbox.graph.events.*;
+import com.blackbox.model.PointData;
 
 public class CanvasTest {
     ConcurrentLinkedQueue<CanvasEvent> eventQueue;
@@ -42,7 +43,7 @@ public class CanvasTest {
      */
     @Test
     void testPointsLoaded() {
-        eventQueue.add(new PointsLoaded(1));
+        eventQueue.add(new PointsLoaded(new PointData(0f, 0f, 0)));
         eventQueue.add(new StopEvent(false));
         Canvas.run(eventQueue);
         assertTrue(true);

@@ -1,14 +1,15 @@
 package com.blackbox.graph.events;
 
+import com.blackbox.model.PointData;
+
 /**
  * For when the points have been loaded,
  * and now need to be passed to the renderer.
  */
 public class PointsLoaded extends CanvasEvent {
-    /** Some example data */
-    public final int data;
+    public final PointData point;
 
-    public PointsLoaded(final int data) {
-        this.data = data;
+    public PointsLoaded(final PointData point) {
+        this.point = point;
     }
 }

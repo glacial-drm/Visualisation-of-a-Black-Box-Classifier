@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.blackbox.graph.events.*;
+import com.blackbox.model.OnnxModel;
+import com.blackbox.model.PointData;
+import com.blackbox.model.Sampler;
 
 public class Controller {
     /** The model. */
@@ -39,10 +42,10 @@ public class Controller {
     /**
      * Send the {@link com.blackbox.graph.events.PointsLoaded PointsLoaded} event.
      *
-     * @param data For now is just an example, will be points in the future
+     * @param point The point data.
      */
-    public void pointsLoaded(int data) {
-        sendEvent(new PointsLoaded(data));
+    public void pointLoaded(PointData point) {
+        sendEvent(new PointsLoaded(point));
     }
 
     /**
@@ -131,6 +134,52 @@ public class Controller {
     private void onModelChanged() {
         System.out.println("Model has changed. Notify the view to update components.");
         // WOP
+    }
+
+    /**
+     * Run the sampler, sending the output to the event queue.
+     * This makes input data spread across a hard-coded range.
+     */
+    public void runSampler(String path) {
+        OnnxModel onnx;
+        try {
+            onnx = new OnnxModel(path);
+        } catch (Exception err) {
+            System.err.println("ONNX file not found");
+            return;
+        }
+
+        Sampler sampler = new Sampler(onnx);
+
+        // Prepare input data
+
+        // Total numbers of points will be resolution * resolution
+        int resolution = 30;
+        // Input data will start be from -range .. +range
+        float range = 2.0f;
+
+        float pointGap = range * 2f / (float) (resolution - 1);
+        // Needed for the outer edge
+        float epsilon = 0.00001f;
+
+        float[][] input = new float[resolution * resolution][2];
+
+        int index = 0;
+        for (float x = -range; x <= range + epsilon; x += pointGap) {
+            for (float y = -range; y <= range + epsilon; y += pointGap) {
+                input[index][0] = x;
+                input[index][1] = y;
+                index++;
+            }
+        }
+
+        // Get output
+
+        List<PointData> points = sampler.sampleBC(input);
+
+        for (PointData point : points) {
+            pointLoaded(point);
+        }
     }
 
 }

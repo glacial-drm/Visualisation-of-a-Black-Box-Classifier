@@ -1,12 +1,10 @@
 package com.blackbox.app;
 
-import com.blackbox.model.OnnxModel;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -34,35 +32,25 @@ public class View extends Application {
         FileChooser fc = new FileChooser();
         fc.setTitle("Select Classifier");
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("ONNX Files", "*.ONNX")
+                new FileChooser.ExtensionFilter("ONNX Files", "*.onnx")
         );
 
         for(int i = 0; i < controller.getFileList().length; i++){
             menuBar.getMenus().get(0).getItems().add(i, new MenuItem(controller.getFileList()[i]));
         }
 
-        // Test button to load points
-        Button button = new Button("PointsLoaded");
-        button.onActionProperty().set(event -> {
-            controller.pointsLoaded(3);
-        });
-
         // Classifier Section
         GridPane classifierRegion = new GridPane();
         ComboBox<Text> classifierList = new ComboBox<Text>();
         classifierList.setPlaceholder(new Label("File -> Import Classifier"));
 
-        ArrayList<OnnxModel> onnxList = new ArrayList<OnnxModel>();
-
         // Adding ONNX to ComboBox
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             File newClassifier = fc.showOpenDialog(primaryStage);
-            onnxList.add(new OnnxModel(newClassifier.getPath()));
+            controller.runSampler(newClassifier.getPath());
 
-            /*
-            Text should be used as key to actual ONNX file (use an array of the files (they contain both references
-            to the file and key))
-             */
+            // Text should be used as key to actual ONNX file
+            // (use an array of the files, they contain both references to the file and key)
             classifierList.getItems().add(new Text(newClassifier.getName().split("\\.")[0]));
         });
 
