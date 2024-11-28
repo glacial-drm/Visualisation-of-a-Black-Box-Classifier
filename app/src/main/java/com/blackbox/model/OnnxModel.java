@@ -9,19 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import java.io.FileNotFoundException;
+
 public class OnnxModel {
 
     private OrtEnvironment environment;
     private OrtSession session;
 
     //Constructor takes in file path of onnx file and creates environment.
-    public OnnxModel(String filePath) {
+    public OnnxModel(String filePath) throws FileNotFoundException {
         try {
             this.environment = OrtEnvironment.getEnvironment();
             environment.setTelemetry(false);
             this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
         } catch (Exception e) {
-            //e.printStackTrace();
+            throw new FileNotFoundException("Onnx file not found");
         }
     }
 

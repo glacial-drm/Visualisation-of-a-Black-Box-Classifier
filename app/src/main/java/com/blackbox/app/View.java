@@ -53,7 +53,11 @@ public class View extends Application {
         // Adding ONNX to ComboBox
         menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
             File newClassifier = fc.showOpenDialog(primaryStage);
-            OnnxModel onnx = new OnnxModel(newClassifier.getPath());
+            try {
+                OnnxModel onnx = new OnnxModel(newClassifier.getPath());
+            } catch (Exception err) {
+                System.err.println("ONNX file not found");
+            }
             // Text should be used as key to actual ONNX file
             classifierList.getItems().add(new Text(newClassifier.getName().split("\\.")[0]));
         });
