@@ -1,0 +1,137 @@
+package com.blackbox.app;
+
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+
+import java.util.List;
+
+public class MainWindow extends Application {
+
+    static Controller controller = new Controller(new Model());
+    private String selectedClassifier = null;
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Main layout
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: #2c2c2c;");
+
+        // Left Pane
+        VBox leftPane = new VBox();
+        leftPane.setAlignment(Pos.TOP_CENTER);
+        leftPane.setPrefWidth(200);
+        leftPane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 0;"); // 左侧背景和内边距
+
+        // Folder Name ()
+        Label folderLabel = new Label("Folder Name");
+        folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        folderLabel.setTextFill(Color.PURPLE);
+        folderLabel.setStyle(" -fx-padding: 20;");
+
+        // Classifiers
+        VBox classifierBox = new VBox(15);
+        classifierBox.setAlignment(Pos.TOP_CENTER);
+        classifierBox.setStyle("-fx-padding: 20 0 20 0;");
+
+        List<String> classifiers = controller.getClassifiers();
+        updateClassifierBox(classifierBox, classifiers);
+
+        // Load
+        Button loadButton = new Button("Load");
+        loadButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        loadButton.setTextFill(Color.PURPLE);
+        loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+        loadButton.setMaxWidth(Double.MAX_VALUE);
+        loadButton.setPrefHeight(50);
+        loadButton.setOnAction(event -> {
+            // Update Right Part
+            if (selectedClassifier != null) {
+                updateRightPane(root, selectedClassifier);
+            } else {
+                updateRightPane(root, "No classifier selected");
+            }
+        });
+
+        VBox.setVgrow(classifierBox, Priority.ALWAYS);
+        updateRightPane(root, "No classifier selected");
+        leftPane.getChildren().addAll(folderLabel, classifierBox, loadButton);
+
+
+        // Set layout
+        root.setLeft(leftPane);
+
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
+        classifierBox.getChildren().clear();
+        if (classifiers.isEmpty()) {
+            Label emptyLabel = new Label("No classifiers available");
+            emptyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+            emptyLabel.setTextFill(Color.GRAY);
+            classifierBox.getChildren().add(emptyLabel);
+        } else {
+            for (String classifier : classifiers) {
+                Label classifierLabel = new Label(classifier);
+                classifierLabel.setMaxWidth(Double.MAX_VALUE);
+                classifierLabel.setPrefHeight(40);
+                classifierLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+                classifierLabel.setTextFill(Color.PURPLE);
+                classifierLabel.setAlignment(Pos.CENTER);
+
+                // While selected, background color become same as right
+                if (classifier.equals(selectedClassifier)) {
+                    classifierLabel.setStyle("-fx-background-color: #2c2c2c;");
+
+                } else {
+                    classifierLabel.setStyle("-fx-background-color: #1e1e1e;");
+                }
+
+                classifierLabel.setOnMouseClicked(event -> {
+                    selectedClassifier = classifier; // Set the currently selected classifier
+                    updateClassifierBox(classifierBox, classifiers); // Refresh styles
+                });
+
+                classifierBox.getChildren().add(classifierLabel);
+            }
+        }
+    }
+
+    private void updateRightPane(BorderPane root, String classifier) {
+        BorderPane rightPane = new BorderPane();
+        rightPane.setStyle("-fx-background-color: #2c2c2c;");
+
+        // Top section: Active model name
+
+        Label activeModelLabel = new Label("Active model - " + classifier);
+        activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        activeModelLabel.setTextFill(Color.PURPLE);
+        BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
+        rightPane.setTop(activeModelLabel);
+
+        // Bottom section: Sample button
+        Button sampleButton = new Button("Sample");
+        sampleButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
+        sampleButton.setTextFill(Color.PURPLE);
+        sampleButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
+        BorderPane.setAlignment(sampleButton, Pos.CENTER);
+        rightPane.setBottom(sampleButton);
+
+        root.setCenter(rightPane);
+    }
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
