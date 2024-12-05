@@ -103,7 +103,7 @@ public class Canvas {
 
         glfwSetMouseButtonCallback(window, (_window, button, action, mods) -> {
             if(action == GLFW_PRESS) {
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
                 InputHandler.mouseDown(button);
             } else if (action == GLFW_RELEASE) {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
