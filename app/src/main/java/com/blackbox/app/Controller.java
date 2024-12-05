@@ -180,6 +180,8 @@ public class Controller {
         for (PointData point : points) {
             pointLoaded(point);
         }
+
+        onnx.endSession();
     }
 
 }
