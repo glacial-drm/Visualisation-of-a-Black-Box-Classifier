@@ -231,4 +231,11 @@ public class Controller {
             }
         }
     }
+
+    public void sampleCurrentModel() {
+        System.out.println("Sampling");
+        String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
+        System.out.println("Selected classifier: " + path);
+        runSampler(path);
+    }
 }

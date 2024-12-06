@@ -131,6 +131,10 @@ public class Model {
     public void setCurrentDir(File newDir) {
         currentDir = newDir;
     }
+
+    public File getCurrentDir(){
+        return currentDir;
+    }
 }
 
 

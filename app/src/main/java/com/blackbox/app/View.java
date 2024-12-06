@@ -148,6 +148,10 @@ public class View extends Application {
         sampleButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
         sampleButton.setTextFill(Color.PURPLE);
         sampleButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
+        sampleButton.setOnAction(event -> {
+            controller.sampleCurrentModel();
+        });
+
         BorderPane.setAlignment(sampleButton, Pos.CENTER);
         rightPane.setBottom(sampleButton);
 
