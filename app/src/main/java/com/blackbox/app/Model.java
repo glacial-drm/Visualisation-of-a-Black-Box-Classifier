@@ -27,7 +27,6 @@ public class Model {
 
     private List<Consumer<Void>> changeListeners = new ArrayList<>();
 
-
     /**
      * gets the list of classifier names.
      * @return a list of strings representing classifier names

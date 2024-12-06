@@ -23,7 +23,6 @@ import java.util.List;
 public class View extends Application {
     /** The controller. */
     static Controller controller;
-    private String selectedClassifier = null;
 
     @Override
     public void start(Stage primaryStage) {
@@ -51,15 +50,17 @@ public class View extends Application {
         List<String> classifiers = controller.getClassifiers();
         updateClassifierBox(classifierBox, classifiers);
 
-        // Load
-        Button loadButton = new Button("Load");
-        loadButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        loadButton.setTextFill(Color.PURPLE);
-        loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
-        loadButton.setMaxWidth(Double.MAX_VALUE);
-        loadButton.setPrefHeight(50);
-        loadButton.setOnAction(event -> {
+
+        // Set active model
+        Button setButton = new Button("Set");
+        setButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        setButton.setTextFill(Color.PURPLE);
+        setButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+        setButton.setMaxWidth(Double.MAX_VALUE);
+        setButton.setPrefHeight(50);
+        setButton.setOnAction(event -> {
             // Update Right Part
+            String selectedClassifier = controller.getSelectedClassifier();
             if (selectedClassifier != null) {
                 updateRightPane(root, selectedClassifier);
             } else {
@@ -67,9 +68,20 @@ public class View extends Application {
             }
         });
 
+
+        Button loadButton = new Button("Load");
+        loadButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        loadButton.setTextFill(Color.PURPLE);
+        loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+        loadButton.setMaxWidth(Double.MAX_VALUE);
+        loadButton.setPrefHeight(50);
+        loadButton.setOnAction(event -> {
+            controller.loadFolder();
+        });
+
         VBox.setVgrow(classifierBox, Priority.ALWAYS);
         updateRightPane(root, "No classifier selected");
-        leftPane.getChildren().addAll(folderLabel, classifierBox, loadButton);
+        leftPane.getChildren().addAll(folderLabel, classifierBox, setButton, loadButton);
 
 
         // Set layout
@@ -97,6 +109,7 @@ public class View extends Application {
                 classifierLabel.setAlignment(Pos.CENTER);
 
                 // While selected, background color become same as right
+                String selectedClassifier = controller.getSelectedClassifier();
                 if (classifier.equals(selectedClassifier)) {
                     classifierLabel.setStyle("-fx-background-color: #2c2c2c;");
 
@@ -105,7 +118,7 @@ public class View extends Application {
                 }
 
                 classifierLabel.setOnMouseClicked(event -> {
-                    selectedClassifier = classifier; // Set the currently selected classifier
+                    controller.setSelectedClassifier(classifier);
                     updateClassifierBox(classifierBox, classifiers); // Refresh styles
                 });
 

@@ -125,7 +125,6 @@ public class Controller {
      */
     public void onClassifierSelected(String selectedClassifier) {
         System.out.println("Selected classifier: " + selectedClassifier);
-        // WOP
     }
 
     /**
@@ -133,7 +132,6 @@ public class Controller {
      */
     private void onModelChanged() {
         System.out.println("Model has changed. Notify the view to update components.");
-        // WOP
     }
 
     /**
@@ -184,4 +182,11 @@ public class Controller {
         onnx.endSession();
     }
 
+    public String getSelectedClassifier() {
+        return model.getSelectedClassifier();
+    }
+
+    public void loadFolder() {
+        System.out.println("Loading files");
+    }
 }
