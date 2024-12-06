@@ -17,7 +17,7 @@ public class Model {
     public String[] fileList = {"Import Classifier", "Export (placeholder)"};
 
     /** List of classifier names available in the ComboBox. */
-    private List<String> classifiers = Arrays.asList("Classifier A", "Classifier B", "Classifier C");
+    private List<String> classifiers = Arrays.asList("Example");
 
     /** navigation details shown in the navigation section. */
     private String navigationDetails = "Navigate through points to classify data.";

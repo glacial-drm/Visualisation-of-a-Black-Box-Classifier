@@ -2,102 +2,138 @@ package com.blackbox.app;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class View extends Application {
     /** The controller. */
     static Controller controller;
+    private String selectedClassifier = null;
 
     @Override
     public void start(Stage primaryStage) {
-        // Test title
-        primaryStage.setTitle(controller.getMessage());
+        // Main layout
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: #2c2c2c;");
 
-        // Menu Bar
-        MenuBar menuBar = new MenuBar();
-        for(int i = 0; i < controller.getMenuList().length; i++){
-            menuBar.getMenus().add(i, new Menu(controller.getMenuList()[i]));
-        }
+        // Left Pane
+        VBox leftPane = new VBox();
+        leftPane.setAlignment(Pos.TOP_CENTER);
+        leftPane.setPrefWidth(200);
+        leftPane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 0;");
 
-        // "File" Menu
-        FileChooser fc = new FileChooser();
-        fc.setTitle("Select Classifier");
-        fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("ONNX Files", "*.onnx")
-        );
+        // Folder Name ()
+        Label folderLabel = new Label("Folder Name");
+        folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        folderLabel.setTextFill(Color.PURPLE);
+        folderLabel.setStyle(" -fx-padding: 20;");
 
-        for(int i = 0; i < controller.getFileList().length; i++){
-            menuBar.getMenus().get(0).getItems().add(i, new MenuItem(controller.getFileList()[i]));
-        }
+        // Classifiers
+        VBox classifierBox = new VBox(15);
+        classifierBox.setAlignment(Pos.TOP_CENTER);
+        classifierBox.setStyle("-fx-padding: 20 0 20 0;");
 
-        // Classifier Section
-        GridPane classifierRegion = new GridPane();
-        ComboBox<Text> classifierList = new ComboBox<Text>();
-        classifierList.setPlaceholder(new Label("File -> Import Classifier"));
+        List<String> classifiers = controller.getClassifiers();
+        updateClassifierBox(classifierBox, classifiers);
 
-        // Adding ONNX to ComboBox
-        menuBar.getMenus().get(0).getItems().get(0).setOnAction(e -> {
-            File newClassifier = fc.showOpenDialog(primaryStage);
-            controller.runSampler(newClassifier.getPath());
-
-            // Text should be used as key to actual ONNX file
-            // (use an array of the files, they contain both references to the file and key)
-            classifierList.getItems().add(new Text(newClassifier.getName().split("\\.")[0]));
+        // Load
+        Button loadButton = new Button("Load");
+        loadButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        loadButton.setTextFill(Color.PURPLE);
+        loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+        loadButton.setMaxWidth(Double.MAX_VALUE);
+        loadButton.setPrefHeight(50);
+        loadButton.setOnAction(event -> {
+            // Update Right Part
+            if (selectedClassifier != null) {
+                updateRightPane(root, selectedClassifier);
+            } else {
+                updateRightPane(root, "No classifier selected");
+            }
         });
 
-        classifierRegion.add(new Text("Classifier Details:"), 0, 0);
-        classifierRegion.add(new Text("Chosen Classifier: "), 0, 1);
-        classifierRegion.add(classifierList, 1, 1);
-
-        classifierRegion.setMinWidth(200);
-        classifierRegion.setMaxWidth(200);
-        classifierRegion.setMinHeight(200);
-        classifierRegion.setMaxHeight(200);
-
-        // Output Details Section
-        GridPane outputRegion = new GridPane();
+        VBox.setVgrow(classifierBox, Priority.ALWAYS);
+        updateRightPane(root, "No classifier selected");
+        leftPane.getChildren().addAll(folderLabel, classifierBox, loadButton);
 
 
-        outputRegion.add(new Text("Output Details:"), 0, 0);
+        // Set layout
+        root.setLeft(leftPane);
 
-        outputRegion.setMinWidth(200);
-        outputRegion.setMaxWidth(200);
-        outputRegion.setMinHeight(200);
-        outputRegion.setMaxHeight(200);
-
-        // Navigation Details Section
-        GridPane navigationRegion = new GridPane();
-
-
-        navigationRegion.add(new Text("Navigation Details:"), 0, 0);
-
-        navigationRegion.setMinWidth(200);
-        navigationRegion.setMaxWidth(200);
-        navigationRegion.setMinHeight(200);
-        navigationRegion.setMaxHeight(200);
-
-        // Adding sections to grid
-        GridPane grid = new GridPane();
-        grid.add(classifierRegion, 0, 0);
-        grid.add(outputRegion, 1, 0);
-        grid.add(navigationRegion, 2, 0);
-
-        // Container
-        VBox container = new VBox(menuBar, grid);
-        container.setPadding(new Insets(8));
-        container.setSpacing(16);
-
-        // Setup
-        primaryStage.setScene(new Scene(container));
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
+        classifierBox.getChildren().clear();
+        if (classifiers.isEmpty()) {
+            Label emptyLabel = new Label("No classifiers available");
+            emptyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+            emptyLabel.setTextFill(Color.GRAY);
+            classifierBox.getChildren().add(emptyLabel);
+        } else {
+            for (String classifier : classifiers) {
+                Label classifierLabel = new Label(classifier);
+                classifierLabel.setMaxWidth(Double.MAX_VALUE);
+                classifierLabel.setPrefHeight(40);
+                classifierLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+                classifierLabel.setTextFill(Color.PURPLE);
+                classifierLabel.setAlignment(Pos.CENTER);
+
+                // While selected, background color become same as right
+                if (classifier.equals(selectedClassifier)) {
+                    classifierLabel.setStyle("-fx-background-color: #2c2c2c;");
+
+                } else {
+                    classifierLabel.setStyle("-fx-background-color: #1e1e1e;");
+                }
+
+                classifierLabel.setOnMouseClicked(event -> {
+                    selectedClassifier = classifier; // Set the currently selected classifier
+                    updateClassifierBox(classifierBox, classifiers); // Refresh styles
+                });
+
+                classifierBox.getChildren().add(classifierLabel);
+            }
+        }
+    }
+
+    private void updateRightPane(BorderPane root, String classifier) {
+        BorderPane rightPane = new BorderPane();
+        rightPane.setStyle("-fx-background-color: #2c2c2c;");
+
+        // Top section: Active model name
+
+        Label activeModelLabel = new Label("Active model - " + classifier);
+        activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        activeModelLabel.setTextFill(Color.PURPLE);
+        BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
+        rightPane.setTop(activeModelLabel);
+
+        // Bottom section: Sample button
+        Button sampleButton = new Button("Sample");
+        sampleButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
+        sampleButton.setTextFill(Color.PURPLE);
+        sampleButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
+        BorderPane.setAlignment(sampleButton, Pos.CENTER);
+        rightPane.setBottom(sampleButton);
+
+        root.setCenter(rightPane);
     }
 }
