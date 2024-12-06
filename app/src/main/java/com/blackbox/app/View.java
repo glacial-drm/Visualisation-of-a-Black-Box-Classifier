@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -48,8 +49,9 @@ public class View extends Application {
         classifierBox.setStyle("-fx-padding: 20 0 20 0;");
 
         List<String> classifiers = controller.getClassifiers();
-        updateClassifierBox(classifierBox, classifiers);
-
+        if(classifiers != null){
+            updateClassifierBox(classifierBox, classifiers);
+        }
 
         // Set active model
         Button setButton = new Button("Set");
@@ -76,7 +78,9 @@ public class View extends Application {
         loadButton.setMaxWidth(Double.MAX_VALUE);
         loadButton.setPrefHeight(50);
         loadButton.setOnAction(event -> {
-            controller.loadFolder();
+            DirectoryChooser chooser = controller.getFileDialog();
+            File selectedDirectory = chooser.showDialog(primaryStage);
+            controller.loadAllOnnx(selectedDirectory);
         });
 
         VBox.setVgrow(classifierBox, Priority.ALWAYS);

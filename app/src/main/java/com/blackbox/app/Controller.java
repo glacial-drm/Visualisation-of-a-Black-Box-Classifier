@@ -1,16 +1,21 @@
 package com.blackbox.app;
 
+import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.blackbox.graph.events.*;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 
 public class Controller {
     /** The model. */
     private Model model;
+    DirectoryChooser chooser = new DirectoryChooser();
 
     /**
      * A message queue going to the {@link com.blackbox.graph.Canvas Canvas}.
@@ -28,6 +33,13 @@ public class Controller {
 
         // Register a listener to update the view when the model changes
         model.addChangeListener(voidParam -> onModelChanged());
+        model.initClassifiers();
+        initFileLoader();
+    }
+
+    private void initFileLoader() {
+        chooser = new DirectoryChooser();
+        chooser.setTitle("Select Classifier");
     }
 
     /**
@@ -186,7 +198,37 @@ public class Controller {
         return model.getSelectedClassifier();
     }
 
-    public void loadFolder() {
-        System.out.println("Loading files");
+    public DirectoryChooser getFileDialog() {
+        return chooser;
+    }
+
+    private String getExt(File file) {
+        String extension = "";
+        String fileName = file.getName();
+
+        int i = fileName.lastIndexOf('.');
+        if (i > 0) {
+            extension = fileName.substring(i+1);
+        }
+        return extension;
+    }
+
+    public void loadAllOnnx(File selectedDirectory) {
+        if(selectedDirectory == null) {
+            return;
+        }
+
+        model.setCurrentDir(selectedDirectory);
+        model.clearClassifiers();
+
+        for(File file : Objects.requireNonNull(selectedDirectory.listFiles())) {
+            if(!file.isDirectory()) {
+                String ext = getExt(file);
+                if(ext.equals("onnx")){
+                    model.addClassifier(file.getName());
+                    System.out.println("Loading onnx file: " + file.getName());
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.blackbox.app;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,8 @@ public class Model {
     public String[] fileList = {"Import Classifier", "Export (placeholder)"};
 
     /** List of classifier names available in the ComboBox. */
-    private List<String> classifiers = Arrays.asList("Example");
+    private File currentDir;
+    private ArrayList<String> classifiers;
 
     /** navigation details shown in the navigation section. */
     private String navigationDetails = "Navigate through points to classify data.";
@@ -51,6 +53,11 @@ public class Model {
     public void addClassifier(String classifier) {
         this.classifiers.add(classifier);
         notifyChangeListeners();
+    }
+
+    public void initClassifiers() {
+        classifiers = new ArrayList<>();
+        classifiers.add("");
     }
 
     /**
@@ -119,6 +126,10 @@ public class Model {
         for (Consumer<Void> listener : changeListeners) {
             listener.accept(null);
         }
+    }
+
+    public void setCurrentDir(File newDir) {
+        currentDir = newDir;
     }
 }
 
