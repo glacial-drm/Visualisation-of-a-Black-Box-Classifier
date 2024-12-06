@@ -24,6 +24,7 @@ import java.util.List;
 public class View extends Application {
     /** The controller. */
     static Controller controller;
+    private VBox classifierBox;
 
     @Override
     public void start(Stage primaryStage) {
@@ -44,14 +45,12 @@ public class View extends Application {
         folderLabel.setStyle(" -fx-padding: 20;");
 
         // Classifiers
-        VBox classifierBox = new VBox(15);
+        classifierBox = new VBox(15);
         classifierBox.setAlignment(Pos.TOP_CENTER);
         classifierBox.setStyle("-fx-padding: 20 0 20 0;");
 
         List<String> classifiers = controller.getClassifiers();
-        if(classifiers != null){
-            updateClassifierBox(classifierBox, classifiers);
-        }
+        updateClassifierBox(classifierBox, classifiers);
 
         // Set active model
         Button setButton = new Button("Set");
@@ -81,6 +80,7 @@ public class View extends Application {
             DirectoryChooser chooser = controller.getFileDialog();
             File selectedDirectory = chooser.showDialog(primaryStage);
             controller.loadAllOnnx(selectedDirectory);
+            updateClassifiers();
         });
 
         VBox.setVgrow(classifierBox, Priority.ALWAYS);
@@ -152,5 +152,9 @@ public class View extends Application {
         rightPane.setBottom(sampleButton);
 
         root.setCenter(rightPane);
+    }
+
+    public void updateClassifiers(){
+        updateClassifierBox(classifierBox, controller.getClassifiers());
     }
 }
