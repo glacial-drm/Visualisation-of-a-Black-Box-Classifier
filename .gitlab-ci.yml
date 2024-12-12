@@ -1,0 +1,41 @@
+default:
+  tags: [ docker ]
+  image: $REGISTRY/$REGISTRY_USER/$TAG
+
+build:
+  stage: build
+  script: 
+    - |
+      export GRADLE_USER_HOME="$(pwd)/.gradle";
+      export ENFORCE_VENDOR=1;
+      # Build all the code including tests, without running the tests
+      gradle build testClasses -x test;
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - app/build
+      - .gradle
+
+test:
+  stage: test
+  image: $REGISTRY/$REGISTRY_USER/$TAG
+  script: 
+    - |
+      export GRADLE_USER_HOME="$(pwd)/.gradle";
+      export ENFORCE_VENDOR=1;
+      # Run all the tests
+      gradle check;
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: pull
+    paths:
+      - app/build
+      - .gradle
+  artifacts:
+    when: always
+    paths:
+      - app/build/test-results/test/*.xml
+    reports:
+      junit: app/build/test-results/test/*.xml
+

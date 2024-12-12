@@ -3,12 +3,32 @@
  */
 package com.blackbox.app;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import com.blackbox.graph.Canvas;
 
+import javafx.application.Application;
+
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        // Setup MVC
+        Model model = new Model();
+        Controller controller = new Controller(model);
+        View.controller = controller;
+
+        // Start JavaFX thread
+        Thread javafxThread = new Thread(() -> {
+            Application.launch(View.class, args);
+            controller.stop();
+        });
+        javafxThread.start();
+
+        // Run Canvas
+        Canvas.run(controller.eventQueue);
+
+        // Wait for JavaFX to exit
+        try {
+            javafxThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Canvas thread was interrupted");
+        }
     }
 }
