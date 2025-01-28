@@ -48,5 +48,5 @@ test: login
 	@echo -e "\n\n"
 
 proto:
-	python -m grpc_tools.protoc -Iapp/src/main/proto --python_out=python --pyi_out=python --grpc_python_out=python app/src/main/proto/helloworld.proto
+	python -m grpc_tools.protoc -Iapp/src/main/proto --python_out=python --pyi_out=python --grpc_python_out=python app/src/main/proto/connector.proto
 
