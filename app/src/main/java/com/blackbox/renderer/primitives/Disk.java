@@ -37,6 +37,7 @@ public class Disk extends Primitive {
     @Override
     protected void setUpVertexBuffer() {
         vertexBuffer = new VertexBuffer();
+        vertexBuffer.bind();
         vertexBuffer.storeFloatData(getVertices(), 0, getDimension());
         attributes.add(0);
     }

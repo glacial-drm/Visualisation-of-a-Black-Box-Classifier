@@ -1,6 +1,5 @@
-package com.blackbox;
+package com.blackbox.renderer;
 
-import com.blackbox.renderer.VertexArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.opengl.GL;

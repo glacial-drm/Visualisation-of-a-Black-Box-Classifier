@@ -1,6 +1,6 @@
-package com.blackbox;
+package com.blackbox.renderer;
 
-import com.blackbox.renderer.IndexBuffer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.opengl.GL;
@@ -20,6 +20,11 @@ class IndexBufferTest {
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
+    }
+
+    @AfterEach
+    void cleanUp() {
+        glBindBuffer(GL_INDEX_ARRAY, 0);
     }
 
     @Test

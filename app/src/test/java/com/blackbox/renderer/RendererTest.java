@@ -1,6 +1,5 @@
-package com.blackbox;
+package com.blackbox.renderer;
 
-import com.blackbox.renderer.Renderer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
