@@ -4,6 +4,7 @@
 [versions]
 java = "21"
 
+javax-annotation = "1.3.2"
 guava = "33.2.1-jre"
 junit = "5.10.3"
 jacoco = "0.8.12"
@@ -17,7 +18,13 @@ onnxruntime = "1.18.0"
 # This doesn't work on some devices, for an unknown reason
 lwjgl = "3.3.3"
 
+protoc = "4.29.2"
+protobuf-plugin = "0.9.4"
+protobuf-java = "4.29.3"
+grpc = "1.70.0"
+
 [libraries]
+javax-annotation = { module = "javax.annotation:javax.annotation-api", version.ref = "javax-annotation" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 joml = { group = "org.joml", name = "joml", version.ref = "joml" }
 lwjgl-bom = { group = "org.lwjgl", name = "lwjgl-bom", version.ref = "lwjgl" }
@@ -27,6 +34,14 @@ lwjgl-opengl = { group = "org.lwjgl", name = "lwjgl-opengl" }
 lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw" }
 onnxruntime = { module = "com.microsoft.onnxruntime:onnxruntime", version.ref = "onnxruntime"}
 
+protoc = { module = "com.google.protobuf:protoc", version.ref = "protoc" }
+protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf-java" }
+grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
+grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpc" }
+grpc-gen = { module = "io.grpc:protoc-gen-grpc-java", version.ref = "grpc" }
+
 [plugins]
 javafx-plugin = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
 

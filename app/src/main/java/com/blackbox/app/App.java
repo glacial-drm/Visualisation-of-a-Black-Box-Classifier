@@ -14,6 +14,9 @@ public class App {
         Controller controller = new Controller(model);
         View.controller = controller;
 
+        Connector connector = new Connector();
+        System.out.println(connector.sayHello("arlo"));
+
         // Start JavaFX thread
         Thread javafxThread = new Thread(() -> {
             Application.launch(View.class, args);
