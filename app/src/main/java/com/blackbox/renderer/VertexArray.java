@@ -20,11 +20,9 @@ public class VertexArray {
      * Enable the given vertex attribute
      *
      * @param attribute the index in the VertexArray
-     * @return true if nothing fails
      */
-    public boolean enableVertexAttrib(int attribute) {
+    public void enableVertexAttrib(int attribute) {
         glEnableVertexAttribArray(attribute);
-        return true;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.blackbox.renderer.*;
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;
 
+import java.rmi.NotBoundException;
 import java.util.ArrayList;
 
 /**
@@ -148,7 +149,6 @@ public abstract class Primitive {
     public abstract void uploadUniforms(Camera camera, Shader shader);
 
     protected abstract void setUpVertexBuffer();
-
 
     /**
      * moves the object

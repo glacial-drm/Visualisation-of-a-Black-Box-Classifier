@@ -6,7 +6,6 @@ import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

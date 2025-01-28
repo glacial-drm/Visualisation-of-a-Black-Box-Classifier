@@ -4,14 +4,11 @@ import com.blackbox.model.PointData;
 import com.blackbox.renderer.primitives.Disk;
 import com.blackbox.renderer.primitives.Primitive;
 import javafx.scene.paint.Color;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 

@@ -25,7 +25,7 @@ public class VertexArrayTest {
     @Test
     void testInitBuffer() {
         VertexArray vao = new VertexArray();
-        assertNotEquals(vao.getVaoId(), 0);
+        assertNotEquals(0, vao.getVaoId());
     }
 
     @Test
