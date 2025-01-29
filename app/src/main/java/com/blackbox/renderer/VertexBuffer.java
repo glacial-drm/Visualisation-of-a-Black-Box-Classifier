@@ -33,6 +33,8 @@ public class VertexBuffer {
      * Binds the buffer to a GL_ARRAY_BUFFER
      */
     public void bind() {
+        assert glGetInteger(GL_ARRAY_BUFFER_BINDING) == 0;
+
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
     }
 
@@ -40,6 +42,8 @@ public class VertexBuffer {
      * Unbinds this vbo
      */
     public void unbind() {
+        assert vboId == glGetInteger(GL_ARRAY_BUFFER_BINDING);
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -63,7 +67,6 @@ public class VertexBuffer {
         FloatBuffer buf = addFloatData(data);
         glBufferData(GL_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
         glVertexAttribPointer(attribute, dimension, GL_FLOAT, false, 0, 0);
-        unbind();
     }
 
     /**

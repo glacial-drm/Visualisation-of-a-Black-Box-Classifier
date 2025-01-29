@@ -1,10 +1,10 @@
 package com.blackbox.renderer;
 
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
 
 public class VertexArray {
     private final int vaoId;
@@ -14,6 +14,10 @@ public class VertexArray {
      */
     public VertexArray() {
         vaoId = glGenVertexArrays();
+
+        if(vaoId < 0) {
+            throw new RuntimeException("Failed to create vertex array");
+        }
     }
 
     /**
@@ -27,32 +31,27 @@ public class VertexArray {
 
     /**
      * Binds the current vertex array
-     *
-     * @return
-     * true if nothing fails
      */
-    public boolean bind() {
+    public void bind() {
+        assert glGetInteger(GL_VERTEX_ARRAY_BINDING) == 0;
+
         glBindVertexArray(vaoId);
-        return true;
     }
 
     /**
      * unbinds the current vao
-     *
-     * @return true if nothing fails
      */
-    public boolean unbind() {
+    public void unbind() {
+        assert vaoId == glGetInteger(GL_VERTEX_ARRAY_BINDING);
+
         glBindVertexArray(0);
-        return true;
     }
 
     /**
      * Clears the memory allocated on the gpu
-     * @return true if nothing fails
      */
-    public boolean delete() {
+    public void delete() {
         glDeleteBuffers(vaoId);
-        return true;
     }
 
     /**

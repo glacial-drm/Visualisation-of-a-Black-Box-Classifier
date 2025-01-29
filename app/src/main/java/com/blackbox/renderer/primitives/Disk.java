@@ -40,6 +40,7 @@ public class Disk extends Primitive {
         vertexBuffer.bind();
         vertexBuffer.storeFloatData(getVertices(), 0, getDimension());
         attributes.add(0);
+        vertexBuffer.unbind();
     }
 
     @Override

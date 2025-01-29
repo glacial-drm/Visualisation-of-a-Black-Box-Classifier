@@ -13,11 +13,11 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL15.*;
 
 class IndexBufferTest {
-
+    long window;
     @BeforeEach
     void setUp() {
         glfwInit();
-        long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+        window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
     }
@@ -25,6 +25,8 @@ class IndexBufferTest {
     @AfterEach
     void cleanUp() {
         glBindBuffer(GL_INDEX_ARRAY, 0);
+        glfwDestroyWindow(window);
+        glfwTerminate();
     }
 
     @Test
