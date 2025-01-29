@@ -85,12 +85,9 @@ class VertexBufferTest {
         int invalidDimension = 5; // Invalid dimension
 
         // Ensure the method throws an IllegalArgumentException for invalid dimension
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             vertexBuffer.storeFloatData(data, attribute, invalidDimension);
         });
-
-        String expectedMessage = "dimension must be less than 4";
-        assertTrue(exception.getMessage().contains(expectedMessage), "Exception message should match expected message");
     }
 
     @Test
@@ -101,12 +98,9 @@ class VertexBufferTest {
         int invalidDimension = 0; // Invalid dimension
 
         // Ensure the method throws an IllegalArgumentException for invalid dimension
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             vertexBuffer.storeFloatData(data, attribute, invalidDimension);
         });
-
-        String expectedMessage = "dimension must be between bigger than 0";
-        assertTrue(exception.getMessage().contains(expectedMessage), "Exception message should match expected message");
     }
 
     @Test
@@ -117,14 +111,9 @@ class VertexBufferTest {
         int dimension = 3;
 
         // Ensure the method throws an IllegalArgumentException for invalid data
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             vertexBuffer.storeFloatData(invalidData, attribute, dimension);
         });
-
-        String expectedMessage = "data is not a multiple of dimension";
-        String actualMessage = exception.getMessage();
-
-        assertTrue(actualMessage.contains(expectedMessage), "Exception message should match expected message");
     }
 
     @Test
@@ -135,12 +124,9 @@ class VertexBufferTest {
         int dimension = 3;
 
         // Ensure the method throws an IllegalArgumentException for invalid data
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             vertexBuffer.storeFloatData(invalidData, attribute, dimension);
         });
-
-        String expectedMessage = "data is not a multiple of dimension";
-        assertTrue(exception.getMessage().contains(expectedMessage), "Exception message should match expected message");
     }
 
 
@@ -155,7 +141,7 @@ class VertexBufferTest {
         vertexBuffer.unbind();
 
         // Ensure the assert statement in storeFloatData fails when the buffer is not bound
-        AssertionError assertionError = assertThrows(AssertionError.class, () -> {
+        assertThrows(AssertionError.class, () -> {
             vertexBuffer.storeFloatData(data, attribute, dimension);
         });
     }

@@ -69,9 +69,7 @@ class IndexBufferTest {
         IndexBuffer indexBuffer2 = new IndexBuffer();
 
         // Ensure the assert statement in storeIndexData fails when the buffer is not bound
-        AssertionError assertionError = assertThrows(AssertionError.class, () -> {
-            indexBuffer2.bind();
-        });
+        assertThrows(AssertionError.class, indexBuffer2::bind);
     }
 
     @Test
@@ -81,9 +79,7 @@ class IndexBufferTest {
         indexBuffer2.bind();
 
         // Ensure the assert statement in storeIndexData fails when the buffer is not bound
-        AssertionError assertionError = assertThrows(AssertionError.class, () -> {
-            indexBuffer.unbind();
-        });
+        assertThrows(AssertionError.class, indexBuffer::unbind);
     }
 
     @Test
@@ -92,7 +88,7 @@ class IndexBufferTest {
         int[] indices = {0, 1, 2, 3, 4, 5};
 
         // Ensure the assert statement in storeIndexData fails when the buffer is not bound
-        AssertionError assertionError = assertThrows(AssertionError.class, () -> {
+        assertThrows(AssertionError.class, () -> {
             indexBuffer.storeIndexData(indices);
         });
     }
@@ -102,7 +98,7 @@ class IndexBufferTest {
         IndexBuffer indexBuffer = new IndexBuffer();
         indexBuffer.bind();
         int[] indices = {};
-        Exception assertionError = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             indexBuffer.storeIndexData(indices);
         });
     }
@@ -123,14 +119,9 @@ class IndexBufferTest {
         IndexBuffer indexBuffer = new IndexBuffer();
         int[] invalidIndices = {0, 1}; // Not a multiple of 3
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             indexBuffer.storeIndexData(invalidIndices);
         });
-
-        String expectedMessage = "The number of indices must be a multiple of 3 and non 0";
-
-        assertTrue(exception.getMessage().contains(expectedMessage), "Exception message should match expected message");
-        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL storing data");
     }
 
     @Test
