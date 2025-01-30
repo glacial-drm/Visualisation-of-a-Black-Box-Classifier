@@ -64,7 +64,7 @@ public class Renderer {
     private void uploadProjectionMatrix() {
         for (Shader shader : shaders.values()) {
             if(shader.isWorldBased())
-                shader.loadMatrixUniform("projectionMatrix", camera.getProjectionMatrix());
+                shader.loadUniform("projectionMatrix", camera.getProjectionMatrix());
         }
     }
 
@@ -72,7 +72,7 @@ public class Renderer {
     private void uploadViewMatrix() {
         for (Shader shader : shaders.values()) {
             if(shader.isWorldBased())
-                shader.loadMatrixUniform("viewMatrix", camera.getViewMatrix());
+                shader.loadUniform("viewMatrix", camera.getViewMatrix());
         }
     }
 

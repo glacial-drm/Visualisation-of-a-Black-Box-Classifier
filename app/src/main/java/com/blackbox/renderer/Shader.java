@@ -51,12 +51,15 @@ public class Shader {
         glAttachShader(id, fragmentShader);
         glLinkProgram(id);
 
-        validProgram = checkShaderProgram(id);
+        boolean validLink = checkLinkStatus(id);
+
+        glValidateProgram(id);
+        validProgram = checkProgramStatus(id);
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        return validProgram && validShaders;
+        return validProgram && validLink && validShaders;
     }
 
     /**
@@ -71,7 +74,7 @@ public class Shader {
      * @param name uniform name in the shader
      * @param vector a 3d vector of floating point values
      */
-    public void loadVector3d(String name, Vector3f vector) {
+    public void loadUniform(String name, Vector3f vector) {
         checkUniformLocation(name);
         glUniform3f(uniformLocations.get(name), vector.x, vector.y, vector.z);
     }
@@ -81,7 +84,7 @@ public class Shader {
      * @param name uniform name in the shader
      * @param matrix 4x4 matrix of floats
      */
-    public void loadMatrixUniform(String name, Matrix4f matrix) {
+    public void loadUniform(String name, Matrix4f matrix) {
         checkUniformLocation(name);
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.get(buf));
@@ -125,22 +128,27 @@ public class Shader {
     }
 
     /**
-     * Function that checks if the shader linked successfully by checking the link status
-     * and checking the validation of the program
-     *
-     * @param program takes in the program id
-     * @return true if successful
+     * Checks the status of the program
+     * @param program program ID
+     * @return true if successful false if error
      */
-    private boolean checkShaderProgram(int program) {
+    boolean checkProgramStatus(int program) {
+        if (glGetProgrami(program, GL_VALIDATE_STATUS) == GL_FALSE) {
+            System.err.println("Validation error: " + glGetProgramInfoLog(program));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks the status of the linking of shaders to the program
+     * @param program program ID
+     * @return true if successful false if error
+     */
+    boolean checkLinkStatus(int program) {
         if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
             System.err.println("Link error: " + glGetProgramInfoLog(program));
             return false;
-        } else {
-            glValidateProgram(program);
-            if (glGetProgrami(program, GL_VALIDATE_STATUS) == GL_FALSE) {
-                System.err.println("Validation error: " + glGetProgramInfoLog(program));
-                return false;
-            }
         }
         return true;
     }
