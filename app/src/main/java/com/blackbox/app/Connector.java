@@ -13,7 +13,7 @@ import com.blackbox.proto.connector.SvcRequest.Kernel;
 
 public class Connector {
     private final boolean debug = false;
-    private final int port = 51243 + new Random().nextInt(100);
+    private final int port = 50000 + new Random().nextInt(10000);
     Process server;
     ManagedChannel channel;
     ConnectorBlockingStub stub;
