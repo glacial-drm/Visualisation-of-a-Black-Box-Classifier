@@ -32,8 +32,8 @@ public class Canvas {
      */
     private StopEvent stopEvent = null;
 
-    private final int width = 300;
-    private final int height = 300;
+    private final int width = 400;
+    private final int height = 500;
 
     private Canvas(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
         this.eventQueue = eventQueue;
@@ -66,7 +66,7 @@ public class Canvas {
         // Hide window until its shown
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-        window = glfwCreateWindow(width, height, "Hello world", NULL, NULL);
+        window = glfwCreateWindow(width, height, "Blackbox Sampler", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create window");
         }

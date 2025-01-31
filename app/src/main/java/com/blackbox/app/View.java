@@ -5,12 +5,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -26,8 +29,15 @@ public class View extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    /*
+    Utilise free space in current stage to add option to train data AND view coordinates/zoom
+     */
+    //Menubar (add option to change between dark and light mode)
+    MenuBar bar = new MenuBar();
+    bar.getMenus().add(new Menu("Test"));
+
     // Main layout
-    BorderPane root = new BorderPane();
+    BorderPane root = new BorderPane(bar);
     root.setStyle("-fx-background-color: #2c2c2c;");
 
     // Left Pane
@@ -40,7 +50,7 @@ public class View extends Application {
     Label folderLabel = new Label("Folder Name");
     folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
     folderLabel.setTextFill(Color.PURPLE);
-    folderLabel.setStyle(" -fx-padding: 20;");
+    //folderLabel.setStyle(" -fx-padding: 20;");
 
     // Classifiers
     classifierBox = new VBox(15);
@@ -54,7 +64,7 @@ public class View extends Application {
     Button setButton = new Button("Set");
     setButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
     setButton.setTextFill(Color.PURPLE);
-    setButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+    setButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #1e1e1e;");
     setButton.setMaxWidth(Double.MAX_VALUE);
     setButton.setPrefHeight(50);
     setButton.setOnAction(event -> {
@@ -71,7 +81,7 @@ public class View extends Application {
     Button loadButton = new Button("Load");
     loadButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
     loadButton.setTextFill(Color.PURPLE);
-    loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+    loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #1e1e1e;");
     loadButton.setMaxWidth(Double.MAX_VALUE);
     loadButton.setPrefHeight(50);
     loadButton.setOnAction(event -> {
@@ -81,9 +91,21 @@ public class View extends Application {
       updateClassifiers();
     });
 
+    // Bottom section: Sample button
+    Button sampleButton = new Button("Sample!");
+    sampleButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+    sampleButton.setTextFill(Color.PURPLE);
+    sampleButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #1e1e1e;");
+    sampleButton.setMaxWidth(Double.MAX_VALUE);
+    sampleButton.setPrefHeight(50);
+    sampleButton.setOnAction(event -> {
+      controller.sampleCurrentModel();
+    });
+    BorderPane.setAlignment(sampleButton, Pos.CENTER);
+
     VBox.setVgrow(classifierBox, Priority.ALWAYS);
     updateRightPane(root, "No classifier selected");
-    leftPane.getChildren().addAll(folderLabel, classifierBox, setButton, loadButton);
+    leftPane.getChildren().addAll(folderLabel, classifierBox, setButton, loadButton, sampleButton);
 
 
     // Set layout
@@ -91,6 +113,7 @@ public class View extends Application {
 
     Scene scene = new Scene(root, 800, 600);
     primaryStage.setScene(scene);
+    primaryStage.setTitle("Blackbox Classifier");
     primaryStage.show();
   }
 
@@ -98,6 +121,8 @@ public class View extends Application {
     classifierBox.getChildren().clear();
     if (classifiers.isEmpty()) {
       Label emptyLabel = new Label("No classifiers available");
+      emptyLabel.setWrapText(true);
+      emptyLabel.setTextAlignment(TextAlignment.CENTER);
       emptyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
       emptyLabel.setTextFill(Color.GRAY);
       classifierBox.getChildren().add(emptyLabel);
@@ -140,18 +165,6 @@ public class View extends Application {
     activeModelLabel.setTextFill(Color.PURPLE);
     BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
     rightPane.setTop(activeModelLabel);
-
-    // Bottom section: Sample button
-    Button sampleButton = new Button("Sample");
-    sampleButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
-    sampleButton.setTextFill(Color.PURPLE);
-    sampleButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
-    sampleButton.setOnAction(event -> {
-      controller.sampleCurrentModel();
-    });
-
-    BorderPane.setAlignment(sampleButton, Pos.CENTER);
-    rightPane.setBottom(sampleButton);
 
     root.setCenter(rightPane);
   }
