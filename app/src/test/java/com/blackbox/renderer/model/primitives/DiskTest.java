@@ -1,13 +1,13 @@
-package com.blackbox.renderer.primitives;
+package com.blackbox.renderer.model.primitives;
 
-import com.blackbox.renderer.Camera;
-import com.blackbox.renderer.Shader;
+import com.blackbox.renderer.controlers.Camera;
+import com.blackbox.renderer.controlers.Shader;
+import com.blackbox.renderer.model.primitives.Disk;
 import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

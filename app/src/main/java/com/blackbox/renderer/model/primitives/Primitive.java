@@ -1,10 +1,9 @@
-package com.blackbox.renderer.primitives;
+package com.blackbox.renderer.model.primitives;
 
-import com.blackbox.renderer.*;
+import com.blackbox.renderer.controlers.*;
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;
 
-import java.rmi.NotBoundException;
 import java.util.ArrayList;
 
 /**
@@ -27,8 +26,8 @@ public abstract class Primitive {
 
     /**
      * Sets up the primitive by setting needed variables and creating
-     * a {@link com.blackbox.renderer.VertexArray vertex array} and
-     * a {@link com.blackbox.renderer.VertexArray index buffer}
+     * a {@link VertexArray vertex array} and
+     * a {@link VertexArray index buffer}
      * for the primitive
      * @param pos position of the primitive in world space
      * @param rot rotation of the primitive
@@ -72,8 +71,8 @@ public abstract class Primitive {
     }
 
     /**
-     * Binds the {@link com.blackbox.renderer.VertexArray vertex array} and
-     * {@link com.blackbox.renderer.VertexArray index buffer}
+     * Binds the {@link VertexArray vertex array} and
+     * {@link VertexArray index buffer}
      * then enables all used attributes
      */
     public void enableAttributes() {
@@ -86,7 +85,7 @@ public abstract class Primitive {
     }
 
     /**
-     * Disables the attributes and the {@link com.blackbox.renderer.VertexArray vertex array}
+     * Disables the attributes and the {@link VertexArray vertex array}
      */
     public void disable() {
         vertexArray.disableVertexAttrib();
@@ -128,13 +127,13 @@ public abstract class Primitive {
         return vertexData;
     }
 
-    /** Creates and binds {@link com.blackbox.renderer.VertexArray vertex array */
+    /** Creates and binds {@link VertexArray vertex array */
      public void initVertexArray(){
         vertexArray = new VertexArray();
         vertexArray.bind();
     }
 
-    /** Creates a {@link com.blackbox.renderer.IndexBuffer indices buffer} ,binds and stores indices */
+    /** Creates a {@link IndexBuffer indices buffer} ,binds and stores indices */
     public void initIndexBuffer(){
         indexBuffer = new IndexBuffer();
         indexBuffer.bind();

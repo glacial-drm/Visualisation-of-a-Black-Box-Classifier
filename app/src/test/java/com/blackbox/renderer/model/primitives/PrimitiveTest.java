@@ -1,4 +1,4 @@
-package com.blackbox.renderer.primitives;
+package com.blackbox.renderer.model.primitives;
 
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;

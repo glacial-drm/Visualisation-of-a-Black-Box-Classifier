@@ -1,4 +1,4 @@
-package com.blackbox.renderer;
+package com.blackbox.renderer.controlers;
 
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL15.*;

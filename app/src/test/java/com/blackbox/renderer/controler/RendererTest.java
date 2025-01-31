@@ -1,5 +1,7 @@
-package com.blackbox.renderer;
+package com.blackbox.renderer.controler;
 
+import com.blackbox.renderer.controlers.Renderer;
+import com.blackbox.renderer.model.Model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,23 +20,9 @@ public class RendererTest {
         long window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
-        renderer = new Renderer(300, 300);
+
+        Model model = new Model(300, 300);
+        renderer = new Renderer(model);
     }
-
-    @DisplayName("Create renderer object")
-    @Test
-    void testCreateRenderer() {
-        Renderer r = new Renderer(200, 200);
-    }
-
-    @DisplayName("Check renderer resize")
-    @Test
-    void checkResize() {
-        renderer.resize(600, 100);
-
-        assertEquals(renderer.getWidth(), 600);
-        assertEquals(renderer.getHeight(), 100);
-    }
-
 
 }

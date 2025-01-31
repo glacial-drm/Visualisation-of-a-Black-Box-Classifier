@@ -1,7 +1,8 @@
-package com.blackbox.renderer.primitives;
+package com.blackbox.renderer.model.primitives;
 
-import com.blackbox.renderer.Camera;
-import com.blackbox.renderer.Shader;
+import com.blackbox.renderer.controlers.Camera;
+import com.blackbox.renderer.controlers.Shader;
+import com.blackbox.renderer.model.primitives.Primitive;
 import javafx.scene.paint.Color;
 import org.joml.Vector3f;
 

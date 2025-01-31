@@ -1,8 +1,8 @@
-package com.blackbox.renderer.primitives;
+package com.blackbox.renderer.model.primitives;
 
-import com.blackbox.renderer.Camera;
-import com.blackbox.renderer.Shader;
-import com.blackbox.renderer.VertexBuffer;
+import com.blackbox.renderer.controlers.Camera;
+import com.blackbox.renderer.controlers.Shader;
+import com.blackbox.renderer.controlers.VertexBuffer;
 import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -30,7 +30,7 @@ public class Disk extends Primitive {
     }
 
     /**
-     * Creates the {@link com.blackbox.renderer.VertexBuffer vertex buffer}
+     * Creates the {@link VertexBuffer vertex buffer}
      * stores the vertex data in the vertex buffer
      * and adds the attribute to the attribute list
      */

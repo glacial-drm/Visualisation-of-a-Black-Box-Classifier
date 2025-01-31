@@ -1,5 +1,6 @@
-package com.blackbox.renderer;
+package com.blackbox.renderer.controler;
 
+import com.blackbox.renderer.controlers.Shader;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.AfterEach;
@@ -13,7 +14,6 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class ShaderTest {
