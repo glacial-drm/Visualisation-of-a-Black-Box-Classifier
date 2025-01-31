@@ -9,6 +9,31 @@ package connector;
 
 service Connector {
   rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc TrainSvc (SvcRequest) returns (ModelResults);
+}
+
+message Point {
+  repeated double values = 1;
+}
+
+message Points {
+  repeated Point points = 1;
+}
+
+message SvcRequest {
+  Points points = 1;
+
+  enum Kernel {
+    LINEAR = 0;
+    POLY = 1;
+    RBF = 2;
+    SIGMOID = 3;
+  }
+  Kernel kernel = 2;
+}
+
+message ModelResults {
+  string onnxPath = 1;
 }
 
 message HelloRequest {

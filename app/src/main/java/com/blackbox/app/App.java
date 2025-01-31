@@ -16,6 +16,7 @@ public class App {
 
         Connector connector = new Connector();
         System.out.println(connector.sayHello("arlo"));
+        System.out.println(connector.trainSvc());
 
         // Start JavaFX thread
         Thread javafxThread = new Thread(() -> {
