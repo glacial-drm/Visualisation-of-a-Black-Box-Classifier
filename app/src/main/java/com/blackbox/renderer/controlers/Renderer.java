@@ -30,6 +30,7 @@ public class Renderer {
         clearScreen();
         move();
 
+        model.prepPoints();
         for (Point obj : model.getObjects()) {
             obj.uploadUniforms(model.getCamera(), model.getShaders().get(obj.getClass()));
             obj.enableAttributes();

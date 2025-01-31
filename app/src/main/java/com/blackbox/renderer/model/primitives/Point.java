@@ -6,6 +6,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.lwjgl.opengl.GL11C.GL_FLOAT;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class Point {
 
@@ -19,9 +24,9 @@ public class Point {
     protected Color colour;
     protected int dimension;
     protected ArrayList<Integer> attributes;
-
     protected VertexArray vertexArray;
     protected VertexBuffer vertexBuffer;
+    private  VertexBuffer colourBuffer;
     protected IndexBuffer indexBuffer;
 
 
@@ -42,10 +47,9 @@ public class Point {
         this.radius = radius;
         this.dimension = 3;
         attributes = new ArrayList<>();
-
-        setUpVertexBuffer();
-
+        
         initVertexArray();
+        setUpVertexBuffer();
         initIndexBuffer();
     }
 
@@ -55,17 +59,35 @@ public class Point {
      * and adds the attribute to the attribute list
      */
     protected void setUpVertexBuffer() {
+        float[] interleavedData = {
+                -0.5f,  0.5f,  0.0f,    (float) colour.getRed(), (float) colour.getGreen(), (float) colour.getBlue(),
+                -0.5f, -0.5f,  0.0f,    (float) colour.getRed(), (float) colour.getGreen(), (float) colour.getBlue(),
+                0.5f, -0.5f,  0.0f,    (float) colour.getRed(), (float) colour.getGreen(), (float) colour.getBlue(),
+                0.5f,  0.5f,  0.0f,    (float) colour.getRed(), (float) colour.getGreen(), (float) colour.getBlue()
+        };
+
+        int stride = (3 + 3) * Float.BYTES;
+
         vertexBuffer = new VertexBuffer();
         vertexBuffer.bind();
-        vertexBuffer.storeFloatData(indexData, 0, dimension);
+
+        // Upload the interleaved data to the GPU
+        vertexBuffer.storeFloatData(interleavedData);
+
+        // Configure position attribute (Attribute 0)
+        vertexArray.setVertexAttrib(0, 3, GL_FLOAT, false, stride, 0);
         attributes.add(0);
+
+        // Configure color attribute (Attribute 1)
+        vertexArray.setVertexAttrib(1, 3, GL_FLOAT, false, stride, 3 * Float.BYTES);
+        attributes.add(1);
+
         vertexBuffer.unbind();
     }
 
     public void uploadUniforms(Camera camera, Shader shader) {
         Matrix4f transformationMatrix = Camera.createTransformMatrix(getPosition(), getRotation(), getScale());
         shader.loadUniform("transformMatrix", transformationMatrix);
-        shader.loadUniform("colour", getColour());
     }
 
     /** Creates and binds {@link VertexArray vertex array */
@@ -140,5 +162,8 @@ public class Point {
     /** Getter for the radius of the circle */
     public float getRadius() {
         return radius;
+    }
+
+    public void setColour() {
     }
 }

@@ -2,9 +2,12 @@ package com.blackbox.renderer.controlers;
 
 import org.lwjgl.BufferUtils;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class VertexBuffer {
@@ -51,24 +54,13 @@ public class VertexBuffer {
      * Stores the given data inside the buffer ready to send to the GPU and unbinds the VertexBuffer
      *
      * @param data      array of floating point values
-     * @param attribute relates to the shader in
-     * @param dimension between 1 and 4 for how the GPU should understand the data
      */
-    public void storeFloatData(float[] data, int attribute, int dimension) {
-        if ((dimension <= 0) || (dimension > 4)) {
-            throw new IllegalArgumentException("dimension must be between 1 and 4");
-        }
-        if (data.length % dimension != 0 || data.length == 0) {
-            throw new IllegalArgumentException("data is not a multiple of dimension");
-        }
-
-        assert vboId == glGetInteger(GL_ARRAY_BUFFER_BINDING);
-
+    public void storeFloatData(float[] data) {
+        // Validate and create a FloatBuffer
         FloatBuffer buf = addFloatData(data);
+        // Upload the data to the currently bound GL_ARRAY_BUFFER
         glBufferData(GL_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
-        glVertexAttribPointer(attribute, dimension, GL_FLOAT, false, 0, 0);
     }
-
     /**
      * Preps the FloatBuffer for sending to the GPU
      *

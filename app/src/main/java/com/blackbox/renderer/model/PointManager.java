@@ -1,8 +1,10 @@
 package com.blackbox.renderer.model;
 
 import com.blackbox.model.PointData;
+import com.blackbox.renderer.controlers.Camera;
 import com.blackbox.renderer.model.primitives.Point;
 import javafx.scene.paint.Color;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -29,5 +31,23 @@ public class PointManager {
 
     public List<Point> getPoints() {
         return points;
+    }
+
+    public void calculatePointsMVP(Camera camera) {
+        // Calculate View and Perspective matrix
+        Matrix4f vp = new Matrix4f().mul(camera.createViewMatrix(), camera.getProjectionMatrix());
+
+        // loop through all points and calculate their MVP
+        // then set it as the attribute
+        for(Point point : points) {
+            Matrix4f model = Camera.createTransformMatrix(point.getPosition(), point.getRotation(), point.getScale());
+            Matrix4f mvp = new Matrix4f().mul(model, vp);
+        }
+    }
+
+    public void prepColours() {
+        for(Point point : points) {
+            point.setColour();
+        }
     }
 }

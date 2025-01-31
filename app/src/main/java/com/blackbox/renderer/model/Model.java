@@ -77,4 +77,9 @@ public class Model {
     public void setCamera(Camera camera) {
         this.camera = camera;
     }
+
+    public void prepPoints() {
+        //pointManager.prepColours();
+        //pointManager.calculatePointsMVP(camera);
+    }
 }

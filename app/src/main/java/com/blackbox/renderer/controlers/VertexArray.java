@@ -1,6 +1,7 @@
 package com.blackbox.renderer.controlers;
 
 import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -66,5 +67,10 @@ public class VertexArray {
      */
     public void disableVertexAttrib() {
         glDisableVertexAttribArray(0);
+    }
+
+    public void setVertexAttrib(int attribute, int size, int type, boolean normalised, int stride, int offset) {
+        glVertexAttribPointer(attribute, size, type, normalised, stride, offset); // Position: 3 floats, starts at offset 0
+        glEnableVertexAttribArray(attribute);
     }
 }
