@@ -3,10 +3,8 @@ package com.blackbox.renderer.model;
 import com.blackbox.model.PointData;
 import com.blackbox.renderer.controlers.Camera;
 import com.blackbox.renderer.controlers.Shader;
-import com.blackbox.renderer.model.primitives.Disk;
+import com.blackbox.renderer.model.primitives.Point;
 import com.blackbox.renderer.model.primitives.Primitive;
-import javafx.scene.paint.Color;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +20,12 @@ public class Model {
     private final HashMap<Class<?>, Shader> shaders = new HashMap<Class<?>, Shader>();
     private final ArrayList<Primitive> objects = new ArrayList<Primitive>();
 
+    private final PointManager pointManager;
+
     public Model(int width, int height) {
         this.sWidth = width;
         this.sHeight = height;
+        pointManager = new PointManager();
 
         initShaders();
     }
@@ -38,7 +39,7 @@ public class Model {
         // Load the disk shader
         Shader diskShader = new Shader(true);
         diskShader.create("vertex.glsl", "fragment.glsl");
-        shaders.put(Disk.class, diskShader);
+        shaders.put(Point.class, diskShader);
     }
 
     public HashMap<Class<?>, Shader> getShaders() {
@@ -51,9 +52,7 @@ public class Model {
      * For now has a fixed radius.
      */
     public void addPoint(PointData point) {
-        Vector3f position = new Vector3f(point.feature1, point.feature2, 0);
-        Color color = point.label == 1 ? Color.RED : Color.BLUE;
-        objects.add(new Disk(position, 0.5f, new Vector3f(0, 0, 0), 0.1f, color));
+        pointManager.addPoint(point);
     }
 
     public void updateSize(int width, int height) {
@@ -65,8 +64,8 @@ public class Model {
         return camera;
     }
 
-    public List<Primitive> getObjects() {
-        return objects;
+    public List<Point> getObjects() {
+        return pointManager.getPoints();
     }
 
     public int getWidth() {

@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-public class Disk extends Primitive {
+public class Point extends Primitive {
 
     private final float radius;
     private static final float[] indexData = new float[]{-0.5f, 0.5f, 0f, -0.5f, -0.5f, 0f, 0.5f, -0.5f, 0f, 0.5f, 0.5f, 0f,};
@@ -21,7 +21,7 @@ public class Disk extends Primitive {
      * @param scale  multiplier of the size
      * @param color  a JavaFx colour of the disk
      */
-    public Disk(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
+    public Point(Vector3f pos, float radius, Vector3f rot, float scale, Color color) {
         super(pos, rot, scale, color, indexData, indicesData);
         this.radius = radius;
         this.dimension = 3;

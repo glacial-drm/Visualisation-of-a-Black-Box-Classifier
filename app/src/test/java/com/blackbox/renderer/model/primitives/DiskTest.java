@@ -2,7 +2,6 @@ package com.blackbox.renderer.model.primitives;
 
 import com.blackbox.renderer.controlers.Camera;
 import com.blackbox.renderer.controlers.Shader;
-import com.blackbox.renderer.model.primitives.Disk;
 import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -23,7 +22,7 @@ class DiskTest {
         float scale = 2.0f;
         Color color = Color.RED;
 
-        Disk disk = new Disk(position, radius, rotation, scale, color);
+        Point disk = new Point(position, radius, rotation, scale, color);
 
         assertEquals(position, disk.getPosition(), "Position should be correctly initialized.");
         assertEquals(rotation, disk.getRotation(), "Rotation should be correctly initialized.");
@@ -42,7 +41,7 @@ class DiskTest {
         float scale = 1.0f;
         Color color = Color.BLUE;
 
-        Disk disk = new Disk(position, radius, rotation, scale, color);
+        Point disk = new Point(position, radius, rotation, scale, color);
 
         assertNotNull(disk.vertexBuffer, "VertexBuffer should be initialized.");
         assertTrue(disk.attributes.contains(0), "Attribute 0 should be added to the attributes list.");
@@ -51,7 +50,7 @@ class DiskTest {
     @Test
     void testUploadUniforms() {
         // Arrange
-        Disk disk = new Disk(new Vector3f(0, 0, 0), 1.0f, new Vector3f(0, 0, 0), 1.0f, javafx.scene.paint.Color.RED);
+        Point disk = new Point(new Vector3f(0, 0, 0), 1.0f, new Vector3f(0, 0, 0), 1.0f, javafx.scene.paint.Color.RED);
         Shader mockShader = mock(Shader.class);
         Matrix4f mockTransformMatrix = new Matrix4f();
 
@@ -78,7 +77,7 @@ class DiskTest {
         float scale = 1.0f;
         Color color = Color.YELLOW;
 
-        Disk disk = new Disk(position, radius, rotation, scale, color);
+        Point disk = new Point(position, radius, rotation, scale, color);
 
         assertEquals(radius, disk.getRadius(), "getRadius() should return the correct radius.");
     }
