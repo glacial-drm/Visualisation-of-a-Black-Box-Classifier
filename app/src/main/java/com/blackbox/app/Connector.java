@@ -7,6 +7,7 @@ import io.grpc.ManagedChannel;
 
 import java.util.Random;
 
+import com.blackbox.model.PointData;
 import com.blackbox.proto.connector.*;
 import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
 import com.blackbox.proto.connector.SvcRequest.Kernel;
@@ -52,11 +53,19 @@ public class Connector {
 
     public String trainSvc() {
         Points points = Points.newBuilder()
-            .addPoints(Point.newBuilder().addValues(10).addValues(11))
-            .addPoints(Point.newBuilder().addValues(12).addValues(13)).build();
+            .addPoints(convertPoint(new PointData(10, 11, 1)))
+            .addPoints(convertPoint(new PointData(12, 13, 2))).build();
         SvcRequest req = SvcRequest.newBuilder().setPoints(points).setKernel(Kernel.RBF).build();
         ModelResults res = stub.trainSvc(req);
         return res.getOnnxPath();
+    }
+
+    public static Point convertPoint(PointData point) {
+        return Point.newBuilder()
+            .setLabel(point.label)
+            .addValues(point.feature1)
+            .addValues(point.feature2)
+            .build();
     }
 
     public void close() {

@@ -13,7 +13,8 @@ service Connector {
 }
 
 message Point {
-  repeated double values = 1;
+  double label = 1;
+  repeated double values = 2;
 }
 
 message Points {
