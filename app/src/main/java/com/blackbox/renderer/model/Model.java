@@ -4,7 +4,6 @@ import com.blackbox.model.PointData;
 import com.blackbox.renderer.controlers.Camera;
 import com.blackbox.renderer.controlers.Shader;
 import com.blackbox.renderer.model.primitives.Point;
-import com.blackbox.renderer.model.primitives.Primitive;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ public class Model {
     private int sWidth, sHeight;
     private Camera camera;
     private final HashMap<Class<?>, Shader> shaders = new HashMap<Class<?>, Shader>();
-    private final ArrayList<Primitive> objects = new ArrayList<Primitive>();
+    private final ArrayList<Point> objects = new ArrayList<Point>();
 
     private final PointManager pointManager;
 
@@ -32,7 +31,6 @@ public class Model {
 
     /**
      * Loads in the shaders from their files and stores them in a hashmap with key of
-     * {@link Primitive primitve type} and value as the new
      * {@link Shader shader}
      */
     private void initShaders() {

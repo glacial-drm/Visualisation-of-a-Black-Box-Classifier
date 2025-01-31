@@ -30,7 +30,6 @@ class DiskTest {
         assertEquals(radius, disk.getRadius(), "Radius should be correctly initialized.");
         assertEquals(new Vector3f((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue()),
                 disk.getColour(), "Color should be correctly initialized.");
-        assertEquals(3, disk.getDimension(), "Dimension should be set to 3.");
     }
 
     @Test

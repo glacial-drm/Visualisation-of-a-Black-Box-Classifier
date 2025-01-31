@@ -1,8 +1,7 @@
 package com.blackbox.renderer.controlers;
 
-import com.blackbox.model.PointData;
 import com.blackbox.renderer.model.Model;
-import com.blackbox.renderer.model.primitives.Primitive;
+import com.blackbox.renderer.model.primitives.Point;
 
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
@@ -31,7 +30,7 @@ public class Renderer {
         clearScreen();
         move();
 
-        for (Primitive obj : model.getObjects()) {
+        for (Point obj : model.getObjects()) {
             obj.uploadUniforms(model.getCamera(), model.getShaders().get(obj.getClass()));
             obj.enableAttributes();
             glDrawElements(GL_TRIANGLES, obj.getIndexCount(), GL_UNSIGNED_INT, 0);
