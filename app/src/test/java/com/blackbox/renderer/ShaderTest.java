@@ -1,6 +1,7 @@
-package com.blackbox;
+package com.blackbox.renderer;
 
-import com.blackbox.renderer.Shader;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,10 +11,10 @@ import org.lwjgl.opengl.GL;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static java.sql.Types.NULL;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class ShaderTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -78,5 +79,42 @@ public class ShaderTest {
     void checkSetActive() {
         shader.create("vertex.glsl", "fragment.glsl");
         shader.setActive();
+    }
+
+    @DisplayName("Test World-Based Flag")
+    @Test
+    void testWorldBasedFlag() {
+        Shader worldBasedShader = new Shader(true);
+        assertTrue(worldBasedShader.isWorldBased());
+
+        Shader nonWorldBasedShader = new Shader(false);
+        assertFalse(nonWorldBasedShader.isWorldBased());
+    }
+
+    @DisplayName("Test Uniform Location Handling")
+    @Test
+    void testUniformLocationHandling() {
+        shader.create("vertex.glsl", "fragment.glsl");
+        shader.setActive();
+
+        // Check if uniform location is cached
+        shader.loadUniform("testVector", new Vector3f(1.0f, 2.0f, 3.0f));
+
+        // Check if non-existent uniform is handled correctly
+        shader.loadUniform("nonExistentUniform", new Vector3f(1.0f, 2.0f, 3.0f));
+        assertTrue(errContent.toString().contains("Could not find uniform location: nonExistentUniform"));
+    }
+
+    @DisplayName("Test Loading Vector3f and Matrix4f Uniforms")
+    @Test
+    void testLoadingUniforms() {
+        shader.create("vertex.glsl", "fragment.glsl");
+        shader.setActive();
+
+        Vector3f vector = new Vector3f(1.0f, 2.0f, 3.0f);
+        shader.loadUniform("testVector", vector);
+
+        Matrix4f matrix = new Matrix4f().identity();
+        shader.loadUniform("testMatrix", matrix);
     }
 }

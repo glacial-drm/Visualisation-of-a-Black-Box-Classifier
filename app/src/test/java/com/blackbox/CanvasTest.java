@@ -1,16 +1,17 @@
 package com.blackbox;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
-
+import com.blackbox.graph.Canvas;
+import com.blackbox.graph.events.CanvasEvent;
+import com.blackbox.graph.events.PointsLoaded;
+import com.blackbox.graph.events.StopEvent;
+import com.blackbox.model.PointData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.blackbox.graph.Canvas;
-import com.blackbox.graph.events.*;
-import com.blackbox.model.PointData;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CanvasTest {
     ConcurrentLinkedQueue<CanvasEvent> eventQueue;

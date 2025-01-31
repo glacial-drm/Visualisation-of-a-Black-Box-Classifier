@@ -15,48 +15,51 @@ public class IndexBuffer {
      */
     public IndexBuffer() {
         iboId = glGenBuffers();
+
+        if (iboId < 0) {
+            throw new RuntimeException("Unable to create index buffer");
+        }
     }
 
     /**
      * Clears the allocated memory on the GPU
-     *
-     * @return true if no error
      */
-    public boolean destroy() {
+    public void destroy() {
         glDeleteBuffers(iboId);
-        return true;
     }
 
     /**
      * Binds this Index buffer as a GL_ELEMENT_ARRAY_BUFFER
-     *
-     * @return true if no errors
      */
-    public boolean bind() {
+    public void bind() {
+        // Ensure no other buffer is bound
+        assert 0 == glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
-        return true;
     }
 
     /**
      * Unbinds this Index Buffer
-     *
-     * @return true if no error
      */
-    public boolean unbind() {
+    public void unbind() {
+        // Ensure this buffer is bound
+        assert iboId == glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        return true;
     }
 
     /**
      * Preps the data to be sent to the GPU and buffers it
      *
      * @param indices list of indices for the model
-     * @return true if no errors
      */
-    public boolean storeIndexData(int[] indices) {
+    public void storeIndexData(int[] indices) {
         if (indices.length == 0 || indices.length % 3 != 0) {
             throw new IllegalArgumentException("The number of indices must be a multiple of 3 and non 0");
         }
+
+        // This buffer is not currently active
+        assert iboId == glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
 
         count = indices.length;
         IntBuffer buffer = BufferUtils.createIntBuffer(indices.length);
@@ -64,7 +67,6 @@ public class IndexBuffer {
         buffer.flip();
 
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        return true;
     }
 
     public int getIboId() {

@@ -37,15 +37,17 @@ public class Disk extends Primitive {
     @Override
     protected void setUpVertexBuffer() {
         vertexBuffer = new VertexBuffer();
+        vertexBuffer.bind();
         vertexBuffer.storeFloatData(getVertices(), 0, getDimension());
         attributes.add(0);
+        vertexBuffer.unbind();
     }
 
     @Override
     public void uploadUniforms(Camera camera, Shader shader) {
         Matrix4f transformationMatrix = Camera.createTransformMatrix(getPosition(), getRotation(), getScale());
-        shader.loadMatrixUniform("transformMatrix", transformationMatrix);
-        shader.loadVector3d("colour", getColour());
+        shader.loadUniform("transformMatrix", transformationMatrix);
+        shader.loadUniform("colour", getColour());
     }
 
     /** Getter for the radius of the circle */

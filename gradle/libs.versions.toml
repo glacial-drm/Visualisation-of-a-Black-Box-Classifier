@@ -16,6 +16,7 @@ onnxruntime = "1.18.0"
 # 3.3.2 updates GLFW to 3.4, which enables Wayland by default
 # This doesn't work on some devices, for an unknown reason
 lwjgl = "3.3.3"
+mockito = "5.5.0"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
@@ -26,6 +27,8 @@ lwjgl-lib = { group = "org.lwjgl", name = "lwjgl" }
 lwjgl-opengl = { group = "org.lwjgl", name = "lwjgl-opengl" }
 lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw" }
 onnxruntime = { module = "com.microsoft.onnxruntime:onnxruntime", version.ref = "onnxruntime"}
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
 [plugins]
 javafx-plugin = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }

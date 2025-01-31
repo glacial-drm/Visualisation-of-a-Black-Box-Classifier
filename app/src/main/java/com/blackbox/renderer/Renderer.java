@@ -4,14 +4,11 @@ import com.blackbox.model.PointData;
 import com.blackbox.renderer.primitives.Disk;
 import com.blackbox.renderer.primitives.Primitive;
 import javafx.scene.paint.Color;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -67,7 +64,7 @@ public class Renderer {
     private void uploadProjectionMatrix() {
         for (Shader shader : shaders.values()) {
             if(shader.isWorldBased())
-                shader.loadMatrixUniform("projectionMatrix", camera.getProjectionMatrix());
+                shader.loadUniform("projectionMatrix", camera.getProjectionMatrix());
         }
     }
 
@@ -75,7 +72,7 @@ public class Renderer {
     private void uploadViewMatrix() {
         for (Shader shader : shaders.values()) {
             if(shader.isWorldBased())
-                shader.loadMatrixUniform("viewMatrix", camera.getViewMatrix());
+                shader.loadUniform("viewMatrix", camera.getViewMatrix());
         }
     }
 

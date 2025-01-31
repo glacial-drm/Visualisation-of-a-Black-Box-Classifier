@@ -2,16 +2,18 @@ package com.blackbox.graph;
 
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
-import com.blackbox.graph.events.*;
+import com.blackbox.graph.events.PointsLoaded;
+import com.blackbox.graph.events.StopEvent;
 import com.blackbox.renderer.Renderer;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * The graph container, handles GLFW, the window, user input, and the renderer.

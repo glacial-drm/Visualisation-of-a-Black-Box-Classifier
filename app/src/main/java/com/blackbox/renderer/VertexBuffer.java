@@ -15,37 +15,36 @@ public class VertexBuffer {
      */
     public VertexBuffer() {
         vboId = glGenBuffers();
+
+        if (vboId < 0) {
+            throw new RuntimeException("Failed to create vertex buffer");
+        }
     }
 
 
     /**
      * Clears the allocated memory on the GPU
-     *
-     * @return true if no error
      */
-    public boolean destroy() {
+    public void destroy() {
         glDeleteBuffers(vboId);
-        return true;
     }
 
     /**
      * Binds the buffer to a GL_ARRAY_BUFFER
-     *
-     * @return true if nothing fails
      */
-    public boolean bind() {
+    public void bind() {
+        assert glGetInteger(GL_ARRAY_BUFFER_BINDING) == 0;
+
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        return true;
     }
 
     /**
      * Unbinds this vbo
-     *
-     * @return true if no fail
      */
-    public boolean unbind() {
+    public void unbind() {
+        assert vboId == glGetInteger(GL_ARRAY_BUFFER_BINDING);
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        return true;
     }
 
     /**
@@ -63,11 +62,11 @@ public class VertexBuffer {
             throw new IllegalArgumentException("data is not a multiple of dimension");
         }
 
-        bind();
+        assert vboId == glGetInteger(GL_ARRAY_BUFFER_BINDING);
+
         FloatBuffer buf = addFloatData(data);
         glBufferData(GL_ARRAY_BUFFER, buf, GL_STATIC_DRAW);
         glVertexAttribPointer(attribute, dimension, GL_FLOAT, false, 0, 0);
-        unbind();
     }
 
     /**
