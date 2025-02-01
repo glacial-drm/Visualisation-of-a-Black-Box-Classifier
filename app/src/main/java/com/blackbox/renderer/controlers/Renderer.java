@@ -8,7 +8,6 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Renderer {
     private final Model model;
-
     /**
      * Resizes the window to the given size <br>
      * initialise the shaders and creates there shader programs <br>

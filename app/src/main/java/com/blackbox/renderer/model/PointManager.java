@@ -35,19 +35,25 @@ public class PointManager {
 
     public void calculatePointsMVP(Camera camera) {
         // Calculate View and Perspective matrix
-        Matrix4f vp = new Matrix4f().mul(camera.createViewMatrix(), camera.getProjectionMatrix());
 
         // loop through all points and calculate their MVP
         // then set it as the attribute
-        for(Point point : points) {
-            Matrix4f model = Camera.createTransformMatrix(point.getPosition(), point.getRotation(), point.getScale());
-            Matrix4f mvp = new Matrix4f().mul(model, vp);
-        }
-    }
 
-    public void prepColours() {
+
+        Matrix4f projection = camera.getProjectionMatrix();
+        Matrix4f view = camera.getViewMatrix();
+
         for(Point point : points) {
-            point.setColour();
+            // upload point matrix
+            Matrix4f model = Camera.createTransformMatrix(point.getPosition(), point.getRotation(), point.getScale());
+
+            Matrix4f mvp = new Matrix4f()
+                    .identity()
+                    .mul(projection)
+                    .mul(view)
+                    .mul(model);
+
+            point.uploadMVP(mvp);
         }
     }
 }

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public class Point {
 
@@ -26,7 +27,7 @@ public class Point {
     protected ArrayList<Integer> attributes;
     protected VertexArray vertexArray;
     protected VertexBuffer vertexBuffer;
-    private  VertexBuffer colourBuffer;
+    private  VertexBuffer mvpBuffer;
     protected IndexBuffer indexBuffer;
 
 
@@ -51,6 +52,8 @@ public class Point {
         initVertexArray();
         setUpVertexBuffer();
         initIndexBuffer();
+
+        mvpBuffer = new VertexBuffer();
     }
 
     /**
@@ -68,6 +71,7 @@ public class Point {
 
         int stride = (3 + 3) * Float.BYTES;
 
+        vertexArray.bind();
         vertexBuffer = new VertexBuffer();
         vertexBuffer.bind();
 
@@ -83,6 +87,7 @@ public class Point {
         attributes.add(1);
 
         vertexBuffer.unbind();
+        vertexArray.unbind();
     }
 
     public void uploadUniforms(Camera camera, Shader shader) {
@@ -164,6 +169,27 @@ public class Point {
         return radius;
     }
 
-    public void setColour() {
+    public void uploadMVP(Matrix4f mvp) {
+        vertexArray.bind();
+        mvpBuffer.bind();
+        mvpBuffer.destroy();
+        mvpBuffer = new VertexBuffer();
+        mvpBuffer.bind();
+
+        float[] mvpFloat = new float[16];
+        mvp.get(mvpFloat);
+
+        mvpBuffer.storeFloatData(mvpFloat);
+        int stride = 16 * Float.BYTES;
+
+        for(int y = 0; y < 4; y++){
+            int offset = y * 4 * Float.BYTES;
+            vertexArray.setVertexAttrib(y+2, 4, GL_FLOAT, false, stride, offset);
+            attributes.add(y+2);
+            glVertexAttribDivisor(y+2, 1);
+        }
+
+        mvpBuffer.unbind();
+        vertexArray.unbind();
     }
 }

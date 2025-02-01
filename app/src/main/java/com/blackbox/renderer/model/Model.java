@@ -79,7 +79,6 @@ public class Model {
     }
 
     public void prepPoints() {
-        //pointManager.prepColours();
-        //pointManager.calculatePointsMVP(camera);
+        pointManager.calculatePointsMVP(camera);
     }
 }
