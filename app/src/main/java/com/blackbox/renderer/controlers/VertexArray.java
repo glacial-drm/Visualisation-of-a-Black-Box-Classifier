@@ -1,33 +1,29 @@
 package com.blackbox.renderer.controlers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.glGetInteger;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public class VertexArray {
     private final int vaoId;
+    private List<Integer> attributes;
 
     /**
      * Create an openGL vertex array and stores the value in vaoId
      */
     public VertexArray() {
         vaoId = glGenVertexArrays();
-
+        attributes = new ArrayList<>();
         if(vaoId < 0) {
             throw new RuntimeException("Failed to create vertex array");
         }
-    }
-
-    /**
-     * Enable the given vertex attribute
-     *
-     * @param attribute the index in the VertexArray
-     */
-    public void enableVertexAttrib(int attribute) {
-        glEnableVertexAttribArray(attribute);
     }
 
     /**
@@ -62,15 +58,35 @@ public class VertexArray {
         return vaoId;
     }
 
+
+    /**
+     * Enables all attributes
+     */
+    public void enableVertexAttributes() {
+        for(Integer attribute : attributes) {
+            glEnableVertexAttribArray(attribute);
+        }
+    }
+
     /**
      * disables the shader arg
      */
-    public void disableVertexAttrib() {
-        glDisableVertexAttribArray(0);
+    public void disableVertexAttributes() {
+        for(Integer attribute : attributes) {
+            glDisableVertexAttribArray(attribute);
+        }
     }
 
-    public void setVertexAttrib(int attribute, int size, int type, boolean normalised, int stride, int offset) {
+
+    public void setVertexAttrib(int attribute, int size, int type, boolean normalised,
+                                int stride, int offset, boolean instanced) {
         glVertexAttribPointer(attribute, size, type, normalised, stride, offset); // Position: 3 floats, starts at offset 0
         glEnableVertexAttribArray(attribute);
+
+        if(instanced) {
+            glVertexAttribDivisor(attribute, 1);
+        }
+
+        attributes.add(attribute);
     }
 }

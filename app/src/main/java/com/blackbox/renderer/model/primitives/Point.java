@@ -24,7 +24,6 @@ public class Point {
     protected float scale;
     protected Color colour;
     protected int dimension;
-    protected ArrayList<Integer> attributes;
     protected VertexArray vertexArray;
     protected VertexBuffer vertexBuffer;
     private  VertexBuffer mvpBuffer;
@@ -47,8 +46,7 @@ public class Point {
 
         this.radius = radius;
         this.dimension = 3;
-        attributes = new ArrayList<>();
-        
+
         initVertexArray();
         setUpVertexBuffer();
         initIndexBuffer();
@@ -79,12 +77,10 @@ public class Point {
         vertexBuffer.storeFloatData(interleavedData);
 
         // Configure position attribute (Attribute 0)
-        vertexArray.setVertexAttrib(0, 3, GL_FLOAT, false, stride, 0);
-        attributes.add(0);
+        vertexArray.setVertexAttrib(0, 3, GL_FLOAT, false, stride, 0, false);
 
         // Configure color attribute (Attribute 1)
-        vertexArray.setVertexAttrib(1, 3, GL_FLOAT, false, stride, 3 * Float.BYTES);
-        attributes.add(1);
+        vertexArray.setVertexAttrib(1, 3, GL_FLOAT, false, stride, 3 * Float.BYTES, false);
 
         vertexBuffer.unbind();
         vertexArray.unbind();
@@ -151,16 +147,14 @@ public class Point {
         vertexArray.bind();
         indexBuffer.bind();
 
-        for (int attribute : attributes) {
-            vertexArray.enableVertexAttrib(attribute);
-        }
+        vertexArray.enableVertexAttributes();
     }
 
     /**
      * Disables the attributes and the {@link VertexArray vertex array}
      */
     public void disable() {
-        vertexArray.disableVertexAttrib();
+        vertexArray.disableVertexAttributes();
         vertexArray.unbind();
     }
 
@@ -184,9 +178,7 @@ public class Point {
 
         for(int y = 0; y < 4; y++){
             int offset = y * 4 * Float.BYTES;
-            vertexArray.setVertexAttrib(y+2, 4, GL_FLOAT, false, stride, offset);
-            attributes.add(y+2);
-            glVertexAttribDivisor(y+2, 1);
+            vertexArray.setVertexAttrib(y+2, 4, GL_FLOAT, false, stride, offset, true);
         }
 
         mvpBuffer.unbind();
