@@ -1,9 +1,11 @@
 package com.blackbox.renderer.controlers;
 
 import com.blackbox.renderer.model.Model;
+import com.blackbox.renderer.model.PointManager;
 import com.blackbox.renderer.model.primitives.Point;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 
 public class Renderer {
     private final Model model;
@@ -21,24 +23,32 @@ public class Renderer {
         uploadViewMatrix();
     }
 
+    public void renderSetUp(){
+        clearScreen();
+        move();
+    }
+
     /**
      * The main render loop.
      */
     public void render() {
-        clearScreen();
-        move();
+    }
 
+    public void render(PointManager pointManager) {
         // Update per-instance MVP matrices for all points.
-        model.prepPoints();
+        pointManager.prepPoints();
 
         // Get the shader for rendering points.
         Shader shader = model.getShaders().get(Point.class);
-        shader.setActive();
+        shader.bind();
         uploadProjectionMatrix();
         uploadViewMatrix();
 
         // Render all points
-        model.getPointManager().render();
+        glDrawElementsInstanced(GL_TRIANGLES, pointManager.getIndicesLength(),
+                GL_UNSIGNED_INT, 0, pointManager.getPointCount());
+        shader.unBind();
+        pointManager.cleanUp();
     }
 
     /**

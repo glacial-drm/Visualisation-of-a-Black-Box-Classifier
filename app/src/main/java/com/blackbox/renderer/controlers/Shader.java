@@ -21,7 +21,7 @@ public class Shader {
     private int id;
     private final HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
 
-    private boolean worldBased;
+    private final boolean worldBased;
 
     public Shader(boolean worldBased) {
         this.worldBased = worldBased;
@@ -65,8 +65,15 @@ public class Shader {
     /**
      * Set this shader program as the one of OpenGL to use
      */
-    public void setActive() {
+    public void bind() {
         glUseProgram(id);
+    }
+
+    /**
+     * Set this shader program as the one of OpenGL to use
+     */
+    public void unBind() {
+        glUseProgram(0);
     }
 
     /**
@@ -96,10 +103,11 @@ public class Shader {
      * @param name uniform name in shader
      */
     private void checkUniformLocation(String name) {
-        setActive();
+        bind();
         if(!uniformLocations.containsKey(name)) {
             getUniformLocations(name);
         }
+        unBind();
     }
 
     /**

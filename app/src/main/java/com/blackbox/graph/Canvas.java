@@ -145,7 +145,11 @@ public class Canvas {
      * Does the rendering and responds to events.
      */
     private void loop() {
-        renderer.render();
+        renderer.renderSetUp();
+
+        if(rendererModel.getPointManager().isPoints()){
+            renderer.render(rendererModel.getPointManager());
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

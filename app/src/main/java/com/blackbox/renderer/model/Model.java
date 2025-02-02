@@ -12,10 +12,10 @@ import java.util.HashMap;
  * and manages which object handles specific tasks.
  */
 public class Model {
-    private int sWidth, sHeight;
-    private Camera camera;
     private final HashMap<Class<?>, Shader> shaders = new HashMap<>();
     private final PointManager pointManager;
+    private int sWidth, sHeight;
+    private Camera camera;
 
     public Model(int width, int height) {
         this.sWidth = width;
@@ -53,24 +53,16 @@ public class Model {
         return camera;
     }
 
+    public void setCamera(Camera camera) {
+        this.camera = camera;
+    }
+
     public int getWidth() {
         return sWidth;
     }
 
     public int getHeight() {
         return sHeight;
-    }
-
-    public void setCamera(Camera camera) {
-        this.camera = camera;
-    }
-
-    /**
-     * Prepares point data for rendering by computing and uploading MVP matrices.
-     */
-    public void prepPoints() {
-        pointManager.uploadModel();
-        pointManager.uploadColourData();
     }
 
     /**

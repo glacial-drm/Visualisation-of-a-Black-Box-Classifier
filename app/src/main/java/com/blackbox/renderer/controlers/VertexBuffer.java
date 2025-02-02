@@ -53,7 +53,7 @@ public class VertexBuffer {
     /**
      * Stores the given data inside the buffer ready to send to the GPU and unbinds the VertexBuffer
      *
-     * @param data      array of floating point values
+     * @param data array of floating point values
      */
     public void storeFloatData(float[] data) {
         // Validate and create a FloatBuffer

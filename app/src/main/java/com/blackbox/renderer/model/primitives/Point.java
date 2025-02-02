@@ -1,7 +1,6 @@
 package com.blackbox.renderer.model.primitives;
 
 import com.blackbox.renderer.controlers.Camera;
-import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

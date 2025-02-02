@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class OnnxModel {
 
-    private OrtEnvironment environment;
-    private OrtSession session;
+    private final OrtEnvironment environment;
+    private final OrtSession session;
 
     // Create the environment from a path to an ONNX file.
     public OnnxModel(String filePath) throws FileNotFoundException {

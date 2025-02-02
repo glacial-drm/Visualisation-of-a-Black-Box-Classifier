@@ -12,15 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL33.*;
 
 public class PointManager {
     private final List<Point> points;
-    private int indicesLength;
-
     // Shared objects for instanced rendering:
     private final VertexArray vao;
+    private int indicesLength;
     private IndexBuffer indexBuffer;
     // Instance VBOs:
     private VertexBuffer instanceVBO;       // For MVP matrices
@@ -28,7 +25,6 @@ public class PointManager {
 
     public PointManager() {
         vao = new VertexArray();
-
         points = new ArrayList<>();
         initInstanceRendering();
     }
@@ -38,7 +34,7 @@ public class PointManager {
      */
     public void addPoint(PointData pointData) {
         Vector3f position = new Vector3f(pointData.feature1, pointData.feature2, 0);
-        Vector3f color = pointData.label == 1 ? new Vector3f(1.0f, 0, 0) : new Vector3f(0, 0, 1.0f) ;
+        Vector3f color = pointData.label == 1 ? new Vector3f(1.0f, 0, 0) : new Vector3f(0, 0, 1.0f);
         points.add(new Point(position, new Vector3f(0, 0, 0), 0.1f, color));
     }
 
@@ -59,12 +55,7 @@ public class PointManager {
     }
 
     private void initVertexPositionData() {
-        float[] vertices = {
-                -0.5f,  0.5f, 0f,
-                -0.5f, -0.5f, 0f,
-                0.5f, -0.5f, 0f,
-                0.5f,  0.5f, 0f,
-        };
+        float[] vertices = {-0.5f, 0.5f, 0f, -0.5f, -0.5f, 0f, 0.5f, -0.5f, 0f, 0.5f, 0.5f, 0f,};
 
         // Create and upload geometry vertex data.
         VertexBuffer vertexBuffer = new VertexBuffer();
@@ -78,10 +69,7 @@ public class PointManager {
 
     private void initIndexBuffer() {
         // Indices for two triangles (quad)
-        final int[] indices = {
-                0, 1, 3,
-                3, 1, 2
-        };
+        final int[] indices = {0, 1, 3, 3, 1, 2};
         indicesLength = indices.length;
         // Create and upload index data.
         indexBuffer = new IndexBuffer();
@@ -111,7 +99,22 @@ public class PointManager {
         instanceVBO.unbind();
     }
 
-    public void uploadModel() {
+    public void prepPoints() {
+        uploadModel();
+        uploadColourData();
+
+        vao.bind();
+        vao.enableVertexAttributes();
+        indexBuffer.bind();
+    }
+
+    public void cleanUp() {
+        vao.disableVertexAttributes();
+        indexBuffer.unbind();
+        vao.unbind();
+    }
+
+    private void uploadModel() {
         int count = points.size();
 
         float[] mvpData = new float[count * 16];
@@ -126,7 +129,7 @@ public class PointManager {
         instanceVBO.unbind();
     }
 
-    public void uploadColourData(){
+    private void uploadColourData() {
         // upload per-instance color data.
         float[] colorData = extractColors(points);
         instanceColorVBO.bind();
@@ -146,14 +149,15 @@ public class PointManager {
         return colorData;
     }
 
-    /**
-     * Renders all points in one instanced draw call.
-     */
-    public void render() {
-        vao.bind();
-        indexBuffer.bind();
-        glDrawElementsInstanced(GL_TRIANGLES, indicesLength, GL_UNSIGNED_INT, 0, points.size());
-        indexBuffer.unbind();
-        vao.unbind();
+    public boolean isPoints() {
+        return !points.isEmpty();
+    }
+
+    public int getPointCount() {
+        return points.size();
+    }
+
+    public int getIndicesLength() {
+        return indicesLength;
     }
 }
