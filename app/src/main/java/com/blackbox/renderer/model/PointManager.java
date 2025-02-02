@@ -1,59 +1,159 @@
 package com.blackbox.renderer.model;
 
 import com.blackbox.model.PointData;
-import com.blackbox.renderer.controlers.Camera;
+import com.blackbox.renderer.controlers.IndexBuffer;
+import com.blackbox.renderer.controlers.VertexArray;
+import com.blackbox.renderer.controlers.VertexBuffer;
 import com.blackbox.renderer.model.primitives.Point;
-import javafx.scene.paint.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Handles storing all the points
- * Manages VAO's which allows for instance rendering
- * Manages MVP matrix for each point to allow for instancing
- *
- */
+import static org.lwjgl.opengl.GL11C.GL_FLOAT;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL33.*;
+
 public class PointManager {
-    private List<Point> points;
+    private final List<Point> points;
+    private int indicesLength;
+
+    // Shared objects for instanced rendering:
+    private final VertexArray vao;
+    private IndexBuffer indexBuffer;
+    // Instance VBOs:
+    private VertexBuffer instanceVBO;       // For MVP matrices
+    private VertexBuffer instanceColorVBO;  // For per-instance colors
 
     public PointManager() {
+        vao = new VertexArray();
+
         points = new ArrayList<>();
+        initInstanceRendering();
     }
 
-    public void addPoint(PointData point) {
-        Vector3f position = new Vector3f(point.feature1, point.feature2, 0);
-        Color color = point.label == 1 ? Color.RED : Color.BLUE;
-        points.add(new Point(position, 0.5f, new Vector3f(0, 0, 0), 0.1f, color));
+    /**
+     * Adds a point using your provided data.
+     */
+    public void addPoint(PointData pointData) {
+        Vector3f position = new Vector3f(pointData.feature1, pointData.feature2, 0);
+        Vector3f color = pointData.label == 1 ? new Vector3f(1.0f, 0, 0) : new Vector3f(0, 0, 1.0f) ;
+        points.add(new Point(position, new Vector3f(0, 0, 0), 0.1f, color));
     }
 
-    public List<Point> getPoints() {
-        return points;
+    /**
+     * Sets up the shared VAO, geometry VBO, index buffer,
+     * instance VBO for MVP matrices, and instance VBO for colors.
+     */
+    private void initInstanceRendering() {
+        vao.bind();
+
+        initVertexPositionData();
+        initIndexBuffer();
+        // Create the instance VBO for MVP matrices.
+        initModelData();
+        initColourData();
+
+        vao.unbind();
     }
 
-    public void calculatePointsMVP(Camera camera) {
-        // Calculate View and Perspective matrix
+    private void initVertexPositionData() {
+        float[] vertices = {
+                -0.5f,  0.5f, 0f,
+                -0.5f, -0.5f, 0f,
+                0.5f, -0.5f, 0f,
+                0.5f,  0.5f, 0f,
+        };
 
-        // loop through all points and calculate their MVP
-        // then set it as the attribute
+        // Create and upload geometry vertex data.
+        VertexBuffer vertexBuffer = new VertexBuffer();
+        vertexBuffer.bind();
+        vertexBuffer.storeFloatData(vertices);
+        int stride = (3) * Float.BYTES;  // 3 floats for position, 3 for color
+        // Attribute 0: position
+        vao.setVertexAttrib(0, 3, GL_FLOAT, false, stride, 0, false);
+        vertexBuffer.unbind();
+    }
+
+    private void initIndexBuffer() {
+        // Indices for two triangles (quad)
+        final int[] indices = {
+                0, 1, 3,
+                3, 1, 2
+        };
+        indicesLength = indices.length;
+        // Create and upload index data.
+        indexBuffer = new IndexBuffer();
+        indexBuffer.bind();
+        indexBuffer.storeIndexData(indices);
+        indexBuffer.unbind();
+    }
 
 
-        Matrix4f projection = camera.getProjectionMatrix();
-        Matrix4f view = camera.getViewMatrix();
+    private void initColourData() {
+        // Create the instance VBO for per-instance color.
+        instanceColorVBO = new VertexBuffer();
+        instanceColorVBO.bind();
+        vao.setVertexAttrib(1, 3, GL_FLOAT, false, 3 * Float.BYTES, 0, true);
+        instanceColorVBO.unbind();
+    }
 
-        for(Point point : points) {
-            // upload point matrix
-            Matrix4f model = Camera.createTransformMatrix(point.getPosition(), point.getRotation(), point.getScale());
-
-            Matrix4f mvp = new Matrix4f()
-                    .identity()
-                    .mul(projection)
-                    .mul(view)
-                    .mul(model);
-
-            point.uploadMVP(mvp);
+    private void initModelData() {
+        instanceVBO = new VertexBuffer();
+        instanceVBO.bind();
+        // (No initial data; each instance supplies a 4x4 matrix = 16 floats.)
+        int matrixStride = 16 * Float.BYTES;
+        // Set up four vertex attributes (locations 2-5) for each column of the matrix.
+        for (int i = 0; i < 4; i++) {
+            vao.setVertexAttrib(2 + i, 4, GL_FLOAT, false, matrixStride, i * 4 * Float.BYTES, true);
         }
+        instanceVBO.unbind();
+    }
+
+    public void uploadModel() {
+        int count = points.size();
+
+        float[] mvpData = new float[count * 16];
+        int mvpOffset = 0;
+        for (Point point : points) {
+            Matrix4f model = point.getModelMatrix();
+            model.get(mvpData, mvpOffset);
+            mvpOffset += 16;
+        }
+        instanceVBO.bind();
+        instanceVBO.storeFloatData(mvpData);
+        instanceVBO.unbind();
+    }
+
+    public void uploadColourData(){
+        // upload per-instance color data.
+        float[] colorData = extractColors(points);
+        instanceColorVBO.bind();
+        instanceColorVBO.storeFloatData(colorData);
+        instanceColorVBO.unbind();
+    }
+
+    private float[] extractColors(List<Point> points) {
+        float[] colorData = new float[points.size() * 3];
+        int colorOffset = 0;
+        for (Point point : points) {
+            Vector3f col = point.getColour();
+            colorData[colorOffset++] = col.x();
+            colorData[colorOffset++] = col.y();
+            colorData[colorOffset++] = col.z();
+        }
+        return colorData;
+    }
+
+    /**
+     * Renders all points in one instanced draw call.
+     */
+    public void render() {
+        vao.bind();
+        indexBuffer.bind();
+        glDrawElementsInstanced(GL_TRIANGLES, indicesLength, GL_UNSIGNED_INT, 0, points.size());
+        indexBuffer.unbind();
+        vao.unbind();
     }
 }

@@ -5,39 +5,32 @@ import com.blackbox.renderer.controlers.Camera;
 import com.blackbox.renderer.controlers.Shader;
 import com.blackbox.renderer.model.primitives.Point;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Stores data which the renderer needs
- * Manages which handle specific tasks
+ * and manages which object handles specific tasks.
  */
 public class Model {
     private int sWidth, sHeight;
     private Camera camera;
-    private final HashMap<Class<?>, Shader> shaders = new HashMap<Class<?>, Shader>();
-    private final ArrayList<Point> objects = new ArrayList<Point>();
-
+    private final HashMap<Class<?>, Shader> shaders = new HashMap<>();
     private final PointManager pointManager;
 
     public Model(int width, int height) {
         this.sWidth = width;
         this.sHeight = height;
         pointManager = new PointManager();
-
         initShaders();
     }
 
     /**
-     * Loads in the shaders from their files and stores them in a hashmap with key of
-     * {@link Shader shader}
+     * Loads the shader(s) from files and stores them in a hashmap.
      */
     private void initShaders() {
-        // Load the disk shader
-        Shader diskShader = new Shader(true);
-        diskShader.create("vertex.glsl", "fragment.glsl");
-        shaders.put(Point.class, diskShader);
+        Shader pointShader = new Shader(true);
+        pointShader.create("vertex.glsl", "fragment.glsl");
+        shaders.put(Point.class, pointShader);
     }
 
     public HashMap<Class<?>, Shader> getShaders() {
@@ -45,9 +38,7 @@ public class Model {
     }
 
     /**
-     * Add a point.
-     * Will be coloured either red or blue depending on the label.
-     * For now has a fixed radius.
+     * Adds a point (color depends on the label).
      */
     public void addPoint(PointData point) {
         pointManager.addPoint(point);
@@ -62,10 +53,6 @@ public class Model {
         return camera;
     }
 
-    public List<Point> getObjects() {
-        return pointManager.getPoints();
-    }
-
     public int getWidth() {
         return sWidth;
     }
@@ -78,7 +65,18 @@ public class Model {
         this.camera = camera;
     }
 
+    /**
+     * Prepares point data for rendering by computing and uploading MVP matrices.
+     */
     public void prepPoints() {
-        pointManager.calculatePointsMVP(camera);
+        pointManager.uploadModel();
+        pointManager.uploadColourData();
+    }
+
+    /**
+     * Provides access to the point manager.
+     */
+    public PointManager getPointManager() {
+        return pointManager;
     }
 }

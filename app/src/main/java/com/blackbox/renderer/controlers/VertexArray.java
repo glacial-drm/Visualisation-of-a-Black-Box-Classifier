@@ -13,80 +13,102 @@ import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public class VertexArray {
     private final int vaoId;
-    private List<Integer> attributes;
+    private final List<Integer> attributes = new ArrayList<>();
 
     /**
-     * Create an openGL vertex array and stores the value in vaoId
+     * Creates a new OpenGL vertex array and stores its ID.
      */
     public VertexArray() {
         vaoId = glGenVertexArrays();
-        attributes = new ArrayList<>();
-        if(vaoId < 0) {
+        if (vaoId <= 0) {
             throw new RuntimeException("Failed to create vertex array");
         }
     }
 
     /**
-     * Binds the current vertex array
+     * Binds this vertex array.
      */
     public void bind() {
-        assert glGetInteger(GL_VERTEX_ARRAY_BINDING) == 0;
-
         glBindVertexArray(vaoId);
     }
 
     /**
-     * unbinds the current vao
+     * Unbinds any vertex array.
      */
     public void unbind() {
-        assert vaoId == glGetInteger(GL_VERTEX_ARRAY_BINDING);
-
         glBindVertexArray(0);
     }
 
     /**
-     * Clears the memory allocated on the gpu
+     * Deletes this vertex array from GPU memory.
      */
     public void delete() {
-        glDeleteBuffers(vaoId);
+        glDeleteVertexArrays(vaoId);
     }
 
     /**
-     * Getter for the vaoID
+     * Returns the ID of this vertex array.
      */
     public int getVaoId() {
         return vaoId;
     }
 
+    /**
+     * Checks that this VAO is currently bound.
+     * Throws an IllegalStateException if it is not.
+     */
+    private void ensureBound() {
+        int current = glGetInteger(GL_VERTEX_ARRAY_BINDING);
+        if (current != vaoId) {
+            throw new IllegalStateException("VertexArray " + vaoId +
+                    " is not bound. Current bound VAO is " + current);
+        }
+    }
 
     /**
-     * Enables all attributes
+     * Enables all stored vertex attribute arrays.
+     * This method requires that this VAO is already bound.
      */
     public void enableVertexAttributes() {
-        for(Integer attribute : attributes) {
+        ensureBound();
+        for (int attribute : attributes) {
             glEnableVertexAttribArray(attribute);
         }
     }
 
     /**
-     * disables the shader arg
+     * Disables all stored vertex attribute arrays.
+     * This method requires that this VAO is already bound.
      */
     public void disableVertexAttributes() {
-        for(Integer attribute : attributes) {
+        ensureBound();
+        for (int attribute : attributes) {
             glDisableVertexAttribArray(attribute);
         }
     }
 
-
-    public void setVertexAttrib(int attribute, int size, int type, boolean normalised,
+    /**
+     * Configures a vertex attribute pointer.
+     * <p>
+     * This method requires that this VAO is already bound.
+     * </p>
+     *
+     * @param attribute   The attribute index.
+     * @param size        The number of components per vertex attribute.
+     * @param type        The data type (e.g. GL_FLOAT).
+     * @param normalized  Whether fixed-point data should be normalized.
+     * @param stride      Byte offset between consecutive attributes.
+     * @param offset      Byte offset of the first attribute.
+     * @param instanced   Whether this attribute is instanced.
+     */
+    public void setVertexAttrib(int attribute, int size, int type, boolean normalized,
                                 int stride, int offset, boolean instanced) {
-        glVertexAttribPointer(attribute, size, type, normalised, stride, offset); // Position: 3 floats, starts at offset 0
+        ensureBound();
+        glVertexAttribPointer(attribute, size, type, normalized, stride, offset);
         glEnableVertexAttribArray(attribute);
-
-        if(instanced) {
+        if (instanced) {
             glVertexAttribDivisor(attribute, 1);
         }
-
         attributes.add(attribute);
     }
 }
