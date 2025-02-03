@@ -35,19 +35,20 @@ public class Renderer {
     }
 
     public void render(PointManager pointManager) {
-        // Update per-instance MVP matrices for all points.
-        pointManager.prepPoints();
-
         // Get the shader for rendering points.
         Shader shader = model.getShaders().get(Point.class);
-        shader.bind();
         uploadProjectionMatrix();
         uploadViewMatrix();
 
+        shader.bind();
+
+        // Update per-instance MVP matrices for all points.
+        pointManager.prepPoints();
         // Render all points
         glDrawElementsInstanced(GL_TRIANGLES, pointManager.getIndicesLength(),
                 GL_UNSIGNED_INT, 0, pointManager.getPointCount());
         pointManager.cleanUp();
+        shader.unbind();
     }
 
     /**
@@ -55,9 +56,11 @@ public class Renderer {
      */
     private void uploadProjectionMatrix() {
         model.getShaders().values().forEach(shader -> {
+            shader.bind();
             if (shader.isWorldBased()) {
                 shader.loadUniform("projectionMatrix", model.getCamera().getProjectionMatrix());
             }
+            shader.unbind();
         });
     }
 
@@ -66,9 +69,11 @@ public class Renderer {
      */
     private void uploadViewMatrix() {
         model.getShaders().values().forEach(shader -> {
+            shader.bind();
             if (shader.isWorldBased()) {
                 shader.loadUniform("viewMatrix", model.getCamera().getViewMatrix());
             }
+            shader.unbind();
         });
     }
 

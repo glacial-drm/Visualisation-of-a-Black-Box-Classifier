@@ -63,17 +63,10 @@ public class VertexArray {
         glBindVertexArray(0);
     }
 
-    // Getters
-    /**
-     * Returns the OpenGL ID of this VertexArray object.
-     *
-     * @return the VAO ID.
-     */
-    public int getVaoId() {
-        return vaoId;
-    }
+    // -------------------------------------------------------------------------
+    // OpenGL State Check Methods
+    // -------------------------------------------------------------------------
 
-    // Check methods
     /**
      * Ensures that this VertexArray object is currently bound.
      *
@@ -147,5 +140,19 @@ public class VertexArray {
             glVertexAttribDivisor(attribute, 1);
         }
         attributes.add(attribute);
+    }
+
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
+
+    /**
+     * Returns the OpenGL ID of this VertexArray object.
+     *
+     * @return the VAO ID.
+     */
+    public int getVaoId() {
+        return vaoId;
     }
 }

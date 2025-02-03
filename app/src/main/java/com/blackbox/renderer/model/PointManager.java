@@ -17,7 +17,6 @@ public class PointManager {
     private final List<Point> points;
     // Shared objects for instanced rendering:
     private final VertexArray vao;
-    private int indicesLength;
     private IndexBuffer indexBuffer;
     // Instance VBOs:
     private VertexBuffer instanceVBO;       // For MVP matrices
@@ -70,7 +69,6 @@ public class PointManager {
     private void initIndexBuffer() {
         // Indices for two triangles (quad)
         final int[] indices = {0, 1, 3, 3, 1, 2};
-        indicesLength = indices.length;
         // Create and upload index data.
         indexBuffer = new IndexBuffer();
         indexBuffer.bind();
@@ -158,6 +156,6 @@ public class PointManager {
     }
 
     public int getIndicesLength() {
-        return indicesLength;
+        return indexBuffer.getCount();
     }
 }

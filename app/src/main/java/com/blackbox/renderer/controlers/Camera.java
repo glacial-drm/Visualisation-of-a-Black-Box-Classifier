@@ -173,8 +173,7 @@ public class Camera {
         viewChanged = false;
     }
 
-    public Camera resize(int width, int height) {
+    public void resize(int width, int height) {
         projectionMatrix = createProjectionMatrix(width, height, fov, near, far);
-        return this;
     }
 }

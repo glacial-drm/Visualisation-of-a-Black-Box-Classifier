@@ -94,7 +94,9 @@ public class VertexBuffer {
         return buffer;
     }
 
-    // Check methods
+    // -------------------------------------------------------------------------
+    // OpenGL State Check Methods
+    // -------------------------------------------------------------------------
 
     /**
      * Ensures that this VertexBuffer object is currently bound.
@@ -120,7 +122,10 @@ public class VertexBuffer {
         }
     }
 
+    // -------------------------------------------------------------------------
     // Getters
+    // -------------------------------------------------------------------------
+
     /**
      * Returns the OpenGL ID of this VertexBuffer object.
      *
