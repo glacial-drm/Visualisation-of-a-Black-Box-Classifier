@@ -70,13 +70,6 @@ public class Shader {
     }
 
     /**
-     * Set this shader program as the one of OpenGL to use
-     */
-    public void unBind() {
-        glUseProgram(0);
-    }
-
-    /**
      * Loads a vector 3 into GPU memory
      * @param name uniform name in the shader
      * @param vector a 3d vector of floating point values
@@ -103,11 +96,9 @@ public class Shader {
      * @param name uniform name in shader
      */
     private void checkUniformLocation(String name) {
-        bind();
         if(!uniformLocations.containsKey(name)) {
             getUniformLocations(name);
         }
-        unBind();
     }
 
     /**

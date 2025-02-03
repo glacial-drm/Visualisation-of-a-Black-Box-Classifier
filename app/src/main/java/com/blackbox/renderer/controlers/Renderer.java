@@ -47,7 +47,6 @@ public class Renderer {
         // Render all points
         glDrawElementsInstanced(GL_TRIANGLES, pointManager.getIndicesLength(),
                 GL_UNSIGNED_INT, 0, pointManager.getPointCount());
-        shader.unBind();
         pointManager.cleanUp();
     }
 
