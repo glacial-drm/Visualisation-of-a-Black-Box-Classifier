@@ -109,4 +109,15 @@ javafx {
 application {
     // Define the main class for the application.
     mainClass = "com.blackbox.app.App"
+    applicationDefaultJvmArgs = run {
+	val osName = System.getProperty("os.name")!!
+	val macNames = arrayOf("Mac OS X", "Darwin")
+
+	if (macNames.any {
+	    osName.startsWith(it)
+	})
+	    listOf("-XstartOnFirstThread")
+	else
+	    listOf()
+    }
 }
