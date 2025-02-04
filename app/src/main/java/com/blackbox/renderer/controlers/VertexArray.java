@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
  * making it easier to manage vertex data for rendering.
  */
 public class VertexArray {
-    private final int vaoId;
+    private int vaoId;
     private final List<Integer> attributes = new ArrayList<>();
 
     // Memory allocation functions
@@ -37,9 +37,11 @@ public class VertexArray {
     /**
      * Deletes this VertexArray object, freeing its associated OpenGL resources.
      * This method does not require the VAO to be bound.
+     * Sets vaoId to -1 to indicate its been destroyed
      */
     public void delete() {
         glDeleteVertexArrays(vaoId);
+        vaoId = -1;
     }
 
     // State management methods
@@ -63,33 +65,6 @@ public class VertexArray {
         glBindVertexArray(0);
     }
 
-    // -------------------------------------------------------------------------
-    // OpenGL State Check Methods
-    // -------------------------------------------------------------------------
-
-    /**
-     * Ensures that this VertexArray object is currently bound.
-     *
-     * @throws IllegalStateException if this VAO is not bound.
-     */
-    private void ensureBound() {
-        int current = glGetInteger(GL_VERTEX_ARRAY_BINDING);
-        if (current != vaoId) {
-            throw new IllegalStateException("VertexArray " + vaoId + " is not bound. Current bound VAO is " + current);
-        }
-    }
-
-    /**
-     * Ensures that no VertexArray object is currently bound.
-     *
-     * @throws IllegalStateException if another VAO is bound.
-     */
-    private void ensureNonBound() {
-        int current = glGetInteger(GL_VERTEX_ARRAY_BINDING);
-        if (current != 0) {
-            throw new IllegalStateException("VertexArray " + current + " is bound. No VAO should be bound");
-        }
-    }
 
     // Attribute methods
     /**
@@ -154,5 +129,33 @@ public class VertexArray {
      */
     public int getVaoId() {
         return vaoId;
+    }
+
+    // -------------------------------------------------------------------------
+    // OpenGL State Check Methods
+    // -------------------------------------------------------------------------
+
+    /**
+     * Ensures that this VertexArray object is currently bound.
+     *
+     * @throws IllegalStateException if this VAO is not bound.
+     */
+    private void ensureBound() {
+        int current = glGetInteger(GL_VERTEX_ARRAY_BINDING);
+        if (current != vaoId) {
+            throw new IllegalStateException("VertexArray " + vaoId + " is not bound. Current bound VAO is " + current);
+        }
+    }
+
+    /**
+     * Ensures that no VertexArray object is currently bound.
+     *
+     * @throws IllegalStateException if another VAO is bound.
+     */
+    private void ensureNonBound() {
+        int current = glGetInteger(GL_VERTEX_ARRAY_BINDING);
+        if (current != 0) {
+            throw new IllegalStateException("VertexArray " + current + " is bound. No VAO should be bound");
+        }
     }
 }

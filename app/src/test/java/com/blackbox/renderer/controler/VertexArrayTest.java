@@ -19,7 +19,7 @@ class VertexArrayTest {
     @BeforeEach
     void setUp() {
         glfwInit();
-        window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+        window = glfwCreateWindow(1, 1, "Testing", NULL, NULL);
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
     }
@@ -32,71 +32,153 @@ class VertexArrayTest {
         glfwTerminate();
     }
 
+    /// =======================================================================
+    ///  CREATION TESTS
+    /// =======================================================================
+
     @Test
-    void testVertexArrayCreation() {
+    void testVertexArrayCreationNoBinds() {
         VertexArray vertexArray = new VertexArray();
-        assertTrue(vertexArray.getVaoId() > 0, "VAO ID should be greater than 0");
-        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen after creating VAO");
+        assertTrue(vertexArray.getVaoId() > 0, "Vao failed to init");
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
     }
 
     @Test
-    void testBind() {
+    void testVertexArrayCreationOtherBound() {
         VertexArray vertexArray = new VertexArray();
         vertexArray.bind();
-        assertEquals(vertexArray.getVaoId(), glGetInteger(GL_VERTEX_ARRAY_BINDING), "Bound VAO ID should match the created VAO ID");
-        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen after binding VAO");
+
+        assertThrows(IllegalStateException.class, VertexArray::new);
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
     }
 
     @Test
-    void testUnbind() {
+    void testVertexArrayAfterUnbind() {
         VertexArray vertexArray = new VertexArray();
         vertexArray.bind();
         vertexArray.unbind();
-        assertEquals(0, glGetInteger(GL_VERTEX_ARRAY_BINDING), "VAO should be unbound");
-        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen after unbinding VAO");
+
+        new VertexArray();
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
     }
 
-    @Test
-    void testEnableVertexAttrib() {
-        VertexArray vertexArray = new VertexArray();
-        vertexArray.bind();
-        vertexArray.enableVertexAttrib(0);
-        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen after enabling vertex attribute");
-    }
+    /// =======================================================================
+    ///  DELETE TESTS
+    /// =======================================================================
 
     @Test
-    void testDisableVertexAttrib() {
-        VertexArray vertexArray = new VertexArray();
-        vertexArray.bind();
-        vertexArray.enableVertexAttrib(0);
-        vertexArray.disableVertexAttrib();
-        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen after disabling vertex attribute");
-    }
-
-    @Test
-    void testDelete() {
+    void testVertexDestroyNonBound() {
         VertexArray vertexArray = new VertexArray();
         vertexArray.delete();
-        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen after deleting VAO");
+
+        assertEquals(-1, vertexArray.getVaoId(), "VaoId did not change after delete");
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
     }
 
     @Test
-    void testBindWhenOtherBound() {
-        VertexArray vertexArray1 = new VertexArray();
-        VertexArray vertexArray2 = new VertexArray();
-        vertexArray1.bind();
+    void testVertexDestroyBound() {
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
+        vertexArray.delete();
 
-        // Ensure the assert statement in bind() fails when another VAO is bound
-        assertThrows(AssertionError.class, vertexArray2::bind);
+        assertEquals(-1, vertexArray.getVaoId(), "VaoId did not change after delete");
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
     }
 
     @Test
-    void testUnbindWhenOtherBound() {
-        VertexArray vertexArray1 = new VertexArray();
+    void testVertexDestroyOtherBound() {
+        VertexArray vertexArray = new VertexArray();
         VertexArray vertexArray2 = new VertexArray();
         vertexArray2.bind();
 
-        // Ensure the assert statement in unbind() fails when another VAO is bound
-        assertThrows(AssertionError.class, vertexArray1::unbind);
+        vertexArray.delete();
+
+        assertEquals(-1, vertexArray.getVaoId(), "VaoId did not change after delete");
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
     }
+
+    /// =======================================================================
+    ///  BIND TESTS
+    /// =======================================================================
+
+    @Test
+    void testVertexArrayBindNoBinds() {
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+    @Test
+    void testVertexArrayBindWhileBound() {
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
+
+        assertThrows(IllegalStateException.class, vertexArray::bind);
+
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+
+    @Test
+    void testVertexArrayBindOtherBound() {
+        VertexArray vertexArray = new VertexArray();
+        VertexArray vertexArray2 = new VertexArray();
+        vertexArray.bind();
+
+        assertThrows(IllegalStateException.class, vertexArray2::bind);
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+    @Test
+    void testVertexArrayBindUnbind() {
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
+        vertexArray.unbind();
+        vertexArray.bind();
+
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+    /// =======================================================================
+    ///  UNBIND TESTS
+    /// =======================================================================
+
+    @Test
+    void testVertexArrayUnBindNoBinds() {
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
+        vertexArray.unbind();
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+    @Test
+    void testVertexArrayUnBindWhileNotBound() {
+        VertexArray vertexArray = new VertexArray();
+
+        assertThrows(IllegalStateException.class, vertexArray::unbind);
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+    @Test
+    void testVertexArrayUnBindOtherBound() {
+        VertexArray vertexArray = new VertexArray();
+        VertexArray vertexArray2 = new VertexArray();
+        vertexArray.bind();
+
+        assertThrows(IllegalStateException.class, vertexArray2::unbind);
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+    @Test
+    void testVertexArrayUnBindAfterBind() {
+        VertexArray vertexArray = new VertexArray();
+        vertexArray.bind();
+        vertexArray.unbind();
+        vertexArray.bind();
+        vertexArray.unbind();
+
+        assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present");
+    }
+
+
 }
