@@ -32,17 +32,8 @@ class SVMClassifier:
         return self.model.predict(X)
     
     def save(self):
-        if not self.is_trained or self.n_features is None:  # 双重验证
+        if not self.is_trained or self.n_features is None:
             raise RuntimeError("Model must be trained before saving")
         converter = SaveAsONNX(model=self.model, model_name="SVM.onnx")
         converter.convert(input_shape=[None, self.n_features])
         converter.save()
-
-if __name__ == "__main__":
-    # 生成示例数据
-    X, y = make_circles(n_samples=1000, noise=0.1)
-    X = X.astype(np.float32)  # 确保数据类型
-    
-    # 训练并保存
-    clf = SVMClassifier().fit(X, y)
-    clf.save()
