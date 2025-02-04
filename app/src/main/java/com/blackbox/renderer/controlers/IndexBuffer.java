@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL15.*;
 
 
 public class IndexBuffer {
-    private final int iboId;
+    private int iboId;
     private int count;
 
     /**
@@ -37,6 +37,7 @@ public class IndexBuffer {
      */
     public void destroy() {
         glDeleteBuffers(iboId);
+        iboId = -1;
     }
 
     /**

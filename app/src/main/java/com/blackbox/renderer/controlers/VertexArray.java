@@ -39,7 +39,7 @@ public class VertexArray {
      * This method does not require the VAO to be bound.
      * Sets vaoId to -1 to indicate its been destroyed
      */
-    public void delete() {
+    public void destroy() {
         glDeleteVertexArrays(vaoId);
         vaoId = -1;
     }

@@ -139,7 +139,7 @@ public class PointManager {
         float[] colorData = new float[points.size() * 3];
         int colorOffset = 0;
         for (Point point : points) {
-            Vector3f col = point.getColour();
+            Vector3f col = point.colour();
             colorData[colorOffset++] = col.x();
             colorData[colorOffset++] = col.y();
             colorData[colorOffset++] = col.z();

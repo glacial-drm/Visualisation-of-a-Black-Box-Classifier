@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.GL_VERTEX_ARRAY_BINDING;
 
 /**
  * Class which handles creating vertex and fragment shaders and wrapping them up in programs

@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL30.GL_VERTEX_ARRAY_BINDING;
  * Used to store vertex data,
  */
 public class VertexBuffer {
-    private final int vboId;
+    private int vboId;
 
     // Allocation methods
 
@@ -37,9 +37,11 @@ public class VertexBuffer {
     /**
      * Deletes this VertexBuffer object, freeing its associated OpenGL resources.
      * This method does not require the VBO to be bound.
+     * Sets vboId to -1
      */
     public void destroy() {
         glDeleteBuffers(vboId);
+        vboId = -1;
     }
 
     // State methods
