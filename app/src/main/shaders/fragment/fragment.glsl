@@ -2,8 +2,7 @@
 
 out vec4 FragColor;
 in vec3 pos;
-
-uniform vec3 colour;
+in vec3 colour;
 
 float radius = 1;
 float smoothing = radius * 0.1;

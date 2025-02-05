@@ -4,7 +4,8 @@ import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
-import com.blackbox.renderer.Renderer;
+import com.blackbox.renderer.controlers.Renderer;
+import com.blackbox.renderer.model.Model;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -24,6 +25,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Canvas {
     private long window;
     private Renderer renderer;
+    private Model rendererModel;
     private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
 
     /** Whether to keep running. */
@@ -82,7 +84,8 @@ public class Canvas {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        renderer = new Renderer(width, height);
+        rendererModel = new Model(width, height);
+        renderer = new Renderer(rendererModel);
 
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
@@ -142,7 +145,11 @@ public class Canvas {
      * Does the rendering and responds to events.
      */
     private void loop() {
-        renderer.render();
+        renderer.renderSetUp();
+
+        if(rendererModel.getPointManager().isPoints()){
+            renderer.render(rendererModel.getPointManager());
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -157,7 +164,7 @@ public class Canvas {
 
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
-                renderer.addPoint(pointsLoaded.point);
+                rendererModel.addPoint(pointsLoaded.point);
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;

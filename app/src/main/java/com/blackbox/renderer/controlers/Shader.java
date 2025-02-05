@@ -1,4 +1,4 @@
-package com.blackbox.renderer;
+package com.blackbox.renderer.controlers;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -21,7 +21,7 @@ public class Shader {
     private int id;
     private final HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
 
-    private boolean worldBased;
+    private final boolean worldBased;
 
     public Shader(boolean worldBased) {
         this.worldBased = worldBased;
@@ -34,6 +34,7 @@ public class Shader {
      * @param fragmentFileName expected to be in the src/main/shaders/fragment folder
      */
     public boolean create(String vertexFileName, String fragmentFileName) {
+        ensureNonBound();
         int vertexShader = Integer.MAX_VALUE, fragmentShader = Integer.MAX_VALUE;
         boolean validShaders = true, validProgram = false;
 
@@ -65,8 +66,14 @@ public class Shader {
     /**
      * Set this shader program as the one of OpenGL to use
      */
-    public void setActive() {
+    public void bind() {
+        ensureNonBound();
         glUseProgram(id);
+    }
+
+    public void unbind() {
+        ensureBound();
+        glUseProgram(0);
     }
 
     /**
@@ -75,6 +82,7 @@ public class Shader {
      * @param vector a 3d vector of floating point values
      */
     public void loadUniform(String name, Vector3f vector) {
+        ensureBound();
         checkUniformLocation(name);
         glUniform3f(uniformLocations.get(name), vector.x, vector.y, vector.z);
     }
@@ -85,6 +93,7 @@ public class Shader {
      * @param matrix 4x4 matrix of floats
      */
     public void loadUniform(String name, Matrix4f matrix) {
+        ensureBound();
         checkUniformLocation(name);
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.get(buf));
@@ -96,7 +105,7 @@ public class Shader {
      * @param name uniform name in shader
      */
     private void checkUniformLocation(String name) {
-        setActive();
+        ensureBound();
         if(!uniformLocations.containsKey(name)) {
             getUniformLocations(name);
         }
@@ -108,6 +117,7 @@ public class Shader {
      * @param name uniform name in shader
      */
     private void getUniformLocations(String name) {
+        ensureBound();
         int location = glGetUniformLocation(id, name);
 
         if(location == -1) {
@@ -192,6 +202,38 @@ public class Shader {
 
         return shader;
     }
+
+    // -------------------------------------------------------------------------
+    // OpenGL State Check Methods
+    // -------------------------------------------------------------------------
+
+    /**
+     * Ensures that this VertexArray object is currently bound.
+     *
+     * @throws IllegalStateException if this VAO is not bound.
+     */
+    private void ensureBound() {
+        int current = glGetInteger(GL_CURRENT_PROGRAM);;
+        if (current != id) {
+            throw new IllegalStateException("Shader " + id + " is not bound. Current bound shader is " + current);
+        }
+    }
+
+    /**
+     * Ensures that no VertexArray object is currently bound.
+     *
+     * @throws IllegalStateException if another VAO is bound.
+     */
+    private void ensureNonBound() {
+        int current = glGetInteger(GL_CURRENT_PROGRAM);
+        if (current != 0) {
+            throw new IllegalStateException("Shader " + current + " is bound. No shader should be bound");
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
 
     public boolean isWorldBased() {
         return worldBased;
