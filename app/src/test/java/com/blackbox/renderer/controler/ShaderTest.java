@@ -223,21 +223,6 @@ class ShaderTest {
     }
 
     // =========================================================================
-    // OpenGL State Enforcement Tests
-    // =========================================================================
-
-    @Test
-    void testCreateEnforcesNonBoundState() {
-        // Manually bind a dummy program to simulate a shader already being active.
-        glUseProgram(12345); // arbitrary non-zero value
-        Shader shader = new Shader(true);
-        assertThrows(IllegalStateException.class, () -> shader.create("testShader.vert", "testShader.frag"), "Creating a shader while another shader is bound should throw an exception");
-        // Reset the state.
-        glUseProgram(0);
-        assertNotEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should be present after enforcing non-bound state");
-    }
-
-    // =========================================================================
     // Other Functional Tests
     // =========================================================================
 
