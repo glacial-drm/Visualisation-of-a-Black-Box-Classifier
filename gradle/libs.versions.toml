@@ -10,13 +10,14 @@ junit = "5.10.3"
 jacoco = "0.8.12"
 
 javafx-plugin = "0.1.0"
-javafx-lib = "23.0.1"
-joml = "1.10.7"
-onnxruntime = "1.18.0"
+javafx-lib = "23.0.2"
+joml = "1.10.8"
+onnxruntime = "1.20.0"
 # For now this is pinned at 3.3.1
 # 3.3.2 updates GLFW to 3.4, which enables Wayland by default
 # This doesn't work on some devices, for an unknown reason
-lwjgl = "3.3.3"
+lwjgl = "3.3.6"
+mockito = "5.5.0"
 
 protoc = "4.29.2"
 protobuf-plugin = "0.9.4"
@@ -33,6 +34,8 @@ lwjgl-lib = { group = "org.lwjgl", name = "lwjgl" }
 lwjgl-opengl = { group = "org.lwjgl", name = "lwjgl-opengl" }
 lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw" }
 onnxruntime = { module = "com.microsoft.onnxruntime:onnxruntime", version.ref = "onnxruntime"}
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
 protoc = { module = "com.google.protobuf:protoc", version.ref = "protoc" }
 protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf-java" }

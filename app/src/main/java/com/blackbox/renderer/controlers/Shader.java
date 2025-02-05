@@ -1,4 +1,4 @@
-package com.blackbox.renderer;
+package com.blackbox.renderer.controlers;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -6,7 +6,6 @@ import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,7 +21,7 @@ public class Shader {
     private int id;
     private final HashMap<String, Integer> uniformLocations = new HashMap<String, Integer>();
 
-    private boolean worldBased;
+    private final boolean worldBased;
 
     public Shader(boolean worldBased) {
         this.worldBased = worldBased;
@@ -35,6 +34,7 @@ public class Shader {
      * @param fragmentFileName expected to be in the src/main/shaders/fragment folder
      */
     public boolean create(String vertexFileName, String fragmentFileName) {
+        ensureNonBound();
         int vertexShader = Integer.MAX_VALUE, fragmentShader = Integer.MAX_VALUE;
         boolean validShaders = true, validProgram = false;
 
@@ -52,19 +52,28 @@ public class Shader {
         glAttachShader(id, fragmentShader);
         glLinkProgram(id);
 
-        validProgram = checkShaderProgram(id);
+        boolean validLink = checkLinkStatus(id);
+
+        glValidateProgram(id);
+        validProgram = checkProgramStatus(id);
 
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
-        return validProgram && validShaders;
+        return validProgram && validLink && validShaders;
     }
 
     /**
      * Set this shader program as the one of OpenGL to use
      */
-    public void setActive() {
+    public void bind() {
+        ensureNonBound();
         glUseProgram(id);
+    }
+
+    public void unbind() {
+        ensureBound();
+        glUseProgram(0);
     }
 
     /**
@@ -72,7 +81,8 @@ public class Shader {
      * @param name uniform name in the shader
      * @param vector a 3d vector of floating point values
      */
-    public void loadVector3d(String name, Vector3f vector) {
+    public void loadUniform(String name, Vector3f vector) {
+        ensureBound();
         checkUniformLocation(name);
         glUniform3f(uniformLocations.get(name), vector.x, vector.y, vector.z);
     }
@@ -82,7 +92,8 @@ public class Shader {
      * @param name uniform name in the shader
      * @param matrix 4x4 matrix of floats
      */
-    public void loadMatrixUniform(String name, Matrix4f matrix) {
+    public void loadUniform(String name, Matrix4f matrix) {
+        ensureBound();
         checkUniformLocation(name);
         FloatBuffer buf = BufferUtils.createFloatBuffer(16);
         glUniformMatrix4fv(uniformLocations.get(name), false, matrix.get(buf));
@@ -94,7 +105,7 @@ public class Shader {
      * @param name uniform name in shader
      */
     private void checkUniformLocation(String name) {
-        setActive();
+        ensureBound();
         if(!uniformLocations.containsKey(name)) {
             getUniformLocations(name);
         }
@@ -106,6 +117,7 @@ public class Shader {
      * @param name uniform name in shader
      */
     private void getUniformLocations(String name) {
+        ensureBound();
         int location = glGetUniformLocation(id, name);
 
         if(location == -1) {
@@ -126,22 +138,27 @@ public class Shader {
     }
 
     /**
-     * Function that checks if the shader linked successfully by checking the link status
-     * and checking the validation of the program
-     *
-     * @param program takes in the program id
-     * @return true if successful
+     * Checks the status of the program
+     * @param program program ID
+     * @return true if successful false if error
      */
-    private boolean checkShaderProgram(int program) {
+    boolean checkProgramStatus(int program) {
+        if (glGetProgrami(program, GL_VALIDATE_STATUS) == GL_FALSE) {
+            System.err.println("Validation error: " + glGetProgramInfoLog(program));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks the status of the linking of shaders to the program
+     * @param program program ID
+     * @return true if successful false if error
+     */
+    boolean checkLinkStatus(int program) {
         if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
             System.err.println("Link error: " + glGetProgramInfoLog(program));
             return false;
-        } else {
-            glValidateProgram(program);
-            if (glGetProgrami(program, GL_VALIDATE_STATUS) == GL_FALSE) {
-                System.err.println("Validation error: " + glGetProgramInfoLog(program));
-                return false;
-            }
         }
         return true;
     }
@@ -185,6 +202,38 @@ public class Shader {
 
         return shader;
     }
+
+    // -------------------------------------------------------------------------
+    // OpenGL State Check Methods
+    // -------------------------------------------------------------------------
+
+    /**
+     * Ensures that this VertexArray object is currently bound.
+     *
+     * @throws IllegalStateException if this VAO is not bound.
+     */
+    private void ensureBound() {
+        int current = glGetInteger(GL_CURRENT_PROGRAM);;
+        if (current != id) {
+            throw new IllegalStateException("Shader " + id + " is not bound. Current bound shader is " + current);
+        }
+    }
+
+    /**
+     * Ensures that no VertexArray object is currently bound.
+     *
+     * @throws IllegalStateException if another VAO is bound.
+     */
+    private void ensureNonBound() {
+        int current = glGetInteger(GL_CURRENT_PROGRAM);
+        if (current != 0) {
+            throw new IllegalStateException("Shader " + current + " is bound. No shader should be bound");
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Getters
+    // -------------------------------------------------------------------------
 
     public boolean isWorldBased() {
         return worldBased;

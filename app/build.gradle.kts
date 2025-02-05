@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.lwjgl.lib)
     implementation(libs.lwjgl.opengl)
     implementation(libs.lwjgl.glfw)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit.jupiter)
     runtimeOnly(variantOf(libs.lwjgl.lib) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.opengl) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.glfw) { classifier(lwjglNatives) })
@@ -133,4 +135,15 @@ protobuf {
 application {
     // Define the main class for the application.
     mainClass = "com.blackbox.app.App"
+    applicationDefaultJvmArgs = run {
+	val osName = System.getProperty("os.name")!!
+	val macNames = arrayOf("Mac OS X", "Darwin")
+
+	if (macNames.any {
+	    osName.startsWith(it)
+	})
+	    listOf("-XstartOnFirstThread")
+	else
+	    listOf()
+    }
 }
