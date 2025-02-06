@@ -12,4 +12,8 @@ public class PointData {
         this.label = lab;
     }
 
+    @Override
+    public String toString() {
+        return label + " : " + feature1 + ", " + feature2;
+    }
 }
