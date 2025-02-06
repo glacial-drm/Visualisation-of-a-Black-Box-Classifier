@@ -7,22 +7,16 @@ import connector_pb2
 import connector_pb2_grpc
 
 import numpy as np
-from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
-from SAO import SaveAsONNX
-
-def trainSvc(X, y, kernel: str) -> str:
-    # This should return the onnx path, but this is useful for debug
-    return str(X) + "\n" + str(y) + "\n" + kernel
+from TrainSVM import SVMClassifier
 
 def parsePoints(points: connector_pb2.Points):
     points = points.points
 
     X = np.zeros((len(points), len(points[0].values)), dtype=np.float32)
-    y = np.zeros(len(points), dtype=np.float32)
+    y = np.zeros(len(points), dtype=np.int16)
     for i, point in enumerate(points):
         X[i] = point.values
-        y[i] = point.label
+        y[i] = int(point.label)
 
     return X, y
 
@@ -34,7 +28,10 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
         X, y = parsePoints(request.points)
         kernel = connector_pb2.SvcRequest.Kernel.Name(request.kernel).lower()
 
-        onnxPath = trainSvc(X, y, kernel)
+        svm = SVMClassifier(kernel, C=1.0, gamma="scale", test_size=0.2, random_state=42)
+        svm.fit(X, y)
+        svm.save();
+        onnxPath = "SVM.onnx"
 
         return connector_pb2.ModelResults(onnxPath=onnxPath)
 

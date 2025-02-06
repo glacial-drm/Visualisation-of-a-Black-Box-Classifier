@@ -5,6 +5,8 @@ import io.grpc.Grpc;
 import io.grpc.InsecureChannelCredentials;
 import io.grpc.ManagedChannel;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import com.blackbox.model.PointData;
@@ -52,10 +54,11 @@ public class Connector {
     }
 
     public String trainSvc() {
-        Points points = Points.newBuilder()
-            .addPoints(convertPoint(new PointData(10, 11, 1)))
-            .addPoints(convertPoint(new PointData(12, 13, 2))).build();
-        SvcRequest req = SvcRequest.newBuilder().setPoints(points).setKernel(Kernel.RBF).build();
+        PointData[] pointDatas = DataGen.genCircle(1000, 1.0);
+        List<Point> points = Arrays.stream(pointDatas).map(point -> convertPoint(point)).toList();
+
+        Points pointsProto = Points.newBuilder().addAllPoints(points).build();
+        SvcRequest req = SvcRequest.newBuilder().setPoints(pointsProto).setKernel(Kernel.RBF).build();
         ModelResults res = stub.trainSvc(req);
         return res.getOnnxPath();
     }
