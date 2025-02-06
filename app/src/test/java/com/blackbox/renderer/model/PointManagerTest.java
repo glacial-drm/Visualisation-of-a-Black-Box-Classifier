@@ -50,7 +50,7 @@ class PointManagerTest {
     void testAddSinglePoint() {
         PointManager pm = new PointManager();
         PointData pd = new PointData(0.1f, 0.2f, 1);
-        pm.addPoint(pd);
+        pm.addPoint(pd, false);
         assertEquals(1, pm.getPointCount(), "Point count should be 1 after adding one point");
         assertTrue(pm.isPoints(), "isPoints() should return true when a point has been added");
         assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen");
@@ -62,7 +62,7 @@ class PointManagerTest {
         int numPoints = 5;
         for (int i = 0; i < numPoints; i++) {
             PointData pd = new PointData(0.1f * i, 0.2f * i, i % 2);
-            pm.addPoint(pd);
+            pm.addPoint(pd, false);
         }
         assertEquals(numPoints, pm.getPointCount(), "Point count should equal the number of points added");
         assertTrue(pm.isPoints(), "no points are stored");
@@ -77,7 +77,7 @@ class PointManagerTest {
         // After adding points, the index buffer length should remain unchanged.
         for (int i = 0; i < 3; i++) {
             PointData pd = new PointData(0.1f * i, 0.2f * i, 0);
-            pm.addPoint(pd);
+            pm.addPoint(pd, false);
         }
         assertEquals(6, pm.getIndicesLength(), "Index buffer length should remain constant regardless of points added");
         assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen");
@@ -88,8 +88,8 @@ class PointManagerTest {
         PointManager pm = new PointManager();
         // Add a couple of points so that instance data is non-empty.
         PointData pd = new PointData(0.5f, 0.5f, 1);
-        pm.addPoint(pd);
-        pm.addPoint(pd);
+        pm.addPoint(pd, false);
+        pm.addPoint(pd, false);
 
         // Calling prepPoints() should upload instance data and bind the shared VAO and index buffer.
         pm.prepPoints();
@@ -105,7 +105,7 @@ class PointManagerTest {
         PointManager pm = new PointManager();
         // Add a point so that prepPoints() binds resources.
         PointData pd = new PointData(0.5f, 0.5f, 1);
-        pm.addPoint(pd);
+        pm.addPoint(pd, false);
         pm.prepPoints();
         // Calling cleanUp() should disable vertex attributes and unbind VAO and index buffer.
         pm.cleanUp();
@@ -137,7 +137,7 @@ class PointManagerTest {
         // Add several points.
         for (int i = 0; i < 7; i++) {
             PointData pd = new PointData(i * 0.1f,i * 0.5f, i % 2);
-            pm.addPoint(pd);
+            pm.addPoint(pd, false);
         }
         assertEquals(initialCount + 7, pm.getPointCount(), "Point count should update correctly after adding points");
         // Call prepPoints() to upload instance data and bind VAO/index buffer.
