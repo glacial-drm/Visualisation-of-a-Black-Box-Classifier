@@ -8,7 +8,10 @@ import ai.onnxruntime.OrtSession;
 import ai.onnxruntime.TensorInfo;
 
 import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -115,12 +118,29 @@ public class OnnxModel {
             return Optional.empty();
         }
 
-        String X = opX.get();
-        String y = opy.get();
+        String XStr = opX.get();
+        String yStr = opy.get();
 
-        System.out.println(X);
-        System.out.println(y);
+        ByteBuffer XBytes = ByteBuffer.wrap(Base64.getDecoder().decode(XStr));
+        XBytes.order(ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer yBytes = ByteBuffer.wrap(Base64.getDecoder().decode(yStr));
+        yBytes.order(ByteOrder.LITTLE_ENDIAN);
 
-        return Optional.of(List.of());
+        int FLOAT_SIZE = 4;
+        int FLOATS_PER_POINT = 2;
+        int count = XBytes.limit() / (FLOAT_SIZE * FLOATS_PER_POINT);
+        System.out.println("Count : " + count);
+
+        List<PointData> points = new ArrayList<>(count);
+
+        for (int i = 0; i < count; i++) {
+            float x = XBytes.getFloat(FLOAT_SIZE * i * FLOATS_PER_POINT);
+            float y = XBytes.getFloat(FLOAT_SIZE * (i * FLOATS_PER_POINT + 1));
+            short label = yBytes.getShort(i * 2);
+
+            points.add(new PointData(x, y, label));
+        }
+
+        return Optional.of(points);
     }
 }

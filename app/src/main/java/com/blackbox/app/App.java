@@ -4,9 +4,12 @@
 package com.blackbox.app;
 
 import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 import com.blackbox.graph.Canvas;
 import com.blackbox.model.OnnxModel;
+import com.blackbox.model.PointData;
 
 import javafx.application.Application;
 
@@ -27,7 +30,12 @@ public class App {
             System.err.println(e);
             return;
         }
-        onnx.getTrainingData();
+        Optional<List<PointData>> points = onnx.getTrainingData();
+        if (points.isPresent()) {
+            for (PointData point : points.get()) {
+                System.out.println(point);
+            }
+        }
 
         // Start JavaFX thread
         Thread javafxThread = new Thread(() -> {

@@ -1,6 +1,7 @@
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 from onnx import StringStringEntryProto
+import base64
 
 class SaveAsONNX:
     def __init__(self, model, model_name="model.onnx", X=None, y=None):
@@ -19,8 +20,10 @@ class SaveAsONNX:
         self.onnx_model = convert_sklearn(self.model, initial_types=initial_type)
 
         if self.X is not None and self.y is not None:
-            self.onnx_model.metadata_props.append(StringStringEntryProto(key="training_data_X", value="test X"))
-            self.onnx_model.metadata_props.append(StringStringEntryProto(key="training_data_y", value="test y"))
+            X = base64.b64encode(self.X.tobytes())
+            y = base64.b64encode(self.y.tobytes())
+            self.onnx_model.metadata_props.append(StringStringEntryProto(key="training_data_X", value=X))
+            self.onnx_model.metadata_props.append(StringStringEntryProto(key="training_data_y", value=y))
 
         print("Model converted to ONNX format.")
 
