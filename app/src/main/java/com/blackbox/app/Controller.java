@@ -59,8 +59,8 @@ public class Controller {
    *
    * @param point The point data.
    */
-  public void pointLoaded(PointData point) {
-    sendEvent(new PointsLoaded(point));
+  public void pointLoaded(PointData point, boolean isTraining) {
+    sendEvent(new PointsLoaded(point, isTraining));
   }
 
   /**
@@ -199,7 +199,7 @@ public class Controller {
     List<PointData> points = sampler.sampleBC(input);
 
     for (PointData point : points) {
-      pointLoaded(point);
+      pointLoaded(point, false);
     }
 
     onnx.endSession();

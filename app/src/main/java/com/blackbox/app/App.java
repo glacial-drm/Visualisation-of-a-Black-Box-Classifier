@@ -33,7 +33,7 @@ public class App {
         Optional<List<PointData>> points = onnx.getTrainingData();
         if (points.isPresent()) {
             for (PointData point : points.get()) {
-                System.out.println(point);
+                controller.pointLoaded(point, true);
             }
         }
 

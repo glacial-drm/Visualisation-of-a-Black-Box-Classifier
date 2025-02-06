@@ -31,10 +31,16 @@ public class PointManager {
     /**
      * Adds a point using your provided data.
      */
-    public void addPoint(PointData pointData) {
+    public void addPoint(PointData pointData, boolean isTraining) {
         Vector3f position = new Vector3f(pointData.feature1, pointData.feature2, 0);
-        Vector3f color = pointData.label == 1 ? new Vector3f(1.0f, 0, 0) : new Vector3f(0, 0, 1.0f);
-        points.add(new Point(position, new Vector3f(0, 0, 0), 0.1f, color));
+
+        float brightness = isTraining ? 0.5f : 0.0f;
+        Vector3f color = pointData.label == 1
+            ? new Vector3f(1.0f, brightness, brightness)
+            : new Vector3f(brightness, brightness, 1.0f);
+
+        float scale = isTraining ? 0.05f : 0.1f;
+        points.add(new Point(position, new Vector3f(0, 0, 0), scale, color));
     }
 
     /**

@@ -8,8 +8,10 @@ import com.blackbox.model.PointData;
  */
 public class PointsLoaded extends CanvasEvent {
     public final PointData point;
+    public final boolean isTraining;
 
-    public PointsLoaded(final PointData point) {
+    public PointsLoaded(final PointData point, final boolean isTraining) {
         this.point = point;
+        this.isTraining = isTraining;
     }
 }

@@ -164,7 +164,7 @@ public class Canvas {
 
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
-                rendererModel.addPoint(pointsLoaded.point);
+                rendererModel.addPoint(pointsLoaded.point, pointsLoaded.isTraining);
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;
