@@ -3,7 +3,11 @@
  */
 package com.blackbox.app;
 
+import java.io.FileNotFoundException;
+
 import com.blackbox.graph.Canvas;
+import com.blackbox.model.OnnxModel;
+
 import javafx.application.Application;
 
 public class App {
@@ -16,6 +20,14 @@ public class App {
         Connector connector = new Connector();
         System.out.println(connector.sayHello("arlo"));
         System.out.println(connector.trainSvc());
+        OnnxModel onnx;
+        try {
+            onnx = new OnnxModel("SVM.onnx");
+        } catch (FileNotFoundException e) {
+            System.err.println(e);
+            return;
+        }
+        onnx.getTrainingData();
 
         // Start JavaFX thread
         Thread javafxThread = new Thread(() -> {

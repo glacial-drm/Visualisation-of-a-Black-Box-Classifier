@@ -31,9 +31,9 @@ class SVMClassifier:
             raise RuntimeError("Model not trained. Call fit() first.")
         return self.model.predict(X)
     
-    def save(self):
+    def save(self, X, y):
         if not self.is_trained or self.n_features is None:
             raise RuntimeError("Model must be trained before saving")
-        converter = SaveAsONNX(model=self.model, model_name="SVM.onnx")
+        converter = SaveAsONNX(model=self.model, model_name="SVM.onnx", X=X, y=y)
         converter.convert(input_shape=[None, self.n_features])
         converter.save()
