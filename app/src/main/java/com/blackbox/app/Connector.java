@@ -54,7 +54,7 @@ public class Connector {
     }
 
     public String trainSvc() {
-        PointData[] pointDatas = DataGen.genCircle(1000, 3f, 1.0);
+        PointData[] pointDatas = DataGen.genCircle(10000, 3f, 1.0, true, false, false, true);
         List<Point> points = Arrays.stream(pointDatas).map(point -> convertPoint(point)).toList();
 
         Points pointsProto = Points.newBuilder().addAllPoints(points).build();
