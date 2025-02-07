@@ -30,7 +30,7 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
         svm = SVMClassifier(kernel, C=1.0, gamma="scale", test_size=0.2, random_state=42)
         svm.fit(X, y)
-        svm.save(X, y);
+        svm.save(X, y)
         onnxPath = "SVM.onnx"
 
         return connector_pb2.ModelResults(onnxPath=onnxPath)
