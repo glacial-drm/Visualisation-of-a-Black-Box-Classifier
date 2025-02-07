@@ -70,7 +70,7 @@ public class Canvas {
         // Hide window until its shown
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-        window = glfwCreateWindow(width, height, "Hello world", NULL, NULL);
+        window = glfwCreateWindow(width, height, "Graph", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create window");
         }

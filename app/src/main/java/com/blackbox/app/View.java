@@ -26,6 +26,8 @@ public class View extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    primaryStage.setTitle("UON Blackbox Project");
+
     // Main layout
     BorderPane root = new BorderPane();
     root.setStyle("-fx-background-color: #2c2c2c;");
