@@ -31,6 +31,11 @@ public class View extends Application {
   public void start(Stage primaryStage) {
     /*
     Utilise free space in current stage to add option to train data AND view coordinates/zoom
+    Connector file on BOX114 branch contains:
+      PointData[] pointDatas = DataGen.genCircle(10000, 3f, 1.0, true, false, false, true);
+
+      Dropdown for model type, SVM, NN, Decision Tree, etc (comes after UI is finalised for current)
+    --- add this to UI
      */
     //Menubar (add option to change between dark and light mode)
     MenuBar bar = new MenuBar();
