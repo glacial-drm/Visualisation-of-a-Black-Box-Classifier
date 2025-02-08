@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.google.protobuf.GeneratedMessage.Builder;
+
 /**
  * Feel free to change/enhance any of the code
  * - Salameh Alfasatleh / psysa21
@@ -23,6 +25,29 @@ public class Model {
      */
     private File currentDir;
     private ArrayList<String> classifiers;
+
+    private int selectedTrainingRequest = 0;
+    private Builder<?>[] trainingRequests;
+
+    public void setTrainingRequests(Builder<?>[] requests) {
+        trainingRequests = requests;
+    }
+
+    public Builder<?>[] getTrainingRequests() {
+        return trainingRequests;
+    }
+
+    public int getSelectedTrainingRequestIndex() {
+        return selectedTrainingRequest;
+    }
+
+    public void setSelectedTrainingRequest(int index) {
+        selectedTrainingRequest = index;
+    }
+
+    public Builder<?> getSelectedTrainingRequest() {
+        return trainingRequests[selectedTrainingRequest];
+    }
 
     /**
      * navigation details shown in the navigation section.

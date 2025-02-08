@@ -6,6 +6,10 @@ import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
+import com.blackbox.proto.connector.SvcRequest;
+import com.blackbox.proto.connector.UiTest;
+import com.google.protobuf.GeneratedMessage.Builder;
+
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -34,10 +38,36 @@ public class Controller {
   public Controller(Model model) {
     this.model = model;
 
+    model.setTrainingRequests(new Builder[] {
+      UiTest.newBuilder()
+        .setBoolean(true)
+        .setF32(1f)
+        .setF64(2.0)
+        .setI32(3)
+        .setI64(4)
+        .setStr("Hello world")
+        .setTestEnum(UiTest.TestEnum.OPTION2),
+      SvcRequest.newBuilder()
+    });
+
     // Register a listener to update the view when the model changes
     model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
     initFileLoader();
+  }
+
+  public Builder<?>[] getTrainingRequests() {
+    return model.getTrainingRequests();
+  }
+
+  public Builder<?> getTrainingRequestByName(String name) {
+    Builder<?> target = null;
+    for (Builder<?> builder : model.getTrainingRequests()) {
+      if (builder.getDescriptorForType().getName() == name) {
+        target = builder;
+      }
+    }
+    return target;
   }
 
   private void initFileLoader() {

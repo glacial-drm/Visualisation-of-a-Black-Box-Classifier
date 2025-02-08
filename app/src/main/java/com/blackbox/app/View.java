@@ -1,9 +1,18 @@
 package com.blackbox.app;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.protobuf.GeneratedMessage.Builder;
+
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
@@ -13,11 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.util.List;
-
-import com.blackbox.proto.connector.UiTest;
+import javafx.util.StringConverter;
 
 public class View extends Application {
   /**
@@ -25,6 +30,7 @@ public class View extends Application {
    */
   static Controller controller;
   private VBox classifierBox;
+  private Node requestNode;
 
   @Override
   public void start(Stage primaryStage) {
@@ -157,15 +163,35 @@ public class View extends Application {
     BorderPane.setAlignment(sampleButton, Pos.CENTER);
     rightPane.setBottom(sampleButton);
 
-    var uiTestBuilder = UiTest.newBuilder()
-      .setBoolean(true)
-      .setF32(1f)
-      .setF64(2.0)
-      .setI32(3)
-      .setI64(4)
-      .setStr("Hello world")
-      .setTestEnum(UiTest.TestEnum.OPTION2);
-    rightPane.setCenter(new ProtoUi(uiTestBuilder).build());
+    VBox vbox = new VBox();
+    rightPane.setCenter(vbox);
+
+    ComboBox<Builder<?>> requestSelector = new ComboBox<>();
+    requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
+    requestSelector.setConverter(new StringConverter<Builder<?>>() {
+      @Override
+      public Builder<?> fromString(String name) {
+        return controller.getTrainingRequestByName(name);
+      }
+
+      @Override
+      public String toString(Builder<?> request) {
+        return request != null
+          ? request.getDescriptorForType().getName()
+          : "";
+      }
+    });
+    vbox.getChildren().add(requestSelector);
+
+    requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
+      if (requestNode != null) {
+        vbox.getChildren().remove(requestNode);
+      }
+
+      requestNode = new ProtoUi(builder).build();
+      vbox.getChildren().add(requestNode);
+    });
+    requestSelector.getSelectionModel().select(0);
 
     root.setCenter(rightPane);
   }
