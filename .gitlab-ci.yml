@@ -1,6 +1,6 @@
 default:
   tags: [ docker ]
-  image: $REGISTRY/$REGISTRY_USER/$TAG
+  image: $REGISTRY/$REGISTRY_USER/$TAG:0.2
 
 build:
   stage: build
@@ -19,7 +19,7 @@ build:
 
 test:
   stage: test
-  image: $REGISTRY/$REGISTRY_USER/$TAG
+  image: $REGISTRY/$REGISTRY_USER/$TAG:0.2
   script: 
     - |
       export GRADLE_USER_HOME="$(pwd)/.gradle";

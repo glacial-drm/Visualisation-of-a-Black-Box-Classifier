@@ -22,59 +22,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# Base Docker Image
-ARG BASE_IMAGE=alpine:3.12
+# Very heavily edited by Arlo Blythe
+# Converted to ubuntu from alpine, among other things
+
+ARG BASE_IMAGE=ubuntu:latest
 FROM ${BASE_IMAGE} AS builder
 
-# Install all needed build deps for Mesa3D
-ARG LLVM_VERSION=9
-RUN set -xe; \
-    apk add --no-cache --quiet \
-        autoconf \
-        automake \
-        bison \
-        build-base \
-        cmake \
-        elfutils-dev \
-        expat-dev \
-        flex \
-        gettext \
-        git \
-        glproto \
-        libdrm-dev \
-        libtool \
-        libva-dev \
-        libx11-dev \
-        libxcb-dev \
-        libxdamage-dev \
-        libxext-dev \
-        libxfixes-dev \
-        libxrandr-dev \
-        libxshmfence-dev \
-        libxt-dev \
-        libxvmc-dev \
-        libxxf86vm-dev \
-        llvm${LLVM_VERSION} \
-        llvm${LLVM_VERSION}-dev \
-        makedepend \
-        meson \
-        py3-packaging \
-        py3-libxml2 \
-        py3-mako \
-        py3-yaml \
-        python3 \
-        python3-dev \
-        talloc-dev \
-        wayland-dev \
-        wayland-protocols \
-        xorg-server-dev \
-        xorgproto \
-        zlib-dev \
-        zstd-dev;
+# Enable source repos
+RUN set -xe; sed -i 's/Types: deb/Types: deb deb-src/g' /etc/apt/sources.list.d/ubuntu.sources;
+# Install mesa build deps
+RUN set -xe; apt-get update;
+RUN set -xe; apt-get build-dep -y mesa;
+RUN set -xe; apt-get install -y git;
 
-# Clone Mesa source repo. (this step caches)
-# Due to ongoing packaging issues we build from git vs tar packages
-# Refer to https://bugs.freedesktop.org/show_bug.cgi?id=107865 
+# Clone Mesa source repo
 ARG MESA_VERSION
 RUN set -xe; \
     mkdir -p /var/tmp/build; \
@@ -124,33 +85,27 @@ RUN set -xe; \
 # Copy our entrypoint into the container.
 COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
 
-# Create fresh image from alpine
-ARG BASE_IMAGE=alpine:3.12
+# Create fresh image
+ARG BASE_IMAGE=ubuntu:latest
 FROM ${BASE_IMAGE}
 
 # Copy the Mesa build & entrypoint script from previous stage
 COPY --from=builder /usr/local /usr/local
 
 # Install runtime dependencies for Mesa and link xorg dri modules
-ARG LLVM_VERSION=9
+RUN set -xe; apt-get update;
 RUN set -xe; \
-    apk add --no-cache --quiet \
-        # Compat libraries to run things expecting glibc
-        # Required due to issue in gradle/foojay-toolchains
-        # https://github.com/gradle/foojay-toolchains/issues/5#issuecomment-2037862837
-        # This may halt alpine upgrades as apparently doesn't work in later versions
-        gcompat \
-        gradle \
-        binutils \
-        expat \
-        llvm${LLVM_VERSION}-libs \
-        setxkbmap \
-        xdpyinfo \
-        xrandr \
+    apt-get install -y \
+        openjdk-21-jre \
+        x11-xkb-utils \
+        x11-utils \
+        x11-xserver-utils \
+        libxrandr2 \
         xvfb \
-        xvfb-run \
-        zstd-libs; \
-    ln -sf /usr/local/lib/xorg/modules/dri/* /usr/lib/xorg/modules/dri/
+        libzstd1;
+RUN set -xe; apt-get clean;
+RUN set -xe; mkdir -p /usr/lib/xorg/modules/dri;
+RUN set -xe; ln -sf /usr/local/lib/xorg/modules/dri/* /usr/lib/xorg/modules/dri/;
 
 # Labels / Metadata.
 ARG MESA_VERSION
