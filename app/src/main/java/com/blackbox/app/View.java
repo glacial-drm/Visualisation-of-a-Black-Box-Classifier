@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.List;
 
+import com.blackbox.proto.connector.UiTest;
+
 public class View extends Application {
   /**
    * The controller.
@@ -154,6 +156,8 @@ public class View extends Application {
 
     BorderPane.setAlignment(sampleButton, Pos.CENTER);
     rightPane.setBottom(sampleButton);
+
+    rightPane.setCenter(new ProtoUi(UiTest.newBuilder()).build());
 
     root.setCenter(rightPane);
   }
