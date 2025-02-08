@@ -3,14 +3,15 @@ REGISTRY ?= registry
 REGISTRY_USER ?= user
 REGISTRY_PASSWD ?= password
 
-TAG = utensils/opengl:0.2
+TAG = utensils/opengl
 PUBLISH_TAG = $(REGISTRY)/$(REGISTRY_USER)/$(TAG)
 
 build:
 	@echo -e "===== Building Docker image =====\n"
 
 	docker buildx build \
-		--build-arg BASE_IMAGE=ubuntu:latest \
+		--build-arg BASE_IMAGE=alpine:latest \
+		--build-arg LLVM_VERSION=17 \
 		--build-arg MESA_VERSION=24.2.6 \
 		--tag $(TAG) \
 		--file Dockerfile .
@@ -41,7 +42,7 @@ test: login
 		cd /src; \
 		export GRADLE_USER_HOME="/src/.gradle"; \
 		export ENFORCE_VENDOR=1; \
-		/src/gradlew check; \
+		gradle check; \
 	"
 
 	@echo -e "\n\n"
