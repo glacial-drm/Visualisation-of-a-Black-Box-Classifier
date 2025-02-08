@@ -3,21 +3,23 @@ package com.blackbox.app;
 import java.util.List;
 import java.util.function.Function;
 
-import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.GeneratedMessage.Builder;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 
-import javafx.beans.property.Property;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 public class ProtoUi {
     private VBox box;
-    private GeneratedMessage.Builder<?> builder;
+    private Builder<?> builder;
 
-    public ProtoUi(GeneratedMessage.Builder<?> builder) {
+    public ProtoUi(Builder<?> builder) {
         this.builder = builder;
         box = new VBox();
     }
@@ -26,7 +28,7 @@ public class ProtoUi {
         box.getChildren().add(node);
     }
 
-    private <T, U> void addListener(FieldDescriptor field, Property<T> property, Function<T, U> process) {
+    private <T, U> void addListener(FieldDescriptor field, ReadOnlyProperty<T> property, Function<T, U> process) {
         property.addListener((_observable, _old, value) -> {
             try {
                 U processed = process.apply(value);
@@ -36,7 +38,7 @@ public class ProtoUi {
         });
     }
 
-    private <T> void addListener(FieldDescriptor field, Property<T> property) {
+    private <T> void addListener(FieldDescriptor field, ReadOnlyProperty<T> property) {
         addListener(field, property, x -> x);
     }
 
@@ -49,6 +51,7 @@ public class ProtoUi {
             switch (field.getJavaType()) {
 				case BOOLEAN: {
                     CheckBox checkBox = new CheckBox();
+                    checkBox.setSelected((Boolean)builder.getField(field));
                     addListener(field, checkBox.selectedProperty());
                     addNode(checkBox);
                     break;
@@ -78,6 +81,13 @@ public class ProtoUi {
                     addNode(input);
 					break;
                 } case ENUM: {
+                    var enumType = field.getEnumType();
+                    var options = enumType.getValues();
+                    ComboBox<String> combo = new ComboBox<String>();
+                    combo.getSelectionModel().select(builder.getField(field).toString());
+                    combo.setItems(FXCollections.observableList(options.stream().map(desc -> desc.getName()).toList()));
+                    addListener(field, combo.getSelectionModel().selectedItemProperty(), enumType::findValueByName);
+                    addNode(combo);
 					break;
                 } case MESSAGE: {
 					break;

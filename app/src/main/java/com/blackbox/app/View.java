@@ -157,7 +157,15 @@ public class View extends Application {
     BorderPane.setAlignment(sampleButton, Pos.CENTER);
     rightPane.setBottom(sampleButton);
 
-    rightPane.setCenter(new ProtoUi(UiTest.newBuilder()).build());
+    var uiTestBuilder = UiTest.newBuilder()
+      .setBoolean(true)
+      .setF32(1f)
+      .setF64(2.0)
+      .setI32(3)
+      .setI64(4)
+      .setStr("Hello world")
+      .setTestEnum(UiTest.TestEnum.OPTION2);
+    rightPane.setCenter(new ProtoUi(uiTestBuilder).build());
 
     root.setCenter(rightPane);
   }

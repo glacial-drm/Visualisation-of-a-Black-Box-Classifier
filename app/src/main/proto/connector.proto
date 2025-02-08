@@ -51,5 +51,12 @@ message UiTest {
   int32 i32 = 4;
   int64 i64 = 5;
   string str = 6;
+
+  enum TestEnum {
+    OPTION1 = 0;
+    OPTION2 = 1;
+    OPTION3 = 2;
+  }
+  TestEnum testEnum = 7;
 }
 
