@@ -9,6 +9,7 @@ import com.blackbox.model.PointData;
 
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
@@ -34,6 +35,7 @@ public class CircleGenerator extends DataGenerator {
 	public Node createNode() {
         box = new VBox();
 
+        box.getChildren().add(new Label("Radius"));
         TextField radiusInput = new TextField(Float.toString(radius));
         radiusInput.textProperty().addListener((_observer, _old, value) -> {
             try {
@@ -43,6 +45,7 @@ public class CircleGenerator extends DataGenerator {
         });
         box.getChildren().add(radiusInput);
 
+        box.getChildren().add(new Label("Quadrants"));
         newCheckBox(tl, b -> tl = b);
         newCheckBox(tr, b -> tr = b);
         newCheckBox(bl, b -> bl = b);
