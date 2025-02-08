@@ -166,6 +166,14 @@ public class View extends Application {
     VBox vbox = new VBox();
     rightPane.setCenter(vbox);
 
+    Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
+    globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(globalGeneratorSettingsLabel);
+
+    Label generatorSettingsLabel = new Label("Generator Settings");
+    generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(generatorSettingsLabel);
+
     vbox.getChildren().add(controller.getGenerator().createNode());
 
     ComboBox<Builder<?>> requestSelector = new ComboBox<>();
@@ -184,6 +192,10 @@ public class View extends Application {
       }
     });
     vbox.getChildren().add(requestSelector);
+
+    Label trainingSettingsLabel = new Label("Training Settings");
+    trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(trainingSettingsLabel);
 
     requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
       if (requestNode != null) {
