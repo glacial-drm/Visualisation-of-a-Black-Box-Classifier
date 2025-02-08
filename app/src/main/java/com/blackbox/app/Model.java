@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
+import com.blackbox.model.PointData;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 /**
@@ -33,6 +34,16 @@ public class Model {
 
     private int selectedTrainingRequest = 0;
     private Builder<?>[] trainingRequests;
+
+    private PointData[] trainingData;
+
+    public void setTrainingData(PointData[] data) {
+        trainingData = data;
+    }
+
+    public PointData[] getTrainingData() {
+        return trainingData;
+    }
 
     public GlobalGenOptions getGetOptions() {
         return genOptions;

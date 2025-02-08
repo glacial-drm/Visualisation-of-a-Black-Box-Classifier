@@ -34,6 +34,8 @@ public class Controller {
    */
   private final Model model;
 
+  Connector connector = new Connector();
+
   /**
    * Constructor for the Controller.
    *
@@ -43,8 +45,16 @@ public class Controller {
     this.model = model;
 
     model.setGenerator(new CircleGenerator());
-    getGenerator().setOnChange(_v -> generateTrainingData());
-    getGenOptions().setOnChange(_v -> generateTrainingData());
+    getGenerator().setOnChange(_v -> {
+      clearPoints();
+      generateTrainingData();
+      showTrainingData();
+    });
+    getGenOptions().setOnChange(_v -> {
+      clearPoints();
+      generateTrainingData();
+      showTrainingData();
+    });
 
     model.setTrainingRequests(new Builder[] {
       UiTest.newBuilder()
@@ -58,16 +68,25 @@ public class Controller {
       SvcRequest.newBuilder()
     });
 
+    generateTrainingData();
+    showTrainingData();
+
     // Register a listener to update the view when the model changes
     model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
     initFileLoader();
   }
 
-  public void generateTrainingData() {
+  public void clearPoints() {
     sendEvent(new ClearPoints());
-    PointData[] trainingData = getGenerator().buildData(getGenOptions());
-    for (PointData point : trainingData) {
+  }
+
+  public void generateTrainingData() {
+    model.setTrainingData(getGenerator().buildData(getGenOptions()));
+  }
+
+  public void showTrainingData() {
+    for (PointData point : model.getTrainingData()) {
       pointLoaded(point, true);
     }
   }
@@ -87,11 +106,17 @@ public class Controller {
   public Builder<?> getTrainingRequestByName(String name) {
     Builder<?> target = null;
     for (Builder<?> builder : model.getTrainingRequests()) {
-      if (builder.getDescriptorForType().getName() == name) {
+      if (builder.getDescriptorForType().getName().equals(name)) {
         target = builder;
       }
     }
     return target;
+  }
+
+  public void trainModel() {
+    System.out.println("Training model...");
+    connector.trainSvc((SvcRequest)getTrainingRequestByName("SvcRequest").build(), model.getTrainingData());
+    System.out.println("Finished training!");
   }
 
   private void initFileLoader() {
@@ -302,6 +327,9 @@ public class Controller {
   }
 
   public void sampleCurrentModel() {
+    // Clear current points and reshow training data
+    clearPoints();
+    showTrainingData();
     System.out.println("Sampling");
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
     System.out.println("Selected classifier: " + path);

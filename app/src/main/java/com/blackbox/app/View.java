@@ -9,7 +9,6 @@ import com.google.protobuf.GeneratedMessage.Builder;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -30,7 +29,7 @@ public class View extends Application {
    */
   static Controller controller;
   private VBox classifierBox;
-  private Node requestNode;
+  private VBox requestBox;
 
   @Override
   public void start(Stage primaryStage) {
@@ -199,15 +198,23 @@ public class View extends Application {
     trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
     vbox.getChildren().add(trainingSettingsLabel);
 
-    requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
-      if (requestNode != null) {
-        vbox.getChildren().remove(requestNode);
-      }
+    requestBox = new VBox();
+    vbox.getChildren().add(requestBox);
 
-      requestNode = new ProtoUi(builder).build();
-      vbox.getChildren().add(requestNode);
+    requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
+      requestBox.getChildren().clear();
+      requestBox.getChildren().add(new ProtoUi(builder).build());
     });
     requestSelector.getSelectionModel().select(0);
+
+    Button trainButton = new Button("Train");
+    trainButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
+    trainButton.setTextFill(Color.PURPLE);
+    trainButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
+    trainButton.setOnAction(event -> {
+      controller.trainModel();
+    });
+    vbox.getChildren().add(trainButton);
 
     root.setCenter(rightPane);
   }

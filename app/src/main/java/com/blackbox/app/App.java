@@ -3,13 +3,7 @@
  */
 package com.blackbox.app;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Optional;
-
 import com.blackbox.graph.Canvas;
-import com.blackbox.model.OnnxModel;
-import com.blackbox.model.PointData;
 
 import javafx.application.Application;
 
@@ -19,23 +13,6 @@ public class App {
         Model model = new Model();
         Controller controller = new Controller(model);
         View.controller = controller;
-
-        Connector connector = new Connector();
-        System.out.println(connector.sayHello("arlo"));
-        System.out.println(connector.trainSvc());
-        OnnxModel onnx;
-        try {
-            onnx = new OnnxModel("SVM.onnx");
-        } catch (FileNotFoundException e) {
-            System.err.println(e);
-            return;
-        }
-        Optional<List<PointData>> points = onnx.getTrainingData();
-        if (points.isPresent()) {
-            for (PointData point : points.get()) {
-                controller.pointLoaded(point, true);
-            }
-        }
 
         // Start JavaFX thread
         Thread javafxThread = new Thread(() -> {

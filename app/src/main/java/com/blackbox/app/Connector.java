@@ -53,12 +53,11 @@ public class Connector {
         return res.getMessage();
     }
 
-    public String trainSvc() {
-        PointData[] pointDatas = DataGen.genCircle(10000, 3f, 1.0, true, false, false, true);
-        List<Point> points = Arrays.stream(pointDatas).map(point -> convertPoint(point)).toList();
+    public String trainSvc(SvcRequest request, PointData[] trainingData) {
+        List<Point> points = Arrays.stream(trainingData).map(point -> convertPoint(point)).toList();
 
         Points pointsProto = Points.newBuilder().addAllPoints(points).build();
-        SvcRequest req = SvcRequest.newBuilder().setPoints(pointsProto).setKernel(Kernel.RBF).build();
+        SvcRequest req = SvcRequest.newBuilder().setPoints(pointsProto).setKernel(request.getKernel()).build();
         ModelResults res = stub.trainSvc(req);
         return res.getOnnxPath();
     }
