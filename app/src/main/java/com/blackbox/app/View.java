@@ -166,6 +166,8 @@ public class View extends Application {
     VBox vbox = new VBox();
     rightPane.setCenter(vbox);
 
+    vbox.getChildren().add(controller.getGenerator().createNode());
+
     ComboBox<Builder<?>> requestSelector = new ComboBox<>();
     requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
     requestSelector.setConverter(new StringConverter<Builder<?>>() {
