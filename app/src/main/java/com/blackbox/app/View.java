@@ -170,6 +170,8 @@ public class View extends Application {
     globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
     vbox.getChildren().add(globalGeneratorSettingsLabel);
 
+    vbox.getChildren().add(controller.getGenOptions().createNode());
+
     Label generatorSettingsLabel = new Label("Generator Settings");
     generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
     vbox.getChildren().add(generatorSettingsLabel);

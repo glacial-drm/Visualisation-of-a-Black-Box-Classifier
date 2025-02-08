@@ -2,6 +2,7 @@ package com.blackbox.app;
 
 import com.blackbox.generators.CircleGenerator;
 import com.blackbox.generators.DataGenerator;
+import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.ClearPoints;
 import com.blackbox.graph.events.PointsLoaded;
@@ -42,13 +43,8 @@ public class Controller {
     this.model = model;
 
     model.setGenerator(new CircleGenerator());
-    getGenerator().setOnChange(generator -> {
-      sendEvent(new ClearPoints());
-      PointData[] trainingData = generator.buildData(10_000, 3f);
-      for (PointData point : trainingData) {
-        pointLoaded(point, true);
-      }
-    });
+    getGenerator().setOnChange(_v -> generateTrainingData());
+    getGenOptions().setOnChange(_v -> generateTrainingData());
 
     model.setTrainingRequests(new Builder[] {
       UiTest.newBuilder()
@@ -66,6 +62,18 @@ public class Controller {
     model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
     initFileLoader();
+  }
+
+  public void generateTrainingData() {
+    sendEvent(new ClearPoints());
+    PointData[] trainingData = getGenerator().buildData(getGenOptions());
+    for (PointData point : trainingData) {
+      pointLoaded(point, true);
+    }
+  }
+
+  public GlobalGenOptions getGenOptions() {
+    return model.getGetOptions();
   }
 
   public DataGenerator getGenerator() {

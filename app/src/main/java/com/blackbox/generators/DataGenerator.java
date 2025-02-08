@@ -17,5 +17,5 @@ public abstract class DataGenerator {
 
     public abstract Node createNode();
 
-    public abstract PointData[] buildData(int count, float range);
+    public abstract PointData[] buildData(GlobalGenOptions options);
 }

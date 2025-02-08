@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.blackbox.generators.DataGenerator;
+import com.blackbox.generators.GlobalGenOptions;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 /**
@@ -27,10 +28,15 @@ public class Model {
     private File currentDir;
     private ArrayList<String> classifiers;
 
+    private GlobalGenOptions genOptions = new GlobalGenOptions();
     private DataGenerator generator;
 
     private int selectedTrainingRequest = 0;
     private Builder<?>[] trainingRequests;
+
+    public GlobalGenOptions getGetOptions() {
+        return genOptions;
+    }
 
     public DataGenerator getGenerator() {
         return generator;
