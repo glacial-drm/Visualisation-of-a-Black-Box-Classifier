@@ -44,6 +44,13 @@ public class PointManager {
     }
 
     /**
+     * Delete all of the points.
+     */
+    public void clearPoints() {
+        points.clear();
+    }
+
+    /**
      * Sets up the shared VAO, geometry VBO, index buffer,
      * instance VBO for MVP matrices, and instance VBO for colors.
      */

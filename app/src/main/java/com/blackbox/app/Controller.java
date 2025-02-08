@@ -3,6 +3,7 @@ package com.blackbox.app;
 import com.blackbox.generators.CircleGenerator;
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.graph.events.CanvasEvent;
+import com.blackbox.graph.events.ClearPoints;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
@@ -42,6 +43,7 @@ public class Controller {
 
     model.setGenerator(new CircleGenerator());
     getGenerator().setOnChange(generator -> {
+      sendEvent(new ClearPoints());
       PointData[] trainingData = generator.buildData(10_000, 3f);
       for (PointData point : trainingData) {
         pointLoaded(point, true);
