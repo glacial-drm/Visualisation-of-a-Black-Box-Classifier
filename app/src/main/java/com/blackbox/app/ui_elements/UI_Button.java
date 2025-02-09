@@ -16,6 +16,7 @@ public class UI_Button extends Button {
 
         updateModeElements();
         setMaxWidth(Double.MAX_VALUE);
+        setPrefWidth(200);
         setPrefHeight(50);
     }
 
@@ -28,7 +29,7 @@ public class UI_Button extends Button {
     }
 
     public void updateModeElements(){
-        setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        setFont(Font.font("Arial", FontWeight.BOLD, 18));
         if(mode == UI_Mode.DARK){
             setTextFill(Color.PURPLE);
             setStyle("-fx-border-color: #1e1e1e;");

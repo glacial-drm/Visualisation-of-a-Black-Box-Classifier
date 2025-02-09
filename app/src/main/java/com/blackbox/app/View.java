@@ -2,16 +2,19 @@ package com.blackbox.app;
 
 import com.blackbox.app.ui_elements.UI_Button;
 import com.blackbox.app.ui_elements.UI_Mode;
+import com.sun.javafx.scene.SpotLightHelper;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -30,25 +33,10 @@ public class View extends Application {
   @Override
   public void start(Stage primaryStage) {
     mode = UI_Mode.DARK;
-    /*
-    Utilise free space in current stage to add option to train data AND view coordinates/zoom
-    Connector file on BOX114 branch contains:
-      PointData[] pointDatas = DataGen.genCircle(10000, 3f, 1.0, true, false, false, true);
-    Un hardcode the data in this function, then provide it somehow to the function
-      Dropdown for model type, SVM, NN, Decision Tree, etc (comes after UI is finalised for current)
-    --- add this to UI
-     */
 
     // Main layout
     BorderPane root = new BorderPane();
     root.setStyle("-fx-background-color: #2c2c2c;");
-
-    //Menubar (add option to change between dark and light mode)
-//    MenuBar bar = new MenuBar();
-//    Menu mode = new Menu("Mode");
-//    bar.getMenus().add(mode);
-//    mode.getItems().addAll(MenuItem)
-//    root.setTop(bar);
 
     // Left Pane
     VBox leftPane = new VBox();
@@ -82,7 +70,6 @@ public class View extends Application {
       }
     });
 
-
     UI_Button loadButton = new UI_Button("Load");
     loadButton.setOnAction(event -> {
       DirectoryChooser chooser = controller.getFileDialog();
@@ -91,7 +78,7 @@ public class View extends Application {
       updateClassifiers();
     });
 
-    // Bottom section: Sample button
+    // Sample button
     UI_Button sampleButton = new UI_Button("Sample!");
     sampleButton.setOnAction(event -> {
       controller.sampleCurrentModel();
@@ -100,11 +87,74 @@ public class View extends Application {
 
     VBox.setVgrow(classifierBox, Priority.ALWAYS);
     updateRightPane(root, "No classifier selected");
-    leftPane.getChildren().addAll(folderLabel, classifierBox, setButton, loadButton, sampleButton);
+    leftPane.getChildren().addAll(folderLabel, classifierBox);
 
+    // Bottom Pane
+    BorderPane bottomPane = new BorderPane();
+
+    bottomPane.setPrefWidth(200);
+    bottomPane.setPrefHeight(125);
+    bottomPane.setStyle("-fx-background-color: #1e1e1e;");
+
+    // ComboBox (Dropdown) to select Model type
+    ComboBox<String> dropdown = new ComboBox<>();
+    dropdown.getItems().addAll("Support Vector Machine (SVM)","Decision Tree", "Neural Network (NN)");
+
+    dropdown.setValue("Select Model");
+    /*
+      Dropdown default text styling seems awkward in inline css
+     */
+    dropdown.setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial; -fx-text-fill: #ffffff;");
+    //dropdown.getButtonCell().setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial;");
+
+    dropdown.setPrefWidth(200);
+    dropdown.setPrefHeight(50);
+
+    // VBox stores above dropdown and buttons
+    VBox modelBox = new VBox();
+    modelBox.getChildren().addAll(dropdown, loadButton, setButton, sampleButton);
+
+    // HNox stores BorderPane bottom elements horizontally
+    HBox detailsBox = new HBox();
+    detailsBox.setStyle("-fx-background-color: #1e1e1e;");
+    detailsBox.setPrefWidth(90);
+    detailsBox.setPrefHeight(90);
+
+    // VBox Stores Navigation information (xyz and zoom) and any other relevant output
+    VBox navBox = new VBox();
+    navBox.setStyle("-fx-background-color: #1e1e1e;");
+    navBox.setPrefWidth(300);
+    navBox.setPrefHeight(90);
+
+    Label navigationLabel = new Label("Navigation");
+    navigationLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+    navigationLabel.setTextFill(Color.PURPLE);
+    navigationLabel.setPrefWidth(300);
+
+    navBox.getChildren().addAll(navigationLabel);
+
+    // VBox Stores ___
+    VBox placeholderBox = new VBox();
+    placeholderBox.setStyle("-fx-background-color: #1e1e1e;");
+    placeholderBox.setPrefWidth(300);
+    placeholderBox.setPrefHeight(90);
+
+    Label placeholderLabel = new Label("Placeholder");
+    placeholderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+    placeholderLabel.setTextFill(Color.PURPLE);
+    placeholderLabel.setPrefWidth(300);
+
+    placeholderBox.getChildren().addAll(placeholderLabel);
+
+    detailsBox.getChildren().addAll(navBox/*, placeholderBox*/);
+
+
+    bottomPane.setLeft(modelBox);
+    bottomPane.setCenter(detailsBox);
+    bottomPane.setRight(placeholderBox);
 
     // Set layout
-
+    root.setBottom(bottomPane);
     root.setLeft(leftPane);
 
     Scene scene = new Scene(root, 800, 600);
@@ -161,6 +211,40 @@ public class View extends Application {
     activeModelLabel.setTextFill(Color.PURPLE);
     BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
     rightPane.setTop(activeModelLabel);
+
+    // Left section: Feature Listing
+
+    VBox featureBox = new VBox();
+    featureBox.setStyle("-fx-background-color: #2c2c2c;");
+
+    Label featureLabel = new Label("Features");
+    featureLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+    featureLabel.setTextFill(Color.PURPLE);
+    featureLabel.setPrefWidth(300);
+    BorderPane.setAlignment(featureLabel, Pos.CENTER);
+
+    ScrollPane featurePane = new ScrollPane();
+
+    featureBox.getChildren().addAll(featureLabel);
+    rightPane.setLeft(featureBox);
+
+    // Right Section : Creating a grid of points
+    /*
+    Connector file on BOX114 branch contains:
+      PointData[] pointDatas = DataGen.genCircle(10000, 3f, 1.0, true, false, false, true);
+      Use these params with some function to generate grid of points(?)
+     */
+    VBox gridBox = new VBox();
+    gridBox.setStyle("-fx-background-color: #2c2c2c;");
+
+    Label gridLabel = new Label("Create Grid Points");
+    gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+    gridLabel.setTextFill(Color.PURPLE);
+    gridLabel.setPrefWidth(300);
+    BorderPane.setAlignment(gridLabel, Pos.CENTER);
+
+    gridBox.getChildren().addAll(gridLabel);
+    rightPane.setCenter(gridBox);
 
     root.setCenter(rightPane);
   }
