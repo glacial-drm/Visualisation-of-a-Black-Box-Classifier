@@ -1,12 +1,11 @@
 package com.blackbox.app;
 
+import com.blackbox.app.ui_elements.UI_Button;
+import com.blackbox.app.ui_elements.UI_Mode;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -26,9 +25,11 @@ public class View extends Application {
    */
   static Controller controller;
   private VBox classifierBox;
+  public static UI_Mode mode;
 
   @Override
   public void start(Stage primaryStage) {
+    mode = UI_Mode.DARK;
     /*
     Utilise free space in current stage to add option to train data AND view coordinates/zoom
     Connector file on BOX114 branch contains:
@@ -37,13 +38,17 @@ public class View extends Application {
       Dropdown for model type, SVM, NN, Decision Tree, etc (comes after UI is finalised for current)
     --- add this to UI
      */
-    //Menubar (add option to change between dark and light mode)
-    MenuBar bar = new MenuBar();
-    bar.getMenus().add(new Menu("Test"));
 
     // Main layout
-    BorderPane root = new BorderPane(bar);
+    BorderPane root = new BorderPane();
     root.setStyle("-fx-background-color: #2c2c2c;");
+
+    //Menubar (add option to change between dark and light mode)
+//    MenuBar bar = new MenuBar();
+//    Menu mode = new Menu("Mode");
+//    bar.getMenus().add(mode);
+//    mode.getItems().addAll(MenuItem)
+//    root.setTop(bar);
 
     // Left Pane
     VBox leftPane = new VBox();
@@ -53,7 +58,7 @@ public class View extends Application {
 
     // Folder Name ()
     Label folderLabel = new Label("Folder Name");
-    folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+    folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
     folderLabel.setTextFill(Color.PURPLE);
     //folderLabel.setStyle(" -fx-padding: 20;");
 
@@ -66,12 +71,7 @@ public class View extends Application {
     updateClassifierBox(classifierBox, classifiers);
 
     // Set active model
-    Button setButton = new Button("Set");
-    setButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-    setButton.setTextFill(Color.PURPLE);
-    setButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #1e1e1e;");
-    setButton.setMaxWidth(Double.MAX_VALUE);
-    setButton.setPrefHeight(50);
+    UI_Button setButton = new UI_Button("Set");
     setButton.setOnAction(event -> {
       // Update Right Part
       String selectedClassifier = controller.getSelectedClassifier();
@@ -83,12 +83,7 @@ public class View extends Application {
     });
 
 
-    Button loadButton = new Button("Load");
-    loadButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-    loadButton.setTextFill(Color.PURPLE);
-    loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #1e1e1e;");
-    loadButton.setMaxWidth(Double.MAX_VALUE);
-    loadButton.setPrefHeight(50);
+    UI_Button loadButton = new UI_Button("Load");
     loadButton.setOnAction(event -> {
       DirectoryChooser chooser = controller.getFileDialog();
       File selectedDirectory = chooser.showDialog(primaryStage);
@@ -97,12 +92,7 @@ public class View extends Application {
     });
 
     // Bottom section: Sample button
-    Button sampleButton = new Button("Sample!");
-    sampleButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-    sampleButton.setTextFill(Color.PURPLE);
-    sampleButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: #1e1e1e;");
-    sampleButton.setMaxWidth(Double.MAX_VALUE);
-    sampleButton.setPrefHeight(50);
+    UI_Button sampleButton = new UI_Button("Sample!");
     sampleButton.setOnAction(event -> {
       controller.sampleCurrentModel();
     });
@@ -114,6 +104,7 @@ public class View extends Application {
 
 
     // Set layout
+
     root.setLeft(leftPane);
 
     Scene scene = new Scene(root, 800, 600);
@@ -166,7 +157,7 @@ public class View extends Application {
     // Top section: Active model name
 
     Label activeModelLabel = new Label("Active model - " + classifier);
-    activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+    activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
     activeModelLabel.setTextFill(Color.PURPLE);
     BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
     rightPane.setTop(activeModelLabel);
