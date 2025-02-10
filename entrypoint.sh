@@ -39,8 +39,7 @@ else
 	echo "Xvfb is running."
 
 	# Execute passed command.
-	# sh -c "$@"
-	echo "Hello!"
+	sh -c "$@"
 	status=$?
 
 	trap "echo 'Stopping'; kill -SIGTERM $Xvfb_pid" SIGINT SIGTERM
