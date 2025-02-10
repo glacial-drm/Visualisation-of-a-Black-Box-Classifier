@@ -39,6 +39,7 @@ else
 	echo "Xvfb is running."
 
 	# Execute passed command.
+	echo -e "Running command : $@"
 	sh -c "$@"
 	status=$?
 
