@@ -2,12 +2,12 @@ default:
   tags: [ docker ]
   image:
     name: $REGISTRY/$REGISTRY_USER/$TAG:0.2
-    entrypoint: ["./entrypoint.sh"]
+    entrypoint: [""]
 
 build:
   stage: build
   script:
-    - "echo 'Hello?'"
+    - "./entrypoint.sh echo 'Hello?'"
   # script: 
   #   - |
   #     # export GRADLE_USER_HOME="$(pwd)/.gradle";
