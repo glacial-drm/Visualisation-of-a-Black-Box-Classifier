@@ -39,8 +39,6 @@ else
 	echo "Xvfb is running."
 
 	# Execute passed command.
-	sh -c 'echo "Hello from entrypoint.sh"'
-	echo "$@"
 	sh -c "$@"
 	status=$?
 
