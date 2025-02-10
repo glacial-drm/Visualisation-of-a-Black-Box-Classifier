@@ -33,15 +33,15 @@ else
 	Xvfb_pid="$!"
 
 	echo "Waiting for Xvfb (PID: $Xvfb_pid) to be ready..."
-	# while ! xdpyinfo -display "${DISPLAY}" > /dev/null 2>&1; do
-	# 	sleep 0.1
-	# done
-	sleep 10
+	while ! xdpyinfo -display "${DISPLAY}" > /dev/null 2>&1; do
+		sleep 0.1
+	done
 	echo "Xvfb is running."
 
 	# Execute passed command.
-	# sh -c "$@"
-	echo "Hello!"
+	sh -c 'echo "Hello from entrypoint.sh"'
+	echo "$@"
+	sh -c "$@"
 	status=$?
 
 	trap "echo 'Stopping'; kill -SIGTERM $Xvfb_pid" SIGINT SIGTERM
