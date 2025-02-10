@@ -1,6 +1,8 @@
 default:
   tags: [ docker ]
-  image: $REGISTRY/$REGISTRY_USER/$TAG:0.2
+  image:
+    name: $REGISTRY/$REGISTRY_USER/$TAG:0.2
+    entrypoint: [""]
 
 build:
   stage: build
