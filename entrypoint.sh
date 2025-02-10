@@ -33,9 +33,10 @@ else
 	Xvfb_pid="$!"
 
 	echo "Waiting for Xvfb (PID: $Xvfb_pid) to be ready..."
-	while ! xdpyinfo -display "${DISPLAY}" > /dev/null 2>&1; do
-		sleep 0.1
-	done
+	# while ! xdpyinfo -display "${DISPLAY}" > /dev/null 2>&1; do
+	# 	sleep 0.1
+	# done
+	sleep 10
 	echo "Xvfb is running."
 
 	# Execute passed command.
