@@ -4,13 +4,15 @@ default:
 
 build:
   stage: build
-  script: 
-    - |
-      # export GRADLE_USER_HOME="$(pwd)/.gradle";
-      # export ENFORCE_VENDOR=1;
-      # Build all the code including tests, without running the tests
-      # ./gradlew build testClasses -x test;
-      echo "Hello?"
+  script:
+    - "echo 'Hello?'"
+  # script: 
+  #   - |
+  #     # export GRADLE_USER_HOME="$(pwd)/.gradle";
+  #     # export ENFORCE_VENDOR=1;
+  #     # Build all the code including tests, without running the tests
+  #     # ./gradlew build testClasses -x test;
+  #     echo "Hello?"
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
