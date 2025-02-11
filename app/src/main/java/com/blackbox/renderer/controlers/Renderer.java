@@ -58,7 +58,7 @@ public class Renderer {
         model.getShaders().values().forEach(shader -> {
             shader.bind();
             if (shader.isWorldBased()) {
-                shader.loadUniform("projectionMatrix", model.getCamera().getProjectionMatrix());
+                shader.loadUniform("projectionMatrix", model.getCamera().getPerspectiveMatrix());
             }
             shader.unbind();
         });
