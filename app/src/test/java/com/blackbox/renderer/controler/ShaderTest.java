@@ -3,6 +3,7 @@ package com.blackbox.renderer.controler;
 import com.blackbox.renderer.controlers.Shader;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,23 @@ class ShaderTest {
         glfwTerminate();
     }
 
+    @AfterAll
+    static void clean() throws IOException {
+        Path vertexDir = Paths.get("src/main/shaders/vertex");
+        Path fragmentDir = Paths.get("src/main/shaders/fragment");
+
+        Path vertexShaderPath = vertexDir.resolve("testShader.vert");
+        Path fragmentShaderPath = fragmentDir.resolve("testShader.frag");
+
+        if(Files.exists(vertexShaderPath)) {
+            Files.delete(vertexShaderPath);
+        }
+
+        if(Files.exists(fragmentShaderPath)) {
+            Files.delete(fragmentShaderPath);
+        }
+    }
+
     /**
      * Helper method which creates minimal valid shader files in the expected locations.
      */
@@ -64,12 +82,26 @@ class ShaderTest {
 
         // Minimal vertex shader
         if (!Files.exists(vertexShaderPath)) {
-            String vertexShaderSource = "#version 330 core\n" + "layout(location = 0) in vec3 position;\n" + "uniform mat4 projection;\n" + "void main() {\n" + "    gl_Position = projection * vec4(position, 1.0);\n" + "}\n";
+            String vertexShaderSource = """
+                    #version 330 core
+                    layout(location = 0) in vec3 position;
+                    uniform mat4 projection;
+                    void main() {
+                        gl_Position = projection * vec4(position, 1.0);
+                    }
+                    """;
             Files.writeString(vertexShaderPath, vertexShaderSource);
         }
         // Minimal fragment shader
         if (!Files.exists(fragmentShaderPath)) {
-            String fragmentShaderSource = "#version 330 core\n" + "out vec4 FragColor;\n" + "uniform vec3 color;\n" + "void main() {\n" + "    FragColor = vec4(color, 1.0);\n" + "}\n";
+            String fragmentShaderSource = """
+                    #version 330 core
+                    out vec4 FragColor;
+                    uniform vec3 color;
+                    void main() {
+                        FragColor = vec4(color, 1.0);
+                    }
+                    """;
             Files.writeString(fragmentShaderPath, fragmentShaderSource);
         }
     }
