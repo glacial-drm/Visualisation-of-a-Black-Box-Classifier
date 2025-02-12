@@ -14,6 +14,10 @@ import com.blackbox.proto.connector.*;
 import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
 import com.blackbox.proto.connector.SvcRequest.Kernel;
 
+
+/**
+ * Connects to the python server through GRPC.
+ */
 public class Connector {
     private final boolean debug = false;
     private final int port = 50000 + new Random().nextInt(10000);

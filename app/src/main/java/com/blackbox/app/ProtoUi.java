@@ -15,6 +15,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+/**
+ * Generates UI from Protocol Buffer classes.
+ */
 public class ProtoUi {
     private VBox box;
     private Builder<?> builder;
