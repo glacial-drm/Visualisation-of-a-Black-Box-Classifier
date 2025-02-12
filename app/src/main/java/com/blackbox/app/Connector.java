@@ -51,12 +51,6 @@ public class Connector {
         stub = ConnectorGrpc.newBlockingStub(channel);
     }
 
-    public String sayHello(String name) {
-        HelloRequest req = HelloRequest.newBuilder().setName(name).build();
-        HelloReply res = stub.sayHello(req);
-        return res.getMessage();
-    }
-
     public String trainSvc(SvcRequest request, PointData[] trainingData) {
         List<Point> points = Arrays.stream(trainingData).map(point -> convertPoint(point)).toList();
 

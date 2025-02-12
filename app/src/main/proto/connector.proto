@@ -7,7 +7,6 @@ option java_outer_classname = "ConnectorProto";
 package connector;
 
 service Connector {
-  rpc SayHello (HelloRequest) returns (HelloReply);
   rpc TrainSvc (SvcRequest) returns (ModelResults);
 }
 
@@ -34,14 +33,6 @@ message SvcRequest {
 
 message ModelResults {
   string onnxPath = 1;
-}
-
-message HelloRequest {
-  string name = 1;
-}
-
-message HelloReply {
-  string message = 1;
 }
 
 message UiTest {
