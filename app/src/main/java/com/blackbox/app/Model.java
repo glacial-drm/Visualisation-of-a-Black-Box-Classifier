@@ -29,6 +29,9 @@ public class Model {
     private File currentDir;
     private ArrayList<String> classifiers;
 
+    /**
+     * The global options for all the training data generators.
+     */
     private GlobalGenOptions genOptions = new GlobalGenOptions();
     private DataGenerator generator;
 

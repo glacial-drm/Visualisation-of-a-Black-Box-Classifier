@@ -57,6 +57,7 @@ public class Controller {
     });
 
     model.setTrainingRequests(new Builder[] {
+      // This specifies the default values for all the training requests
       UiTest.newBuilder()
         .setBoolean(true)
         .setF32(1f)
@@ -77,14 +78,26 @@ public class Controller {
     initFileLoader();
   }
 
+  /**
+   * Send the {@link ClearPoints} event.
+   */
   public void clearPoints() {
     sendEvent(new ClearPoints());
   }
 
+  /**
+   * Generate new training data with the selected generator.
+   * This doesn't show the training data on the Canvas,
+   * use {@link #showTrainingData()} for that.
+   */
   public void generateTrainingData() {
     model.setTrainingData(getGenerator().buildData(getGenOptions()));
   }
 
+  /**
+   * Show the previously generated training data on the Canvas.
+   * Use in conjunction with {@link #clearPoints()}.
+   */
   public void showTrainingData() {
     for (PointData point : model.getTrainingData()) {
       pointLoaded(point, true);
