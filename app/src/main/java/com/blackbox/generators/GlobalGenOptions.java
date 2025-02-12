@@ -6,6 +6,15 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+/**
+ * Stores the training generation options
+ * that are shared between the different generators.
+ *
+ * Creates a UI to modify itself.
+ *
+ * Use {@link #setOnChange()} to regenerate
+ * the training data when the inputs are changed.
+ */
 public class GlobalGenOptions {
     private Consumer<GlobalGenOptions> onChange;
 
