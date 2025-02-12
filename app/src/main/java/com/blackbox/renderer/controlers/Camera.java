@@ -17,7 +17,8 @@ public class Camera {
     private final float near;
     private final float far;
     private final float sensitivity;
-    private Matrix4f projectionMatrix;
+    private Matrix4f orthogonalMatrix;
+    private Matrix4f perspectiveMatrix;
     private Matrix4f viewMatrix;
     private boolean viewChanged = false;
 
@@ -36,7 +37,9 @@ public class Camera {
         this.far = far;
         this.sensitivity = 0.01f;
 
-        projectionMatrix = createProjectionMatrix(width, height, fov, near, far);
+        orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
+        perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
+
         viewMatrix = createViewMatrix();
     }
 
@@ -52,6 +55,12 @@ public class Camera {
         return new Matrix4f().translate(translation).rotate((float) Math.toRadians(rotation.x()), new Vector3f(1, 0, 0)).rotate((float) Math.toRadians(rotation.y()), new Vector3f(0, 1, 0)).rotate((float) Math.toRadians(rotation.z()), new Vector3f(0, 0, 1)).scale(scale);
     }
 
+    public Matrix4f createPerspectiveProjection(float width, float height, float FOV, float near, float far) {
+        perspectiveMatrix = new Matrix4f();
+        perspectiveMatrix.setPerspective(FOV, (float) width / height, near, far);
+        return perspectiveMatrix;
+    }
+
     /**
      * Creates a perspective camera
      *
@@ -62,7 +71,7 @@ public class Camera {
      * @param far    how far objects can be and still be rendered
      * @return a perspective matrix
      */
-    public Matrix4f createProjectionMatrix(float width, float height, float fov, float near, float far) {
+    public Matrix4f createOrthogonalProjection(float width, float height, float fov, float near, float far) {
         float aspectRatio = width / height;
         float yScale = (float) ((1.0f / Math.toRadians(fov / 2.0f))) * aspectRatio;
         float xScale = yScale / aspectRatio;
@@ -86,8 +95,8 @@ public class Camera {
      *
      * @return projectionMatrix
      */
-    public Matrix4f getProjectionMatrix() {
-        return projectionMatrix;
+    public Matrix4f getOrthogonalMatrix() {
+        return orthogonalMatrix;
     }
 
     /**
@@ -97,6 +106,10 @@ public class Camera {
      */
     public Matrix4f getViewMatrix() {
         return viewMatrix;
+    }
+
+    public Matrix4f getPerspectiveMatrix() {
+        return perspectiveMatrix;
     }
 
     /**
@@ -174,6 +187,6 @@ public class Camera {
     }
 
     public void resize(int width, int height) {
-        projectionMatrix = createProjectionMatrix(width, height, fov, near, far);
+        orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
     }
 }
