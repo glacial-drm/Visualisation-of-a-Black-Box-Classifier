@@ -21,9 +21,6 @@ def parsePoints(points: connector_pb2.Points):
     return X, y
 
 class Connector(connector_pb2_grpc.ConnectorServicer):
-    def SayHello(self, request: connector_pb2.HelloRequest, context: grpc._server._Context):
-        return connector_pb2.HelloReply(message="Hello, %s!" % request.name)
-
     def TrainSvc(self, request: connector_pb2.SvcRequest, context: grpc._server._Context):
         X, y = parsePoints(request.points)
         kernel = connector_pb2.SvcRequest.Kernel.Name(request.kernel).lower()

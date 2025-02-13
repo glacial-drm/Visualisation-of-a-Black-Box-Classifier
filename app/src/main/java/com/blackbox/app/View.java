@@ -1,9 +1,18 @@
 package com.blackbox.app;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
+import com.blackbox.generators.DataGenerator;
+import com.google.protobuf.GeneratedMessage.Builder;
+
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
@@ -13,9 +22,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.util.List;
+import javafx.util.StringConverter;
 
 public class View extends Application {
   /**
@@ -23,6 +30,7 @@ public class View extends Application {
    */
   static Controller controller;
   private VBox classifierBox;
+  private VBox requestBox;
 
   @Override
   public void start(Stage primaryStage) {
@@ -154,6 +162,102 @@ public class View extends Application {
 
     BorderPane.setAlignment(sampleButton, Pos.CENTER);
     rightPane.setBottom(sampleButton);
+
+    VBox vbox = new VBox();
+    rightPane.setCenter(vbox);
+
+    // Global generator settings
+
+    Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
+    globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(globalGeneratorSettingsLabel);
+
+    vbox.getChildren().add(controller.getGenOptions().createNode());
+
+    // Date generator selector
+
+    Label generatorSettingsLabel = new Label("Generator Settings");
+    generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(generatorSettingsLabel);
+
+    ComboBox<DataGenerator> generatorSelector = new ComboBox<>();
+    generatorSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getGenerators())));
+    generatorSelector.setConverter(new StringConverter<DataGenerator>() {
+      @Override
+      public DataGenerator fromString(String name) {
+        return controller.getGeneratorByName(name);
+      }
+
+      @Override
+      public String toString(DataGenerator generator) {
+        return generator != null
+          ? generator.getClass().getSimpleName()
+          : "";
+      }
+    });
+    vbox.getChildren().add(generatorSelector);
+
+    // Data generator settings
+
+    VBox generatorBox = new VBox();
+    vbox.getChildren().add(generatorBox);
+
+    generatorSelector.getSelectionModel().selectedItemProperty().addListener((_observer, _old, generator) -> {
+      generatorBox.getChildren().clear();
+      generatorBox.getChildren().add(generator.createNode());
+    });
+    generatorSelector.getSelectionModel().selectedIndexProperty().addListener((_observer, _old, index) -> {
+      controller.setSelectedGenerator(index.intValue());
+    });
+    generatorSelector.getSelectionModel().select(0);
+
+    // Training request selector
+
+    Label trainingSettingsLabel = new Label("Training Settings");
+    trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(trainingSettingsLabel);
+
+    ComboBox<Builder<?>> requestSelector = new ComboBox<>();
+    requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
+    requestSelector.setConverter(new StringConverter<Builder<?>>() {
+      @Override
+      public Builder<?> fromString(String name) {
+        return controller.getTrainingRequestByName(name);
+      }
+
+      @Override
+      public String toString(Builder<?> request) {
+        return request != null
+          ? request.getDescriptorForType().getName()
+          : "";
+      }
+    });
+    vbox.getChildren().add(requestSelector);
+
+    // Training request settings
+
+    requestBox = new VBox();
+    vbox.getChildren().add(requestBox);
+
+    requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
+      requestBox.getChildren().clear();
+      requestBox.getChildren().add(new ProtoUi(builder).build());
+    });
+    requestSelector.getSelectionModel().selectedIndexProperty().addListener((_observer, _old, index) -> {
+      controller.setSelectedTrainingRequest(index.intValue());
+    });
+    requestSelector.getSelectionModel().select(0);
+
+    // Train button
+
+    Button trainButton = new Button("Train");
+    trainButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
+    trainButton.setTextFill(Color.PURPLE);
+    trainButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
+    trainButton.setOnAction(event -> {
+      controller.trainModel();
+    });
+    vbox.getChildren().add(trainButton);
 
     root.setCenter(rightPane);
   }

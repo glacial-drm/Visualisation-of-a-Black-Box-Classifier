@@ -12,8 +12,12 @@ import java.util.Random;
 import com.blackbox.model.PointData;
 import com.blackbox.proto.connector.*;
 import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
-import com.blackbox.proto.connector.SvcRequest.Kernel;
+import com.google.protobuf.GeneratedMessage.Builder;
 
+
+/**
+ * Connects to the python server through GRPC.
+ */
 public class Connector {
     private final boolean debug = false;
     private final int port = 50000 + new Random().nextInt(10000);
@@ -47,19 +51,19 @@ public class Connector {
         stub = ConnectorGrpc.newBlockingStub(channel);
     }
 
-    public String sayHello(String name) {
-        HelloRequest req = HelloRequest.newBuilder().setName(name).build();
-        HelloReply res = stub.sayHello(req);
-        return res.getMessage();
-    }
-
-    public String trainSvc() {
-        PointData[] pointDatas = DataGen.genCircle(10000, 3f, 1.0, true, false, false, true);
-        List<Point> points = Arrays.stream(pointDatas).map(point -> convertPoint(point)).toList();
-
+    public String trainModel(Builder<?> request, PointData[] trainingData) {
+        List<Point> points = Arrays.stream(trainingData).map(point -> convertPoint(point)).toList();
         Points pointsProto = Points.newBuilder().addAllPoints(points).build();
-        SvcRequest req = SvcRequest.newBuilder().setPoints(pointsProto).setKernel(Kernel.RBF).build();
-        ModelResults res = stub.trainSvc(req);
+
+        ModelResults res;
+
+        if (request instanceof SvcRequest.Builder svc) {
+            SvcRequest svcRequest = svc.setPoints(pointsProto).build();
+            res = stub.trainSvc(svcRequest);
+        } else {
+            return null;
+        }
+
         return res.getOnnxPath();
     }
 

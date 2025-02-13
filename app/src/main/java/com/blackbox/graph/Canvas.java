@@ -2,6 +2,7 @@ package com.blackbox.graph;
 
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
+import com.blackbox.graph.events.ClearPoints;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
 import com.blackbox.renderer.controlers.Renderer;
@@ -165,6 +166,8 @@ public class Canvas {
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
                 rendererModel.addPoint(pointsLoaded.point, pointsLoaded.isTraining);
+            } else if (canvasEvent instanceof ClearPoints ){
+                rendererModel.getPointManager().clearPoints();
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;

@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.blackbox.generators.DataGenerator;
+import com.blackbox.generators.GlobalGenOptions;
+import com.blackbox.model.PointData;
+import com.google.protobuf.GeneratedMessage.Builder;
+
 /**
  * Feel free to change/enhance any of the code
  * - Salameh Alfasatleh / psysa21
@@ -23,6 +28,62 @@ public class Model {
      */
     private File currentDir;
     private ArrayList<String> classifiers;
+
+    /**
+     * The global options for all the training data generators.
+     */
+    private GlobalGenOptions genOptions = new GlobalGenOptions();
+    private int selectedGenerator;
+    private DataGenerator[] generators;
+
+    private int selectedTrainingRequest = 0;
+    private Builder<?>[] trainingRequests;
+
+    private PointData[] trainingData;
+
+    public void setTrainingData(PointData[] data) {
+        trainingData = data;
+    }
+
+    public PointData[] getTrainingData() {
+        return trainingData;
+    }
+
+    public GlobalGenOptions getGetOptions() {
+        return genOptions;
+    }
+
+    public DataGenerator[] getGenerators() {
+        return generators;
+    }
+
+    public DataGenerator getSelectedGenerator() {
+        return generators[selectedGenerator];
+    }
+
+    public void setGenerators(DataGenerator[] generators) {
+        this.generators = generators;
+    }
+
+    public void setSelectedGenerator(int index) {
+        selectedGenerator = index;
+    }
+
+    public void setTrainingRequests(Builder<?>[] requests) {
+        trainingRequests = requests;
+    }
+
+    public Builder<?>[] getTrainingRequests() {
+        return trainingRequests;
+    }
+
+    public void setSelectedTrainingRequest(int index) {
+        selectedTrainingRequest = index;
+    }
+
+    public Builder<?> getSelectedTrainingRequest() {
+        return trainingRequests[selectedTrainingRequest];
+    }
 
     /**
      * navigation details shown in the navigation section.
