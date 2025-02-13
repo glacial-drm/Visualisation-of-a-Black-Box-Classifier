@@ -12,6 +12,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
+/**
+ * A training data generator to generate a circle separating the classes.
+ *
+ * Quadrants are toggleable to test incomplete data.
+ */
 public class CircleGenerator extends DataGenerator {
     private VBox box;
     private float radius = 1f;
