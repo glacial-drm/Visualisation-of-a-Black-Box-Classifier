@@ -6,11 +6,14 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
+import com.google.protobuf.gradle.*
+
 plugins {
     application
     // Apply the application plugin to add support for building a CLI application in Java.
     alias(libs.plugins.javafx.plugin)
     jacoco
+    alias(libs.plugins.protobuf)
 }
 
 repositories {
@@ -48,7 +51,7 @@ val lwjglNatives = Pair(
 }
 
 dependencies {
-    // This dependency is used by the application.
+    implementation(libs.javax.annotation)
     implementation(libs.guava)
 
     implementation(libs.joml)
@@ -63,6 +66,11 @@ dependencies {
     runtimeOnly(variantOf(libs.lwjgl.opengl) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.glfw) { classifier(lwjglNatives) })
     implementation(libs.onnxruntime)
+
+    implementation(libs.protobuf.java)
+    implementation(libs.grpc.stub)
+    implementation(libs.grpc.protobuf)
+    implementation(libs.grpc.okhttp)
 }
 
 testing {
@@ -104,6 +112,24 @@ java {
 javafx {
     version = libs.versions.javafx.lib.get()
     modules("javafx.controls")
+}
+
+protobuf {
+    protoc {
+        artifact = libs.protoc.get().toString()
+    }
+    plugins {
+	id("grpc") {
+	    artifact = libs.grpc.gen.get().toString()
+	}
+    }
+    generateProtoTasks {
+	ofSourceSet("main").forEach {
+	    it.plugins {
+		id("grpc") { }
+	    }
+	}
+    }
 }
 
 application {

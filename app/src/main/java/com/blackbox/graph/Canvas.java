@@ -2,6 +2,7 @@ package com.blackbox.graph;
 
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
+import com.blackbox.graph.events.ClearPoints;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
 import com.blackbox.renderer.controlers.Renderer;
@@ -70,7 +71,7 @@ public class Canvas {
         // Hide window until its shown
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-        window = glfwCreateWindow(width, height, "Hello world", NULL, NULL);
+        window = glfwCreateWindow(width, height, "Graph", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create window");
         }
@@ -164,7 +165,9 @@ public class Canvas {
 
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
-                rendererModel.addPoint(pointsLoaded.point);
+                rendererModel.addPoint(pointsLoaded.point, pointsLoaded.isTraining);
+            } else if (canvasEvent instanceof ClearPoints ){
+                rendererModel.getPointManager().clearPoints();
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;

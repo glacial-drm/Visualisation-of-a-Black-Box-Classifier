@@ -4,6 +4,7 @@
 package com.blackbox.app;
 
 import com.blackbox.graph.Canvas;
+
 import javafx.application.Application;
 
 public class App {

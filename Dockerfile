@@ -121,11 +121,8 @@ RUN set -xe; \
     ninja -C build/ -j $(getconf _NPROCESSORS_ONLN); \
     ninja -C build/ install;
 
-# Copy our entrypoint into the container.
-COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# Create fresh image from alpine
-ARG BASE_IMAGE=alpine:3.12
+# Create fresh image
+ARG BASE_IMAGE=ubuntu:latest
 FROM ${BASE_IMAGE}
 
 # Copy the Mesa build & entrypoint script from previous stage
@@ -174,6 +171,9 @@ ENV \
     LP_PERF="" \
     MESA_VERSION="${MESA_VERSION}" \
     XVFB_WHD="1920x1080x24"
+
+# Copy our entrypoint into the container.
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Set the entrypoint script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

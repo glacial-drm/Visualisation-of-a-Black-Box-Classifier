@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.blackbox.proto.connector";
+option java_outer_classname = "ConnectorProto";
+
+package connector;
+
+service Connector {
+  rpc TrainSvc (SvcRequest) returns (ModelResults);
+}
+
+message Point {
+  float label = 1;
+  repeated float values = 2;
+}
+
+message Points {
+  repeated Point points = 1;
+}
+
+message SvcRequest {
+  Points points = 1;
+
+  enum Kernel {
+    LINEAR = 0;
+    POLY = 1;
+    RBF = 2;
+    SIGMOID = 3;
+  }
+  Kernel kernel = 2;
+}
+
+message ModelResults {
+  string onnxPath = 1;
+}
+
+message UiTest {
+  bool boolean = 1;
+  float f32 = 2;
+  double f64 = 3;
+  int32 i32 = 4;
+  int64 i64 = 5;
+  string str = 6;
+
+  enum TestEnum {
+    OPTION1 = 0;
+    OPTION2 = 1;
+    OPTION3 = 2;
+  }
+  TestEnum testEnum = 7;
+}
+

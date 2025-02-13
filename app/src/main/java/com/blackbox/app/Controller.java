@@ -1,11 +1,19 @@
 package com.blackbox.app;
 
+import com.blackbox.generators.CircleGenerator;
+import com.blackbox.generators.DataGenerator;
+import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.graph.events.CanvasEvent;
+import com.blackbox.graph.events.ClearPoints;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
+import com.blackbox.proto.connector.SvcRequest;
+import com.blackbox.proto.connector.UiTest;
+import com.google.protobuf.GeneratedMessage.Builder;
+
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -26,6 +34,8 @@ public class Controller {
    */
   private final Model model;
 
+  Connector connector = new Connector();
+
   /**
    * Constructor for the Controller.
    *
@@ -34,10 +44,118 @@ public class Controller {
   public Controller(Model model) {
     this.model = model;
 
+    model.setGenerators(new DataGenerator[] {
+      new CircleGenerator()
+    });
+    for (DataGenerator generator : getGenerators()) {
+      generator.setOnChange(_v -> {
+      clearPoints();
+      generateTrainingData();
+      showTrainingData();
+      });
+    }
+    getGenOptions().setOnChange(_v -> {
+      clearPoints();
+      generateTrainingData();
+      showTrainingData();
+    });
+
+    model.setTrainingRequests(new Builder[] {
+      // This specifies the default values for all the training requests
+      UiTest.newBuilder()
+        .setBoolean(true)
+        .setF32(1f)
+        .setF64(2.0)
+        .setI32(3)
+        .setI64(4)
+        .setStr("Hello world")
+        .setTestEnum(UiTest.TestEnum.OPTION2),
+      SvcRequest.newBuilder()
+    });
+
+    generateTrainingData();
+    showTrainingData();
+
     // Register a listener to update the view when the model changes
     model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
     initFileLoader();
+  }
+
+  /**
+   * Send the {@link ClearPoints} event.
+   */
+  public void clearPoints() {
+    sendEvent(new ClearPoints());
+  }
+
+  /**
+   * Generate new training data with the selected generator.
+   * This doesn't show the training data on the Canvas,
+   * use {@link #showTrainingData()} for that.
+   */
+  public void generateTrainingData() {
+    model.setTrainingData(getSelectedGenerator().buildData(getGenOptions()));
+  }
+
+  /**
+   * Show the previously generated training data on the Canvas.
+   * Use in conjunction with {@link #clearPoints()}.
+   */
+  public void showTrainingData() {
+    for (PointData point : model.getTrainingData()) {
+      pointLoaded(point, true);
+    }
+  }
+
+  public GlobalGenOptions getGenOptions() {
+    return model.getGetOptions();
+  }
+
+  public DataGenerator[] getGenerators() {
+    return model.getGenerators();
+  }
+
+  public DataGenerator getSelectedGenerator() {
+    return model.getSelectedGenerator();
+  }
+
+  public DataGenerator getGeneratorByName(String name) {
+    DataGenerator target = null;
+    for (DataGenerator generator : model.getGenerators()) {
+      if (generator.getClass().getSimpleName().equals(name)) {
+        target = generator;
+      }
+    }
+    return target;
+  }
+
+  public void setSelectedGenerator(int index) {
+    model.setSelectedGenerator(index);
+  }
+
+  public Builder<?>[] getTrainingRequests() {
+    return model.getTrainingRequests();
+  }
+
+  public Builder<?> getTrainingRequestByName(String name) {
+    Builder<?> target = null;
+    for (Builder<?> builder : model.getTrainingRequests()) {
+      if (builder.getDescriptorForType().getName().equals(name)) {
+        target = builder;
+      }
+    }
+    return target;
+  }
+
+  public void setSelectedTrainingRequest(int index) {
+    model.setSelectedTrainingRequest(index);
+  }
+
+  public void trainModel() {
+    System.out.println("Training model...");
+    connector.trainModel(model.getSelectedTrainingRequest(), model.getTrainingData());
+    System.out.println("Finished training!");
   }
 
   private void initFileLoader() {
@@ -59,8 +177,8 @@ public class Controller {
    *
    * @param point The point data.
    */
-  public void pointLoaded(PointData point) {
-    sendEvent(new PointsLoaded(point));
+  public void pointLoaded(PointData point, boolean isTraining) {
+    sendEvent(new PointsLoaded(point, isTraining));
   }
 
   /**
@@ -199,7 +317,7 @@ public class Controller {
     List<PointData> points = sampler.sampleBC(input);
 
     for (PointData point : points) {
-      pointLoaded(point);
+      pointLoaded(point, false);
     }
 
     onnx.endSession();
@@ -248,6 +366,9 @@ public class Controller {
   }
 
   public void sampleCurrentModel() {
+    // Clear current points and reshow training data
+    clearPoints();
+    showTrainingData();
     System.out.println("Sampling");
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
     System.out.println("Selected classifier: " + path);

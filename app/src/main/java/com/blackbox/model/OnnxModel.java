@@ -1,14 +1,20 @@
 package com.blackbox.model;
 
 import ai.onnxruntime.NodeInfo;
+import ai.onnxruntime.OnnxModelMetadata;
 import ai.onnxruntime.OrtEnvironment;
+import ai.onnxruntime.OrtException;
 import ai.onnxruntime.OrtSession;
 import ai.onnxruntime.TensorInfo;
 
 import java.io.FileNotFoundException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OnnxModel {
@@ -92,5 +98,49 @@ public class OnnxModel {
         return getTensorInfos().stream()
             .map(tensorInfo -> tensorInfo.getShape())
             .collect(Collectors.toList());
+    }
+
+    public Optional<List<PointData>> getTrainingData() {
+        OnnxModelMetadata metadata;
+        try {
+            metadata = session.getMetadata();
+        } catch (OrtException e) {
+            System.err.println(e);
+            return Optional.empty();
+        }
+
+        Optional<String> opX = metadata.getCustomMetadataValue("training_data_X");
+        Optional<String> opy = metadata.getCustomMetadataValue("training_data_y");
+
+        if (opX.isEmpty() || opy.isEmpty()) {
+            // This isn't a critical error
+            System.err.println("No training data found");
+            return Optional.empty();
+        }
+
+        String XStr = opX.get();
+        String yStr = opy.get();
+
+        ByteBuffer XBytes = ByteBuffer.wrap(Base64.getDecoder().decode(XStr));
+        XBytes.order(ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer yBytes = ByteBuffer.wrap(Base64.getDecoder().decode(yStr));
+        yBytes.order(ByteOrder.LITTLE_ENDIAN);
+
+        int FLOAT_SIZE = 4;
+        int FLOATS_PER_POINT = 2;
+        int count = XBytes.limit() / (FLOAT_SIZE * FLOATS_PER_POINT);
+        System.out.println("Count : " + count);
+
+        List<PointData> points = new ArrayList<>(count);
+
+        for (int i = 0; i < count; i++) {
+            float x = XBytes.getFloat(FLOAT_SIZE * i * FLOATS_PER_POINT);
+            float y = XBytes.getFloat(FLOAT_SIZE * (i * FLOATS_PER_POINT + 1));
+            short label = yBytes.getShort(i * 2);
+
+            points.add(new PointData(x, y, label));
+        }
+
+        return Optional.of(points);
     }
 }

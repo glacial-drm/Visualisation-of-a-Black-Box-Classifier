@@ -40,8 +40,8 @@ public class Model {
     /**
      * Adds a point (color depends on the label).
      */
-    public void addPoint(PointData point) {
-        pointManager.addPoint(point);
+    public void addPoint(PointData point, boolean isTraining) {
+        pointManager.addPoint(point, isTraining);
     }
 
     public void updateSize(int width, int height) {
