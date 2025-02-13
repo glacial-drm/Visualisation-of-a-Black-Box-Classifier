@@ -3,7 +3,7 @@ REGISTRY ?= registry
 REGISTRY_USER ?= user
 REGISTRY_PASSWD ?= password
 
-TAG = utensils/opengl
+TAG = utensils/opengl:0.2
 PUBLISH_TAG = $(REGISTRY)/$(REGISTRY_USER)/$(TAG)
 
 build:
@@ -42,7 +42,7 @@ test: login
 		cd /src; \
 		export GRADLE_USER_HOME="/src/.gradle"; \
 		export ENFORCE_VENDOR=1; \
-		gradle check; \
+		/src/gradlew check; \
 	"
 
 	@echo -e "\n\n"
