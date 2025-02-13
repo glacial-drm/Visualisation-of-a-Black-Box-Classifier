@@ -77,10 +77,6 @@ public class Model {
         return trainingRequests;
     }
 
-    public int getSelectedTrainingRequestIndex() {
-        return selectedTrainingRequest;
-    }
-
     public void setSelectedTrainingRequest(int index) {
         selectedTrainingRequest = index;
     }
