@@ -12,7 +12,7 @@ import java.util.Random;
 import com.blackbox.model.PointData;
 import com.blackbox.proto.connector.*;
 import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
-import com.blackbox.proto.connector.SvcRequest.Kernel;
+import com.google.protobuf.GeneratedMessage.Builder;
 
 
 /**
@@ -51,12 +51,19 @@ public class Connector {
         stub = ConnectorGrpc.newBlockingStub(channel);
     }
 
-    public String trainSvc(SvcRequest request, PointData[] trainingData) {
+    public String trainModel(Builder<?> request, PointData[] trainingData) {
         List<Point> points = Arrays.stream(trainingData).map(point -> convertPoint(point)).toList();
-
         Points pointsProto = Points.newBuilder().addAllPoints(points).build();
-        SvcRequest req = SvcRequest.newBuilder().setPoints(pointsProto).setKernel(request.getKernel()).build();
-        ModelResults res = stub.trainSvc(req);
+
+        ModelResults res;
+
+        if (request instanceof SvcRequest.Builder svc) {
+            SvcRequest svcRequest = svc.setPoints(pointsProto).build();
+            res = stub.trainSvc(svcRequest);
+        } else {
+            return null;
+        }
+
         return res.getOnnxPath();
     }
 

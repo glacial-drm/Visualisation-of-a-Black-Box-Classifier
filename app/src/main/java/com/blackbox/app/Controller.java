@@ -154,7 +154,7 @@ public class Controller {
 
   public void trainModel() {
     System.out.println("Training model...");
-    connector.trainSvc((SvcRequest)getTrainingRequestByName("SvcRequest").build(), model.getTrainingData());
+    connector.trainModel(model.getSelectedTrainingRequest(), model.getTrainingData());
     System.out.println("Finished training!");
   }
 
