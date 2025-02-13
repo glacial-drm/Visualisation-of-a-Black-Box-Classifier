@@ -44,12 +44,16 @@ public class Controller {
   public Controller(Model model) {
     this.model = model;
 
-    model.setGenerator(new CircleGenerator());
-    getGenerator().setOnChange(_v -> {
+    model.setGenerators(new DataGenerator[] {
+      new CircleGenerator()
+    });
+    for (DataGenerator generator : getGenerators()) {
+      generator.setOnChange(_v -> {
       clearPoints();
       generateTrainingData();
       showTrainingData();
-    });
+      });
+    }
     getGenOptions().setOnChange(_v -> {
       clearPoints();
       generateTrainingData();
@@ -91,7 +95,7 @@ public class Controller {
    * use {@link #showTrainingData()} for that.
    */
   public void generateTrainingData() {
-    model.setTrainingData(getGenerator().buildData(getGenOptions()));
+    model.setTrainingData(getSelectedGenerator().buildData(getGenOptions()));
   }
 
   /**
@@ -108,8 +112,26 @@ public class Controller {
     return model.getGetOptions();
   }
 
-  public DataGenerator getGenerator() {
-    return model.getGenerator();
+  public DataGenerator[] getGenerators() {
+    return model.getGenerators();
+  }
+
+  public DataGenerator getSelectedGenerator() {
+    return model.getSelectedGenerator();
+  }
+
+  public DataGenerator getGeneratorByName(String name) {
+    DataGenerator target = null;
+    for (DataGenerator generator : model.getGenerators()) {
+      if (generator.getClass().getSimpleName().equals(name)) {
+        target = generator;
+      }
+    }
+    return target;
+  }
+
+  public void setSelectedGenerator(int index) {
+    model.setSelectedGenerator(index);
   }
 
   public Builder<?>[] getTrainingRequests() {

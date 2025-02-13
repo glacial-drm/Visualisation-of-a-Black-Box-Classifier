@@ -33,7 +33,8 @@ public class Model {
      * The global options for all the training data generators.
      */
     private GlobalGenOptions genOptions = new GlobalGenOptions();
-    private DataGenerator generator;
+    private int selectedGenerator;
+    private DataGenerator[] generators;
 
     private int selectedTrainingRequest = 0;
     private Builder<?>[] trainingRequests;
@@ -52,12 +53,20 @@ public class Model {
         return genOptions;
     }
 
-    public DataGenerator getGenerator() {
-        return generator;
+    public DataGenerator[] getGenerators() {
+        return generators;
     }
 
-    public void setGenerator(DataGenerator generator) {
-        this.generator = generator;
+    public DataGenerator getSelectedGenerator() {
+        return generators[selectedGenerator];
+    }
+
+    public void setGenerators(DataGenerator[] generators) {
+        this.generators = generators;
+    }
+
+    public void setSelectedGenerator(int index) {
+        selectedGenerator = index;
     }
 
     public void setTrainingRequests(Builder<?>[] requests) {
