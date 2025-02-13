@@ -37,7 +37,6 @@ public class ProtoUi {
                 U processed = process.apply(value);
                 builder.setField(field, processed);
             } catch (Exception e) {}
-            System.out.println(builder.toString());
         });
     }
 
