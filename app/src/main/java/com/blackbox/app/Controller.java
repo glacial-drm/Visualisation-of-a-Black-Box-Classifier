@@ -126,6 +126,10 @@ public class Controller {
     return target;
   }
 
+  public void setSelectedTrainingRequest(int index) {
+    model.setSelectedTrainingRequest(index);
+  }
+
   public void trainModel() {
     System.out.println("Training model...");
     connector.trainSvc((SvcRequest)getTrainingRequestByName("SvcRequest").build(), model.getTrainingData());

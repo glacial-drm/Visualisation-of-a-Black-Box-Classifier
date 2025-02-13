@@ -205,6 +205,9 @@ public class View extends Application {
       requestBox.getChildren().clear();
       requestBox.getChildren().add(new ProtoUi(builder).build());
     });
+    requestSelector.getSelectionModel().selectedIndexProperty().addListener((_observer, _old, index) -> {
+      controller.setSelectedTrainingRequest(index.intValue());
+    });
     requestSelector.getSelectionModel().select(0);
 
     Button trainButton = new Button("Train");
