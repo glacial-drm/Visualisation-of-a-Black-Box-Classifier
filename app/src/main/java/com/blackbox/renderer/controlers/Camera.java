@@ -57,7 +57,7 @@ public class Camera {
 
     public Matrix4f createPerspectiveProjection(float width, float height, float FOV, float near, float far) {
         perspectiveMatrix = new Matrix4f();
-        perspectiveMatrix.setPerspective(FOV, (float) width / height, near, far);
+        perspectiveMatrix.setPerspective(FOV, width / height, near, far);
         return perspectiveMatrix;
     }
 

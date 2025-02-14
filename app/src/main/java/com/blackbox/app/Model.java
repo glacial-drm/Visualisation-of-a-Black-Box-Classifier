@@ -1,14 +1,14 @@
 package com.blackbox.app;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.model.PointData;
 import com.google.protobuf.GeneratedMessage.Builder;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Feel free to change/enhance any of the code
@@ -32,7 +32,7 @@ public class Model {
     /**
      * The global options for all the training data generators.
      */
-    private GlobalGenOptions genOptions = new GlobalGenOptions();
+    private final GlobalGenOptions genOptions = new GlobalGenOptions();
     private int selectedGenerator;
     private DataGenerator[] generators;
 

@@ -3,6 +3,7 @@ package com.blackbox.renderer.controlers;
 import com.blackbox.renderer.model.Model;
 import com.blackbox.renderer.model.PointManager;
 import com.blackbox.renderer.model.primitives.Point;
+
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
@@ -23,7 +24,7 @@ public class Renderer {
         uploadViewMatrix();
     }
 
-    public void renderSetUp(){
+    public void renderSetUp() {
         clearScreen();
         move();
     }
