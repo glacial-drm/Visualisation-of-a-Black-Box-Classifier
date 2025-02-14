@@ -1,5 +1,9 @@
 package com.blackbox.app;
 
+import com.blackbox.model.PointData;
+import com.blackbox.proto.connector.*;
+import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
+import com.google.protobuf.GeneratedMessage.Builder;
 import io.grpc.ConnectivityState;
 import io.grpc.Grpc;
 import io.grpc.InsecureChannelCredentials;
@@ -8,11 +12,6 @@ import io.grpc.ManagedChannel;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import com.blackbox.model.PointData;
-import com.blackbox.proto.connector.*;
-import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
-import com.google.protobuf.GeneratedMessage.Builder;
 
 
 /**
@@ -36,8 +35,8 @@ public class Connector {
             return;
         }
 
-        channel = Grpc.newChannelBuilder("localhost:" + Integer.toString(port), InsecureChannelCredentials.create())
-            .build();
+        channel = Grpc.newChannelBuilder("localhost:" + port, InsecureChannelCredentials.create())
+                .build();
 
         ConnectivityState lastState = null;
         while (lastState != ConnectivityState.READY) {
@@ -69,10 +68,10 @@ public class Connector {
 
     public static Point convertPoint(PointData point) {
         return Point.newBuilder()
-            .setLabel(point.label)
-            .addValues(point.feature1)
-            .addValues(point.feature2)
-            .build();
+                .setLabel(point.label)
+                .addValues(point.feature1)
+                .addValues(point.feature2)
+                .build();
     }
 
     public void close() {

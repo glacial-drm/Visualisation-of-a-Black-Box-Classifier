@@ -36,8 +36,8 @@ public class PointManager {
 
         float brightness = isTraining ? 0.5f : 0.0f;
         Vector3f color = pointData.label == 1
-            ? new Vector3f(1.0f, brightness, brightness)
-            : new Vector3f(brightness, brightness, 1.0f);
+                         ? new Vector3f(1.0f, brightness, brightness)
+                         : new Vector3f(brightness, brightness, 1.0f);
 
         float scale = isTraining ? 0.05f : 0.1f;
         points.add(new Point(position, new Vector3f(0, 0, 0), scale, color));

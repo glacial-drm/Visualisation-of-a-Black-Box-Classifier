@@ -1,15 +1,14 @@
 package com.blackbox.generators;
 
+import com.blackbox.model.PointData;
+import javafx.scene.Node;
+
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.blackbox.model.PointData;
-
-import javafx.scene.Node;
-
 /**
  * An abstract class to generate training data.
- *
+ * <p>
  * Implementers also need to generate a UI to change the inputs.
  */
 public abstract class DataGenerator {
@@ -18,7 +17,7 @@ public abstract class DataGenerator {
 
     public void setOnChange(Consumer<DataGenerator> onChange) {
         this.onChange = onChange;
-    } 
+    }
 
     public abstract Node createNode();
 

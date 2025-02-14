@@ -5,9 +5,6 @@ import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.GL_VERTEX_ARRAY_BINDING;
 
 /**
  * Represents an OpenGL Vertex Buffer Object (VBO).
@@ -22,7 +19,7 @@ public class VertexBuffer {
      * Constructs a new VertexBuffer object and generates a new OpenGL VBO.
      * Ensures that no other VBO is currently bound before creating the new one.
      *
-     * @throws RuntimeException if the VBO creation fails (e.g., if OpenGL returns an invalid ID).
+     * @throws RuntimeException      if the VBO creation fails (e.g., if OpenGL returns an invalid ID).
      * @throws IllegalStateException if another VBO is currently bound.
      */
     public VertexBuffer() {
