@@ -187,6 +187,7 @@ public class Camera {
     }
 
     public void resize(int width, int height) {
+        perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
         orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
     }
 }
