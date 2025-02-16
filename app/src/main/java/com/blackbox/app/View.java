@@ -220,7 +220,7 @@ public class View extends Application {
     Label featureLabel = new Label("Features");
     featureLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
     featureLabel.setTextFill(Color.PURPLE);
-    featureLabel.setPrefWidth(300);
+    featureLabel.setPrefWidth(200);
     BorderPane.setAlignment(featureLabel, Pos.CENTER);
 
     ScrollPane featurePane = new ScrollPane();
@@ -235,12 +235,12 @@ public class View extends Application {
       Use these params with some function to generate grid of points(?)
      */
     VBox gridBox = new VBox();
-    gridBox.setStyle("-fx-background-color: #2c2c2c;");
+    gridBox.setStyle("-fx-background-color: #2c2c2c; border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e");
 
     Label gridLabel = new Label("Create Grid Points");
     gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
     gridLabel.setTextFill(Color.PURPLE);
-    gridLabel.setPrefWidth(300);
+    gridLabel.setPrefWidth(400);
     BorderPane.setAlignment(gridLabel, Pos.CENTER);
 
     gridBox.getChildren().addAll(gridLabel);
