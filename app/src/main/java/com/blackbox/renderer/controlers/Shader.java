@@ -78,8 +78,7 @@ public class Shader {
 
     /**
      * Loads a vector 3 into GPU memory
-     *
-     * @param name   uniform name in the shader
+     * @param name uniform name in the shader
      * @param vector a 3d vector of floating point values
      */
     public void loadUniform(String name, Vector3f vector) {
@@ -90,8 +89,7 @@ public class Shader {
 
     /**
      * Loads a 4x4 Matrix of floats into GPU memory
-     *
-     * @param name   uniform name in the shader
+     * @param name uniform name in the shader
      * @param matrix 4x4 matrix of floats
      */
     public void loadUniform(String name, Matrix4f matrix) {
@@ -104,27 +102,25 @@ public class Shader {
     /**
      * Sets the shader to active and then checks if the uniformLocation is know
      * if not then it gets it from the GPU
-     *
      * @param name uniform name in shader
      */
     private void checkUniformLocation(String name) {
         ensureBound();
-        if (!uniformLocations.containsKey(name)) {
+        if(!uniformLocations.containsKey(name)) {
             getUniformLocations(name);
         }
     }
 
     /**
-     * Gets the uniform location from the shader <br>
-     * will print to std.err if name is not found
-     *
+     *  Gets the uniform location from the shader <br>
+     *  will print to std.err if name is not found
      * @param name uniform name in shader
      */
     private void getUniformLocations(String name) {
         ensureBound();
         int location = glGetUniformLocation(id, name);
 
-        if (location == -1) {
+        if(location == -1) {
             System.err.println("Could not find uniform location: " + name);
         }
 
@@ -133,18 +129,16 @@ public class Shader {
 
     /**
      * Checks if the shader compiled correctly
-     *
      * @param shader shader ID
      */
     private void checkShader(int shader) {
-        if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
+        if(glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE){
             System.err.println("[RENDERER] Could not link shader program: " + glGetShaderInfoLog(shader));
         }
     }
 
     /**
      * Checks the status of the program
-     *
      * @param program program ID
      * @return true if successful false if error
      */
@@ -158,7 +152,6 @@ public class Shader {
 
     /**
      * Checks the status of the linking of shaders to the program
-     *
      * @param program program ID
      * @return true if successful false if error
      */
@@ -220,7 +213,7 @@ public class Shader {
      * @throws IllegalStateException if this VAO is not bound.
      */
     private void ensureBound() {
-        int current = glGetInteger(GL_CURRENT_PROGRAM);
+        int current = glGetInteger(GL_CURRENT_PROGRAM);;
         if (current != id) {
             throw new IllegalStateException("Shader " + id + " is not bound. Current bound shader is " + current);
         }

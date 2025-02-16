@@ -19,12 +19,11 @@ public class VertexArray {
     private final List<Integer> attributes = new ArrayList<>();
 
     // Memory allocation functions
-
     /**
      * Constructs a new VertexArray object and generates a new OpenGL VAO.
      * Ensures that no other VAO is currently bound before creating the new one.
      *
-     * @throws RuntimeException      if the VAO creation fails (e.g., if OpenGL returns an invalid ID).
+     * @throws RuntimeException if the VAO creation fails (e.g., if OpenGL returns an invalid ID).
      * @throws IllegalStateException if another VAO is currently bound.
      */
     public VertexArray() {
@@ -46,7 +45,6 @@ public class VertexArray {
     }
 
     // State management methods
-
     /**
      * Binds this VertexArray object, making it the active VAO for subsequent OpenGL operations.
      *
@@ -69,7 +67,6 @@ public class VertexArray {
 
 
     // Attribute methods
-
     /**
      * Enables all vertex attribute arrays associated with this VAO.
      * This method requires that this VAO is currently bound.
@@ -101,7 +98,6 @@ public class VertexArray {
      * Configures a vertex attribute pointer for this VAO.
      * This method requires that this VAO is currently bound.
      * </p>
-     *
      * @param attribute  The index of the vertex attribute to configure.
      * @param size       The number of components per vertex attribute (e.g., 3 for XYZ coordinates).
      * @param type       The data type of each component (e.g., GL_FLOAT).

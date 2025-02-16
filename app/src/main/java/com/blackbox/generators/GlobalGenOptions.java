@@ -1,17 +1,17 @@
 package com.blackbox.generators;
 
+import java.util.function.Consumer;
+
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
-import java.util.function.Consumer;
-
 /**
  * Stores the training generation options
  * that are shared between the different generators.
- * <p>
+ *
  * Creates a UI to modify itself.
- * <p>
+ *
  * Use {@link #setOnChange()} to regenerate
  * the training data when the inputs are changed.
  */
@@ -38,21 +38,19 @@ public class GlobalGenOptions {
 
         TextField countInput = new TextField(Integer.toString(count));
         countInput.textProperty().addListener((_observer, _old, value) -> {
-            try {
-                count = Integer.parseInt(value);
-                onChange.accept(this);
-            } catch (Exception e) {
-            }
+          try {
+            count = Integer.parseInt(value);
+            onChange.accept(this);
+          } catch (Exception e) {}
         });
         box.getChildren().add(countInput);
 
         TextField rangeInput = new TextField(Float.toString(range));
         rangeInput.textProperty().addListener((_observer, _old, value) -> {
-            try {
-                range = Float.parseFloat(value);
-                onChange.accept(this);
-            } catch (Exception e) {
-            }
+          try {
+            range = Float.parseFloat(value);
+            onChange.accept(this);
+          } catch (Exception e) {}
         });
         box.getChildren().add(rangeInput);
 

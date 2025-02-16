@@ -1,11 +1,20 @@
 package com.blackbox.model;
 
-import ai.onnxruntime.*;
+import ai.onnxruntime.NodeInfo;
+import ai.onnxruntime.OnnxModelMetadata;
+import ai.onnxruntime.OrtEnvironment;
+import ai.onnxruntime.OrtException;
+import ai.onnxruntime.OrtSession;
+import ai.onnxruntime.TensorInfo;
 
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class OnnxModel {
@@ -72,23 +81,23 @@ public class OnnxModel {
         }
 
         return inputInfo.values().stream()
-                .filter(nodeInfo -> nodeInfo.getInfo() instanceof TensorInfo)
-                .map(tensorInfo -> (TensorInfo) tensorInfo.getInfo())
-                .collect(Collectors.toList());
+            .filter(nodeInfo -> nodeInfo.getInfo() instanceof TensorInfo)
+            .map(tensorInfo -> (TensorInfo)tensorInfo.getInfo())
+            .collect(Collectors.toList());
     }
 
     // Get the input types.
     public List<String> getInputTypes() {
         return getTensorInfos().stream()
-                .map(tensorInfo -> tensorInfo.type.name())
-                .collect(Collectors.toList());
+            .map(tensorInfo -> tensorInfo.type.name())
+            .collect(Collectors.toList());
     }
 
     // Get the shape of the input data.
     public List<long[]> getInputShapes() {
         return getTensorInfos().stream()
-                .map(tensorInfo -> tensorInfo.getShape())
-                .collect(Collectors.toList());
+            .map(tensorInfo -> tensorInfo.getShape())
+            .collect(Collectors.toList());
     }
 
     public Optional<List<PointData>> getTrainingData() {

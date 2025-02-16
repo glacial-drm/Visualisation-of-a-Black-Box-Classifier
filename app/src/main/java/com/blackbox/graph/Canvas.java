@@ -19,7 +19,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  * The graph container, handles GLFW, the window, user input, and the renderer.
- * <p>
+ *
  * Should only be used with the static {@link com.blackbox.graph.Canvas#run Canvas.run} method.
  * This ensures all operations are run on a single thread, which is required for GLFW.
  */
@@ -29,9 +29,7 @@ public class Canvas {
     private Model rendererModel;
     private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
 
-    /**
-     * Whether to keep running.
-     */
+    /** Whether to keep running. */
     private boolean running = true;
     /**
      * The stop event given when quitting.
@@ -51,7 +49,7 @@ public class Canvas {
 
     /**
      * Initialise the canvas.
-     * <p>
+     *
      * This sets up GLFW and opens the window.
      */
     private void init() {
@@ -102,15 +100,15 @@ public class Canvas {
         glfwSetKeyCallback(window, (_window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 glfwSetWindowShouldClose(window, true);
-            } else if (action == GLFW_PRESS) {
-                InputHandler.keyDown((char) key);
+            } else if(action == GLFW_PRESS) {
+                InputHandler.keyDown((char)key);
             } else if (action == GLFW_RELEASE) {
-                InputHandler.keyUp((char) key);
+                InputHandler.keyUp((char)key);
             }
         });
 
         glfwSetMouseButtonCallback(window, (_window, button, action, mods) -> {
-            if (action == GLFW_PRESS) {
+            if(action == GLFW_PRESS) {
                 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
                 InputHandler.mouseDown(button);
             } else if (action == GLFW_RELEASE) {
@@ -144,13 +142,13 @@ public class Canvas {
 
     /**
      * The main application loop.
-     * <p>
+     *
      * Does the rendering and responds to events.
      */
     private void loop() {
         renderer.renderSetUp();
 
-        if (rendererModel.getPointManager().isPoints()) {
+        if(rendererModel.getPointManager().isPoints()){
             renderer.render(rendererModel.getPointManager());
         }
 
@@ -168,7 +166,7 @@ public class Canvas {
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
                 rendererModel.addPoint(pointsLoaded.point, pointsLoaded.isTraining);
-            } else if (canvasEvent instanceof ClearPoints) {
+            } else if (canvasEvent instanceof ClearPoints ){
                 rendererModel.getPointManager().clearPoints();
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;

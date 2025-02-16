@@ -1,7 +1,11 @@
 package com.blackbox.app;
 
-import com.google.protobuf.Descriptors.FieldDescriptor;
+import java.util.List;
+import java.util.function.Function;
+
 import com.google.protobuf.GeneratedMessage.Builder;
+import com.google.protobuf.Descriptors.FieldDescriptor;
+
 import javafx.beans.property.ReadOnlyProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
@@ -11,15 +15,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
-import java.util.List;
-import java.util.function.Function;
-
 /**
  * Generates UI from Protocol Buffer classes.
  */
 public class ProtoUi {
-    private final VBox box;
-    private final Builder<?> builder;
+    private VBox box;
+    private Builder<?> builder;
 
     public ProtoUi(Builder<?> builder) {
         this.builder = builder;
@@ -35,8 +36,7 @@ public class ProtoUi {
             try {
                 U processed = process.apply(value);
                 builder.setField(field, processed);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) {}
         });
     }
 
@@ -51,44 +51,38 @@ public class ProtoUi {
             addNode(new Label(field.getName()));
 
             switch (field.getJavaType()) {
-                case BOOLEAN: {
+				case BOOLEAN: {
                     CheckBox checkBox = new CheckBox();
-                    checkBox.setSelected((Boolean) builder.getField(field));
+                    checkBox.setSelected((Boolean)builder.getField(field));
                     addListener(field, checkBox.selectedProperty());
                     addNode(checkBox);
                     break;
-                }
-                case STRING: {
+                } case STRING: {
                     TextField input = new TextField(builder.getField(field).toString());
                     addListener(field, input.textProperty());
                     addNode(input);
-                    break;
-                }
-                case FLOAT: {
+					break;
+                } case FLOAT: {
                     TextField input = new TextField(builder.getField(field).toString());
                     addListener(field, input.textProperty(), Float::parseFloat);
                     addNode(input);
-                    break;
-                }
-                case DOUBLE: {
+					break;
+                } case DOUBLE: {
                     TextField input = new TextField(builder.getField(field).toString());
                     addListener(field, input.textProperty(), Double::parseDouble);
                     addNode(input);
-                    break;
-                }
-                case INT: {
+					break;
+                } case INT: {
                     TextField input = new TextField(builder.getField(field).toString());
                     addListener(field, input.textProperty(), Integer::parseInt);
                     addNode(input);
-                    break;
-                }
-                case LONG: {
+					break;
+                } case LONG: {
                     TextField input = new TextField(builder.getField(field).toString());
                     addListener(field, input.textProperty(), Long::parseLong);
                     addNode(input);
-                    break;
-                }
-                case ENUM: {
+					break;
+                } case ENUM: {
                     var enumType = field.getEnumType();
                     var options = enumType.getValues();
                     ComboBox<String> combo = new ComboBox<String>();
@@ -96,16 +90,13 @@ public class ProtoUi {
                     combo.setItems(FXCollections.observableList(options.stream().map(desc -> desc.getName()).toList()));
                     addListener(field, combo.getSelectionModel().selectedItemProperty(), enumType::findValueByName);
                     addNode(combo);
-                    break;
-                }
-                case MESSAGE: {
-                    break;
-                }
-                case BYTE_STRING: {
-                    break;
-                }
-                default:
-                    break;
+					break;
+                } case MESSAGE: {
+					break;
+                } case BYTE_STRING: {
+					break;
+                } default:
+					break;
             }
         }
 

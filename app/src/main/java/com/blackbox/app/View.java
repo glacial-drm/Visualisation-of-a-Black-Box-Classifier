@@ -1,10 +1,8 @@
 package com.blackbox.app;
 
-import com.blackbox.app.ui_elements.UI_Button;
-import com.blackbox.app.ui_elements.UI_Mode;
-import com.sun.javafx.scene.SpotLightHelper;
 import com.blackbox.generators.DataGenerator;
 import com.google.protobuf.GeneratedMessage.Builder;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
@@ -12,16 +10,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -31,17 +25,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class View extends Application {
-    /**
-     * The controller.
-     */
-    static Controller controller;
-    private VBox classifierBox;
-    private VBox requestBox;
-  public static UI_Mode mode;
+  /**
+   * The controller.
+   */
+  static Controller controller;
+  private VBox classifierBox;
+  private VBox requestBox;
 
   @Override
   public void start(Stage primaryStage) {
-    mode = UI_Mode.DARK;
     primaryStage.setTitle("UON Blackbox Project");
 
     // Main layout
@@ -56,9 +48,9 @@ public class View extends Application {
 
     // Folder Name ()
     Label folderLabel = new Label("Folder Name");
-    folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+    folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
     folderLabel.setTextFill(Color.PURPLE);
-    //folderLabel.setStyle(" -fx-padding: 20;");
+    folderLabel.setStyle(" -fx-padding: 20;");
 
     // Classifiers
     classifierBox = new VBox(15);
@@ -69,7 +61,12 @@ public class View extends Application {
     updateClassifierBox(classifierBox, classifiers);
 
     // Set active model
-    UI_Button setButton = new UI_Button("Set");
+    Button setButton = new Button("Set");
+    setButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+    setButton.setTextFill(Color.PURPLE);
+    setButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+    setButton.setMaxWidth(Double.MAX_VALUE);
+    setButton.setPrefHeight(50);
     setButton.setOnAction(event -> {
       // Update Right Part
       String selectedClassifier = controller.getSelectedClassifier();
@@ -80,7 +77,13 @@ public class View extends Application {
       }
     });
 
-    UI_Button loadButton = new UI_Button("Load");
+
+    Button loadButton = new Button("Load");
+    loadButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+    loadButton.setTextFill(Color.PURPLE);
+    loadButton.setStyle("-fx-background-color: #2c2c2c; -fx-border-color: transparent;");
+    loadButton.setMaxWidth(Double.MAX_VALUE);
+    loadButton.setPrefHeight(50);
     loadButton.setOnAction(event -> {
       DirectoryChooser chooser = controller.getFileDialog();
       File selectedDirectory = chooser.showDialog(primaryStage);
@@ -88,88 +91,16 @@ public class View extends Application {
       updateClassifiers();
     });
 
-    // Sample button
-    UI_Button sampleButton = new UI_Button("Sample!");
-    sampleButton.setOnAction(event -> {
-      controller.sampleCurrentModel();
-    });
-    BorderPane.setAlignment(sampleButton, Pos.CENTER);
-
     VBox.setVgrow(classifierBox, Priority.ALWAYS);
     updateRightPane(root, "No classifier selected");
-    leftPane.getChildren().addAll(folderLabel, classifierBox);
+    leftPane.getChildren().addAll(folderLabel, classifierBox, setButton, loadButton);
 
-    // Bottom Pane
-    BorderPane bottomPane = new BorderPane();
-
-    bottomPane.setPrefWidth(200);
-    bottomPane.setPrefHeight(125);
-    bottomPane.setStyle("-fx-background-color: #1e1e1e;");
-
-    // ComboBox (Dropdown) to select Model type
-    ComboBox<String> dropdown = new ComboBox<>();
-    dropdown.getItems().addAll("Support Vector Machine (SVM)","Decision Tree", "Neural Network (NN)");
-
-    dropdown.setValue("Select Model");
-    /*
-      Dropdown default text styling seems awkward in inline css
-     */
-    dropdown.setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial; -fx-text-fill: #ffffff;");
-    //dropdown.getButtonCell().setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial;");
-
-    dropdown.setPrefWidth(200);
-    dropdown.setPrefHeight(50);
-
-    // VBox stores above dropdown and buttons
-    VBox modelBox = new VBox();
-    modelBox.getChildren().addAll(dropdown, loadButton, setButton, sampleButton);
-
-    // HNox stores BorderPane bottom elements horizontally
-    HBox detailsBox = new HBox();
-    detailsBox.setStyle("-fx-background-color: #1e1e1e;");
-    detailsBox.setPrefWidth(90);
-    detailsBox.setPrefHeight(90);
-
-    // VBox Stores Navigation information (xyz and zoom) and any other relevant output
-    VBox navBox = new VBox();
-    navBox.setStyle("-fx-background-color: #1e1e1e;");
-    navBox.setPrefWidth(300);
-    navBox.setPrefHeight(90);
-
-    Label navigationLabel = new Label("Navigation");
-    navigationLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-    navigationLabel.setTextFill(Color.PURPLE);
-    navigationLabel.setPrefWidth(300);
-
-    navBox.getChildren().addAll(navigationLabel);
-
-    // VBox Stores ___
-    VBox placeholderBox = new VBox();
-    placeholderBox.setStyle("-fx-background-color: #1e1e1e;");
-    placeholderBox.setPrefWidth(300);
-    placeholderBox.setPrefHeight(90);
-
-    Label placeholderLabel = new Label("Placeholder");
-    placeholderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-    placeholderLabel.setTextFill(Color.PURPLE);
-    placeholderLabel.setPrefWidth(300);
-
-    placeholderBox.getChildren().addAll(placeholderLabel);
-
-    detailsBox.getChildren().addAll(navBox/*, placeholderBox*/);
-
-
-    bottomPane.setLeft(modelBox);
-    bottomPane.setCenter(detailsBox);
-    bottomPane.setRight(placeholderBox);
 
     // Set layout
-    root.setBottom(bottomPane);
     root.setLeft(leftPane);
 
     Scene scene = new Scene(root, 800, 600);
     primaryStage.setScene(scene);
-    primaryStage.setTitle("Blackbox Classifier");
     primaryStage.show();
   }
 
@@ -177,8 +108,6 @@ public class View extends Application {
     classifierBox.getChildren().clear();
     if (classifiers.isEmpty()) {
       Label emptyLabel = new Label("No classifiers available");
-      emptyLabel.setWrapText(true);
-      emptyLabel.setTextAlignment(TextAlignment.CENTER);
       emptyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
       emptyLabel.setTextFill(Color.GRAY);
       classifierBox.getChildren().add(emptyLabel);
@@ -217,44 +146,118 @@ public class View extends Application {
     // Top section: Active model name
 
     Label activeModelLabel = new Label("Active model - " + classifier);
-    activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+    activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
     activeModelLabel.setTextFill(Color.PURPLE);
     BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
     rightPane.setTop(activeModelLabel);
 
-    // Left section: Feature Listing
+    // Bottom section: Sample button
+    Button sampleButton = new Button("Sample");
+    sampleButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
+    sampleButton.setTextFill(Color.PURPLE);
+    sampleButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
+    sampleButton.setOnAction(event -> {
+      controller.sampleCurrentModel();
+    });
 
-    VBox featureBox = new VBox();
-    featureBox.setStyle("-fx-background-color: #2c2c2c;");
+    BorderPane.setAlignment(sampleButton, Pos.CENTER);
+    rightPane.setBottom(sampleButton);
 
-    Label featureLabel = new Label("Features");
-    featureLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-    featureLabel.setTextFill(Color.PURPLE);
-    featureLabel.setPrefWidth(200);
-    BorderPane.setAlignment(featureLabel, Pos.CENTER);
+    VBox vbox = new VBox();
+    rightPane.setCenter(vbox);
 
-    ScrollPane featurePane = new ScrollPane();
+    // Global generator settings
 
-    featureBox.getChildren().addAll(featureLabel);
-    rightPane.setLeft(featureBox);
+    Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
+    globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(globalGeneratorSettingsLabel);
 
-    // Right Section : Creating a grid of points
-    /*
-    Connector file on BOX114 branch contains:
-      PointData[] pointDatas = DataGen.genCircle(10000, 3f, 1.0, true, false, false, true);
-      Use these params with some function to generate grid of points(?)
-     */
-    VBox gridBox = new VBox();
-    gridBox.setStyle("-fx-background-color: #2c2c2c; border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e");
+    vbox.getChildren().add(controller.getGenOptions().createNode());
 
-    Label gridLabel = new Label("Create Grid Points");
-    gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-    gridLabel.setTextFill(Color.PURPLE);
-    gridLabel.setPrefWidth(400);
-    BorderPane.setAlignment(gridLabel, Pos.CENTER);
+    // Date generator selector
 
-    gridBox.getChildren().addAll(gridLabel);
-    rightPane.setCenter(gridBox);
+    Label generatorSettingsLabel = new Label("Generator Settings");
+    generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(generatorSettingsLabel);
+
+    ComboBox<DataGenerator> generatorSelector = new ComboBox<>();
+    generatorSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getGenerators())));
+    generatorSelector.setConverter(new StringConverter<DataGenerator>() {
+      @Override
+      public DataGenerator fromString(String name) {
+        return controller.getGeneratorByName(name);
+      }
+
+      @Override
+      public String toString(DataGenerator generator) {
+        return generator != null
+          ? generator.getClass().getSimpleName()
+          : "";
+      }
+    });
+    vbox.getChildren().add(generatorSelector);
+
+    // Data generator settings
+
+    VBox generatorBox = new VBox();
+    vbox.getChildren().add(generatorBox);
+
+    generatorSelector.getSelectionModel().selectedItemProperty().addListener((_observer, _old, generator) -> {
+      generatorBox.getChildren().clear();
+      generatorBox.getChildren().add(generator.createNode());
+    });
+    generatorSelector.getSelectionModel().selectedIndexProperty().addListener((_observer, _old, index) -> {
+      controller.setSelectedGenerator(index.intValue());
+    });
+    generatorSelector.getSelectionModel().select(0);
+
+    // Training request selector
+
+    Label trainingSettingsLabel = new Label("Training Settings");
+    trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
+    vbox.getChildren().add(trainingSettingsLabel);
+
+    ComboBox<Builder<?>> requestSelector = new ComboBox<>();
+    requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
+    requestSelector.setConverter(new StringConverter<Builder<?>>() {
+      @Override
+      public Builder<?> fromString(String name) {
+        return controller.getTrainingRequestByName(name);
+      }
+
+      @Override
+      public String toString(Builder<?> request) {
+        return request != null
+          ? request.getDescriptorForType().getName()
+          : "";
+      }
+    });
+    vbox.getChildren().add(requestSelector);
+
+    // Training request settings
+
+    requestBox = new VBox();
+    vbox.getChildren().add(requestBox);
+
+    requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
+      requestBox.getChildren().clear();
+      requestBox.getChildren().add(new ProtoUi(builder).build());
+    });
+    requestSelector.getSelectionModel().selectedIndexProperty().addListener((_observer, _old, index) -> {
+      controller.setSelectedTrainingRequest(index.intValue());
+    });
+    requestSelector.getSelectionModel().select(0);
+
+    // Train button
+
+    Button trainButton = new Button("Train");
+    trainButton.setFont(Font.font("Arial", FontWeight.BOLD, 35));
+    trainButton.setTextFill(Color.PURPLE);
+    trainButton.setStyle("-fx-background-color: transparent; -fx-border-color: #37c6ff;");
+    trainButton.setOnAction(event -> {
+      controller.trainModel();
+    });
+    vbox.getChildren().add(trainButton);
 
     root.setCenter(rightPane);
   }
