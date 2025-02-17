@@ -235,7 +235,7 @@ public class View extends Application {
       Use these params with some function to generate grid of points(?)
      */
     VBox gridBox = new VBox();
-    gridBox.setStyle("-fx-background-color: #2c2c2c; border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e");
+    gridBox.setStyle("-fx-background-color: #2c2c2c;/* border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e*/");
 
     Label gridLabel = new Label("Create Grid Points");
     gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
