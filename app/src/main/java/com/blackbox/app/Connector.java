@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.tinylog.Logger;
+
 import com.blackbox.model.PointData;
 import com.blackbox.proto.connector.*;
 import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
@@ -19,7 +21,6 @@ import com.google.protobuf.GeneratedMessage.Builder;
  * Connects to the python server through GRPC.
  */
 public class Connector {
-    private final boolean debug = true;
     private final int port = 50000 + new Random().nextInt(10000);
     Process server;
     ManagedChannel channel;
@@ -28,11 +29,10 @@ public class Connector {
     public Connector() {
         try {
             ProcessBuilder serverBuilder = createProcessBuilder(Integer.toString(port));
-            if (debug) serverBuilder = serverBuilder.inheritIO();
+            if (Logger.isDebugEnabled()) serverBuilder.inheritIO();
             server = serverBuilder.start();
         } catch (Exception e) {
-            System.err.println("Can't proceed, failed to start python server:");
-            System.err.println(e);
+            Logger.error("Can't proceed, failed to start python server:", e);
             return;
         }
 
@@ -43,7 +43,7 @@ public class Connector {
         while (lastState != ConnectivityState.READY) {
             ConnectivityState state = channel.getState(true);
             if (state != lastState) {
-                if (debug) System.out.println(state);
+                Logger.debug(state);
                 lastState = state;
             }
         }

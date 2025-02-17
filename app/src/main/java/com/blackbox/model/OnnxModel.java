@@ -129,7 +129,6 @@ public class OnnxModel {
         int FLOAT_SIZE = 4;
         int FLOATS_PER_POINT = 2;
         int count = XBytes.limit() / (FLOAT_SIZE * FLOATS_PER_POINT);
-        System.out.println("Count : " + count);
 
         List<PointData> points = new ArrayList<>(count);
 
