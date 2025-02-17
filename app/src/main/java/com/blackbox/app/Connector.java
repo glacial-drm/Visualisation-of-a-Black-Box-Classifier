@@ -19,7 +19,7 @@ import com.google.protobuf.GeneratedMessage.Builder;
  * Connects to the python server through GRPC.
  */
 public class Connector {
-    private final boolean debug = false;
+    private final boolean debug = true;
     private final int port = 50000 + new Random().nextInt(10000);
     Process server;
     ManagedChannel channel;
@@ -27,7 +27,7 @@ public class Connector {
 
     public Connector() {
         try {
-            ProcessBuilder serverBuilder = new ProcessBuilder("python3", "../python/server.py", Integer.toString(port));
+            ProcessBuilder serverBuilder = createProcessBuilder(Integer.toString(port));
             if (debug) serverBuilder = serverBuilder.inheritIO();
             server = serverBuilder.start();
         } catch (Exception e) {
@@ -49,6 +49,15 @@ public class Connector {
         }
 
         stub = ConnectorGrpc.newBlockingStub(channel);
+    }
+
+    private ProcessBuilder createProcessBuilder(String port) {
+        String os = System.getProperty("os.name");
+        if (os.toLowerCase().contains("windows")) {
+            return new ProcessBuilder("python", "../python/server.py", port);
+        } else {
+            return new ProcessBuilder("python3", "../python/server.py", port);
+        }
     }
 
     public String trainModel(Builder<?> request, PointData[] trainingData) {
