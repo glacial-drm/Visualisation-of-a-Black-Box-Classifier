@@ -1,5 +1,6 @@
 package com.blackbox.app;
 
+import com.blackbox.app.ui_elements.UI_Mode;
 import com.blackbox.generators.DataGenerator;
 import com.google.protobuf.GeneratedMessage.Builder;
 
@@ -32,6 +33,7 @@ public class View extends Application {
   static Controller controller;
   private VBox classifierBox;
   private VBox requestBox;
+  public static UI_Mode mode;
 
   @Override
   public void start(Stage primaryStage) {
