@@ -56,6 +56,9 @@ dependencies {
 
     implementation(libs.joml)
 
+    implementation(libs.tinylog.api)
+    implementation(libs.tinylog.impl)
+
     implementation(platform(libs.lwjgl.bom))
     implementation(libs.lwjgl.lib)
     implementation(libs.lwjgl.opengl)

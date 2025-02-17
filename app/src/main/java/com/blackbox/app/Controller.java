@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.tinylog.Logger;
+
 public class Controller {
   /**
    * A message queue going to the {@link com.blackbox.graph.Canvas Canvas}.
@@ -153,9 +155,9 @@ public class Controller {
   }
 
   public void trainModel() {
-    System.out.println("Training model...");
+    Logger.info("Training model...");
     connector.trainModel(model.getSelectedTrainingRequest(), model.getTrainingData());
-    System.out.println("Finished training!");
+    Logger.info("Finished training!");
   }
 
   private void initFileLoader() {
@@ -265,14 +267,14 @@ public class Controller {
    * @param selectedClassifier the selected classifier name
    */
   public void onClassifierSelected(String selectedClassifier) {
-    System.out.println("Selected classifier: " + selectedClassifier);
+    Logger.info("Selected classifier: " + selectedClassifier);
   }
 
   /**
    * Responds to model changes.
    */
   private void onModelChanged() {
-    System.out.println("Model has changed. Notify the view to update components.");
+    Logger.info("Model has changed. Notify the view to update components.");
   }
 
   /**
@@ -359,7 +361,7 @@ public class Controller {
         String ext = getExt(file);
         if (ext.equals("onnx")) {
           model.addClassifier(file.getName());
-          System.out.println("Loading onnx file: " + file.getName());
+          Logger.info("Loading onnx file: " + file.getName());
         }
       }
     }
@@ -369,9 +371,9 @@ public class Controller {
     // Clear current points and reshow training data
     clearPoints();
     showTrainingData();
-    System.out.println("Sampling");
+    Logger.info("Sampling");
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
-    System.out.println("Selected classifier: " + path);
+    Logger.info("Selected classifier: " + path);
     runSampler(path);
   }
 }
