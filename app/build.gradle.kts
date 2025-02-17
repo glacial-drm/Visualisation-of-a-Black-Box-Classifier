@@ -60,11 +60,13 @@ dependencies {
     implementation(libs.lwjgl.lib)
     implementation(libs.lwjgl.opengl)
     implementation(libs.lwjgl.glfw)
+    implementation(libs.lwjgl.tinyfd)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.junit.jupiter)
     runtimeOnly(variantOf(libs.lwjgl.lib) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.opengl) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.glfw) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.tinyfd) { classifier(lwjglNatives) })
     implementation(libs.onnxruntime)
 
     implementation(libs.protobuf.java)

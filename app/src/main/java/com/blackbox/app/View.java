@@ -19,6 +19,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import java.io.File;
 import java.util.Arrays;
@@ -85,9 +86,10 @@ public class View extends Application {
     loadButton.setMaxWidth(Double.MAX_VALUE);
     loadButton.setPrefHeight(50);
     loadButton.setOnAction(event -> {
-      DirectoryChooser chooser = controller.getFileDialog();
-      File selectedDirectory = chooser.showDialog(primaryStage);
-      controller.loadAllOnnx(selectedDirectory);
+      File folder = folderSelector(primaryStage);
+      if (folder != null) {
+        controller.loadAllOnnx(folder);
+      }
       updateClassifiers();
     });
 
@@ -264,5 +266,27 @@ public class View extends Application {
 
   public void updateClassifiers() {
     updateClassifierBox(classifierBox, controller.getClassifiers());
+  }
+
+  /**
+   * Open a folder selector.
+   *
+   * This will use JavaFX on Windows and Mac, and tinyfd on Linux.
+   *
+   * Returns null if the action was cancelled.
+   */
+  public File folderSelector(Stage stage) {
+    File selectedDirectory;
+
+    if (System.getProperty("os.name").equals("Linux")) {
+      String path = TinyFileDialogs.tinyfd_selectFolderDialog("", System.getProperty("user.dir"));
+      if (path == null) return null;
+      selectedDirectory = new File(path);
+    } else {
+      DirectoryChooser chooser = controller.getFileDialog();
+      selectedDirectory = chooser.showDialog(stage);
+    }
+
+    return selectedDirectory;
   }
 }
