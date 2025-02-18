@@ -14,7 +14,7 @@ public class DataCombination {
             float f2 = data[i][1];
             long lab = labels[i];
 
-            dataToSend.add(new PointData(f1, f2, lab));
+            dataToSend.add(new PointData(f1, f2, 0, lab));
         }
         return dataToSend;
     }
