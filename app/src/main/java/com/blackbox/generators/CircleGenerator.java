@@ -20,15 +20,10 @@ import javafx.scene.layout.VBox;
 public class CircleGenerator extends DataGenerator {
     private VBox box;
     private float radius = 1f;
-    private boolean frt = true;
-    private boolean flt = true;
-    private boolean blt = true;
-    private boolean brt = true;
-    private boolean frb = true;
-    private boolean flb = true;
-    private boolean brb = true;
-    private boolean blb = true;
-
+    private boolean tl = true;
+    private boolean tr = true;
+    private boolean bl = true;
+    private boolean br = true;
 
     private void newCheckBox(boolean initial, Consumer<Boolean> consumer) {
         CheckBox checkBox = new CheckBox();
@@ -40,8 +35,8 @@ public class CircleGenerator extends DataGenerator {
         box.getChildren().add(checkBox);
     }
 
-	@Override
-	public Node createNode() {
+    @Override
+    public Node createNode() {
         box = new VBox();
 
         box.getChildren().add(new Label("Radius"));
@@ -55,46 +50,39 @@ public class CircleGenerator extends DataGenerator {
         box.getChildren().add(radiusInput);
 
         box.getChildren().add(new Label("Quadrants"));
-        newCheckBox(frt, b -> frt = b);
-        newCheckBox(flt, b -> flt = b);
-        newCheckBox(blt, b -> blt = b);
-        newCheckBox(brt, b -> brt = b);
-        newCheckBox(frb, b -> frb = b);
-        newCheckBox(flb, b -> flb = b);
-        newCheckBox(brb, b -> brb = b);
-        newCheckBox(blb, b -> blb = b);
+        newCheckBox(tl, b -> tl = b);
+        newCheckBox(tr, b -> tr = b);
+        newCheckBox(bl, b -> bl = b);
+        newCheckBox(br, b -> br = b);
+
         return box;
-	}
+    }
 
     private static float[] genQuadrant(float range, float[] offsets) {
         float x = rng.nextFloat(-range / 2f, range / 2f) + offsets[0];
         float y = rng.nextFloat(-range / 2f, range / 2f) + offsets[1];
-        float z = rng.nextFloat(-range / 2f, range / 2f) + offsets[2];
-        return new float[] { x, y, z};
+        return new float[] { x, y };
     }
 
-	@Override
-	public PointData[] buildData(GlobalGenOptions options) {
+    @Override
+    public PointData[] buildData(GlobalGenOptions options) {
         double radius_2 = Math.pow(radius, 2);
         PointData[] data = new PointData[options.getCount()];
 
         List<float[]> quadrantOffsets = new ArrayList<>();
-        if (frt) { quadrantOffsets.add(new float[] { options.getRange() / 2f, options.getRange() / 2f, options.getRange() / 2f }); }
-        if (flt) { quadrantOffsets.add(new float[] { -options.getRange() / 2f, options.getRange() / 2f, options.getRange() / 2f }); }
-        if (blt) { quadrantOffsets.add(new float[] { -options.getRange() / 2f, -options.getRange() / 2f, options.getRange() / 2f }); }
-        if (brt) { quadrantOffsets.add(new float[] { options.getRange() / 2f, -options.getRange() / 2f, options.getRange() / 2f }); }
-        if (frb) { quadrantOffsets.add(new float[] { options.getRange() / 2f, options.getRange() / 2f, -options.getRange() / 2f }); }
-        if (flb) { quadrantOffsets.add(new float[] { -options.getRange() / 2f, options.getRange() / 2f, -options.getRange() / 2f }); }
-        if (brb) { quadrantOffsets.add(new float[] { -options.getRange() / 2f, -options.getRange() / 2f, -options.getRange() / 2f }); }
-        if (blb) { quadrantOffsets.add(new float[] { options.getRange() / 2f, -options.getRange() / 2f, -options.getRange() / 2f }); }
+        if (tl) { quadrantOffsets.add(new float[] { -options.getRange() / 2f, options.getRange() / 2f }); }
+        if (tr) { quadrantOffsets.add(new float[] { options.getRange() / 2f, options.getRange() / 2f }); }
+        if (bl) { quadrantOffsets.add(new float[] { -options.getRange() / 2f, -options.getRange() / 2f }); }
+        if (br) { quadrantOffsets.add(new float[] { options.getRange() / 2f, -options.getRange() / 2f }); }
 
         for (int i = 0; i < options.getCount(); i++) {
             float[] point = genQuadrant(options.getRange(), quadrantOffsets.get(rng.nextInt(quadrantOffsets.size())));
             int label = Math.pow((double)point[0], 2) + Math.pow((double)point[1], 2) >= radius_2 ? 0 : 1;
 
-            data[i] = new PointData(point[0], point[1], point[2], label);
+            data[i] = new PointData(point[0], point[1], point[3], label);
         }
 
         return data;
-	}
+    }
+
 }
