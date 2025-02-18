@@ -148,10 +148,6 @@ tasks.register<Exec>("pythonPrechecks") {
     commandLine(pythonExecutable, "python/precheck.py")
 }
 
-tasks.named("build") {
-    dependsOn("pythonPrechecks")
-}
-
 tasks.named("run") {
     dependsOn("pythonPrechecks")
 }
