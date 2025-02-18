@@ -137,6 +137,22 @@ protobuf {
     }
 }
 
+tasks.register<Exec>("pythonPrechecks") {
+    // Set the working directory to the project root
+    workingDir = project.rootDir
+
+    // run python script
+    commandLine("python", "python/precheck.py")
+}
+
+tasks.named("build") {
+    dependsOn("pythonPrechecks")
+}
+
+tasks.named("run") {
+    dependsOn("pythonPrechecks")
+}
+
 application {
     // Define the main class for the application.
     mainClass = "com.blackbox.app.App"
