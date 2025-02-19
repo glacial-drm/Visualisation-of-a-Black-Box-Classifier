@@ -1,5 +1,6 @@
 package com.blackbox.graph;
 
+import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.ClearPoints;
@@ -9,8 +10,6 @@ import com.blackbox.renderer.controlers.Renderer;
 import com.blackbox.renderer.model.Model;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -27,7 +26,10 @@ public class Canvas {
     private long window;
     private Renderer renderer;
     private Model rendererModel;
-    private final ConcurrentLinkedQueue<CanvasEvent> eventQueue;
+    /**
+     * Canvas' event queue, with messages sent from the controller.
+     */
+    private final EventConsumer<CanvasEvent> eventQueue;
 
     /** Whether to keep running. */
     private boolean running = true;
@@ -40,7 +42,7 @@ public class Canvas {
     private final int width = 300;
     private final int height = 300;
 
-    private Canvas(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
+    private Canvas(EventConsumer<CanvasEvent> eventQueue) {
         this.eventQueue = eventQueue;
 
         init();
@@ -196,7 +198,7 @@ public class Canvas {
      *
      * @param eventQueue To pass events into the created thread.
      */
-    public static void run(ConcurrentLinkedQueue<CanvasEvent> eventQueue) {
+    public static void run(EventConsumer<CanvasEvent> eventQueue) {
         Canvas canvas = new Canvas(eventQueue);
 
         while (canvas.isRunning()) {

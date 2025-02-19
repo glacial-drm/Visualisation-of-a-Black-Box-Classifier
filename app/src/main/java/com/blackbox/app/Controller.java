@@ -1,5 +1,6 @@
 package com.blackbox.app;
 
+import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.generators.CircleGenerator;
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
@@ -19,7 +20,6 @@ import javafx.stage.DirectoryChooser;
 import java.io.File;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.tinylog.Logger;
 
@@ -29,7 +29,7 @@ public class Controller {
    * <p>
    * Messages passed here will be processed in the canvas render loop.
    */
-  public ConcurrentLinkedQueue<CanvasEvent> eventQueue = new ConcurrentLinkedQueue<>();
+  private final EventProducer<CanvasEvent> canvasEventSink;
   DirectoryChooser chooser = new DirectoryChooser();
   /**
    * The model.
@@ -43,8 +43,9 @@ public class Controller {
    *
    * @param model the model instance to work with
    */
-  public Controller(Model model) {
+  public Controller(Model model, EventProducer<CanvasEvent> canvasEventSink) {
     this.model = model;
+    this.canvasEventSink = canvasEventSink;
 
     model.setGenerators(new DataGenerator[] {
       new CircleGenerator()
@@ -88,7 +89,7 @@ public class Controller {
    * Send the {@link ClearPoints} event.
    */
   public void clearPoints() {
-    sendEvent(new ClearPoints());
+    canvasEventSink.send(new ClearPoints());
   }
 
   /**
@@ -166,21 +167,12 @@ public class Controller {
   }
 
   /**
-   * Send an event to the {@link com.blackbox.graph.Canvas Canvas}.
-   *
-   * @param event The event to send
-   */
-  private void sendEvent(CanvasEvent event) {
-    eventQueue.add(event);
-  }
-
-  /**
    * Send the {@link com.blackbox.graph.events.PointsLoaded PointsLoaded} event.
    *
    * @param point The point data.
    */
   public void pointLoaded(PointData point, boolean isTraining) {
-    sendEvent(new PointsLoaded(point, isTraining));
+    canvasEventSink.send(new PointsLoaded(point, isTraining));
   }
 
   /**
@@ -189,7 +181,7 @@ public class Controller {
   public void stop() {
     // Called with true to also kill this thread
     // May be changed in the future when windows can be open independently.
-    sendEvent(new StopEvent(true));
+    canvasEventSink.send(new StopEvent(true));
   }
 
   /**
