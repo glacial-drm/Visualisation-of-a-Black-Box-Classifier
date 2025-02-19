@@ -42,7 +42,7 @@ def main():
             except ImportError:
                 print(f"Failed to find '{lib.rstrip()}' please install all packages from " +
                       f"requirements.txt using (pip install -r requirements.txt)\n"
-                      f"If this is not the problem ensure you have active your virtual environment "
+                      f"If this is not the problem ensure you have activated your virtual environment "
                       f"if you are using one")
                 raise ImportError(f"failed to import {lib.rstrip()}")
                 
