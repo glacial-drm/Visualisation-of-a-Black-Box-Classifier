@@ -1,5 +1,9 @@
 package com.blackbox;
 
+import com.blackbox.eventqueue.EventConsumer;
+import com.blackbox.eventqueue.EventProducer;
+import com.blackbox.eventqueue.EventQueue;
+import com.blackbox.eventqueue.ProducerConsumerPair;
 import com.blackbox.graph.Canvas;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.PointsLoaded;
@@ -9,21 +13,25 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CanvasTest {
-    ConcurrentLinkedQueue<CanvasEvent> eventQueue;
+    ProducerConsumerPair<CanvasEvent> eventQueuePair;
+    EventProducer<CanvasEvent> eventProducer;
+    EventConsumer<CanvasEvent> eventConsumer;
 
     @BeforeEach
     void init() {
-        eventQueue = new ConcurrentLinkedQueue<>();
+        eventQueuePair = EventQueue.createPair();
+        eventProducer = eventQueuePair.producer;
+        eventConsumer = eventQueuePair.consumer;
     }
 
     @AfterEach
     void cleanup() {
-        eventQueue = null;
+        eventQueuePair = null;
+        eventProducer = null;
+        eventConsumer = null;
     }
 
     /**
@@ -33,8 +41,8 @@ public class CanvasTest {
      */
     @Test
     void testStartStop() {
-        eventQueue.add(new StopEvent(false));
-        Canvas.run(eventQueue);
+        eventProducer.send(new StopEvent(false));
+        Canvas.run(eventConsumer, null);
         assertTrue(true);
     }
 
@@ -44,9 +52,9 @@ public class CanvasTest {
      */
     @Test
     void testPointsLoaded() {
-        eventQueue.add(new PointsLoaded(new PointData(0f, 0f, 0), false));
-        eventQueue.add(new StopEvent(false));
-        Canvas.run(eventQueue);
+        eventProducer.send(new PointsLoaded(new PointData(0f, 0f, 0), false));
+        eventProducer.send(new StopEvent(false));
+        Canvas.run(eventConsumer, null);
         assertTrue(true);
     }
 }
