@@ -14,9 +14,11 @@ import javafx.application.Application;
 public class App {
     public static void main(String[] args) {
         // Create 1 directional link from canvas -> controller
-        ProducerConsumerPair<ControllerEvent> controllerEventQueue = EventQueue.createPair();
+        ProducerConsumerPair<ControllerEvent> controllerEventQueue =
+            EventQueue.createPair();
         // Create 1 directional link from controller -> canvas
-        ProducerConsumerPair<CanvasEvent> canvasEventQueue = EventQueue.createPair();
+        ProducerConsumerPair<CanvasEvent> canvasEventQueue =
+            EventQueue.createPair();
 
         // Setup MVC
         Model model = new Model();
