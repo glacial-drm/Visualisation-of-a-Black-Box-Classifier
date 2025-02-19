@@ -10,6 +10,8 @@ public class EventProducer<T> {
     }
 
     public void send(T event) {
+        if (event == null) return;
+
         queue.offer(event);
     }
 }
