@@ -86,6 +86,13 @@ public class Controller {
   }
 
   /**
+   * Check for received events and respond to them.
+   */
+  public void checkForEvents() {
+    Logger.info("Checking for events");
+  }
+
+  /**
    * Send the {@link ClearPoints} event.
    */
   public void clearPoints() {
