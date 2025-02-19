@@ -2,7 +2,6 @@ package com.blackbox;
 
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
-import com.blackbox.eventqueue.EventQueue;
 import com.blackbox.eventqueue.ProducerConsumerPair;
 import com.blackbox.graph.Canvas;
 import com.blackbox.graph.events.CanvasEvent;
@@ -22,7 +21,7 @@ public class CanvasTest {
 
     @BeforeEach
     void init() {
-        eventQueuePair = EventQueue.createPair();
+        eventQueuePair = new ProducerConsumerPair<>();
         eventProducer = eventQueuePair.producer;
         eventConsumer = eventQueuePair.consumer;
     }

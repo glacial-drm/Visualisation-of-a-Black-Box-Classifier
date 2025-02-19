@@ -4,7 +4,6 @@
 package com.blackbox.app;
 
 import com.blackbox.app.events.ControllerEvent;
-import com.blackbox.eventqueue.EventQueue;
 import com.blackbox.eventqueue.ProducerConsumerPair;
 import com.blackbox.graph.Canvas;
 import com.blackbox.graph.events.CanvasEvent;
@@ -14,11 +13,9 @@ import javafx.application.Application;
 public class App {
     public static void main(String[] args) {
         // Create 1 directional link from canvas -> controller
-        ProducerConsumerPair<ControllerEvent> controllerEventQueue =
-            EventQueue.createPair();
+        var controllerEventQueue = new ProducerConsumerPair<ControllerEvent>();
         // Create 1 directional link from controller -> canvas
-        ProducerConsumerPair<CanvasEvent> canvasEventQueue =
-            EventQueue.createPair();
+        var canvasEventQueue = new ProducerConsumerPair<CanvasEvent>();
 
         // Setup MVC
         Model model = new Model();
