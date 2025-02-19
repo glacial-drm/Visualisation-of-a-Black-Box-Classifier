@@ -44,7 +44,7 @@ public class CanvasTest {
      */
     @Test
     void testPointsLoaded() {
-        eventQueue.add(new PointsLoaded(new PointData(0f, 0f, 0), false));
+        eventQueue.add(new PointsLoaded(new PointData(0f, 0f, 0f, 0), false));
         eventQueue.add(new StopEvent(false));
         Canvas.run(eventQueue);
         assertTrue(true);
