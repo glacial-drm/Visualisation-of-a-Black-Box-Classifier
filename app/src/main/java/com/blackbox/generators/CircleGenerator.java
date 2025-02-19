@@ -35,8 +35,8 @@ public class CircleGenerator extends DataGenerator {
         box.getChildren().add(checkBox);
     }
 
-	@Override
-	public Node createNode() {
+    @Override
+    public Node createNode() {
         box = new VBox();
 
         box.getChildren().add(new Label("Radius"));
@@ -56,7 +56,7 @@ public class CircleGenerator extends DataGenerator {
         newCheckBox(br, b -> br = b);
 
         return box;
-	}
+    }
 
     private static float[] genQuadrant(float range, float[] offsets) {
         float x = rng.nextFloat(-range / 2f, range / 2f) + offsets[0];
@@ -64,8 +64,8 @@ public class CircleGenerator extends DataGenerator {
         return new float[] { x, y };
     }
 
-	@Override
-	public PointData[] buildData(GlobalGenOptions options) {
+    @Override
+    public PointData[] buildData(GlobalGenOptions options) {
         double radius_2 = Math.pow(radius, 2);
         PointData[] data = new PointData[options.getCount()];
 
@@ -79,10 +79,10 @@ public class CircleGenerator extends DataGenerator {
             float[] point = genQuadrant(options.getRange(), quadrantOffsets.get(rng.nextInt(quadrantOffsets.size())));
             int label = Math.pow((double)point[0], 2) + Math.pow((double)point[1], 2) >= radius_2 ? 0 : 1;
 
-            data[i] = new PointData(point[0], point[1], label);
+            data[i] = new PointData(point[0], point[1], 0, label);
         }
 
         return data;
-	}
+    }
 
 }

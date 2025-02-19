@@ -81,6 +81,7 @@ public class Connector {
             .setLabel(point.label)
             .addValues(point.feature1)
             .addValues(point.feature2)
+            .addValues(point.feature3)
             .build();
     }
 
