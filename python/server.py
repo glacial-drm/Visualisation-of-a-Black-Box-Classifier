@@ -34,12 +34,20 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
 
 def serve():
+    if len(sys.argv) != 2:
+        print("Invalid args")
+        print("Usage : server.py <PORT>")
+        exit(1)
+
     port = sys.argv[1]
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     connector_pb2_grpc.add_ConnectorServicer_to_server(Connector(), server)
+
     server.add_insecure_port("localhost:" + port)
     server.start()
     print("Server started, listening on " + port)
+
     server.wait_for_termination()
 
 

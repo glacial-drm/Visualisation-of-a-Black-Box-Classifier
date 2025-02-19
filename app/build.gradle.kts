@@ -56,15 +56,20 @@ dependencies {
 
     implementation(libs.joml)
 
+    implementation(libs.tinylog.api)
+    implementation(libs.tinylog.impl)
+
     implementation(platform(libs.lwjgl.bom))
     implementation(libs.lwjgl.lib)
     implementation(libs.lwjgl.opengl)
     implementation(libs.lwjgl.glfw)
+    implementation(libs.lwjgl.tinyfd)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.junit.jupiter)
     runtimeOnly(variantOf(libs.lwjgl.lib) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.opengl) { classifier(lwjglNatives) })
     runtimeOnly(variantOf(libs.lwjgl.glfw) { classifier(lwjglNatives) })
+    runtimeOnly(variantOf(libs.lwjgl.tinyfd) { classifier(lwjglNatives) })
     implementation(libs.onnxruntime)
 
     implementation(libs.protobuf.java)
@@ -130,6 +135,21 @@ protobuf {
 	    }
 	}
     }
+}
+
+tasks.register<Exec>("pythonPrechecks") {
+    // Set the working directory to the project root
+    workingDir = project.rootDir
+
+    val osName = System.getProperty("os.name").lowercase()
+    val pythonExecutable = if (osName.contains("win")) "python" else "python3"
+
+    // run python script
+    commandLine(pythonExecutable, "python/precheck.py")
+}
+
+tasks.named("run") {
+    dependsOn("pythonPrechecks")
 }
 
 application {
