@@ -1,6 +1,8 @@
 package com.blackbox.graph;
 
+import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
+import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.ClearPoints;
@@ -30,6 +32,7 @@ public class Canvas {
      * Canvas' event queue, with messages sent from the controller.
      */
     private final EventConsumer<CanvasEvent> eventQueue;
+    private final EventProducer<ControllerEvent> controllerEventSink;
 
     /** Whether to keep running. */
     private boolean running = true;
@@ -42,8 +45,12 @@ public class Canvas {
     private final int width = 300;
     private final int height = 300;
 
-    private Canvas(EventConsumer<CanvasEvent> eventQueue) {
+    private Canvas(
+        EventConsumer<CanvasEvent> eventQueue,
+        EventProducer<ControllerEvent> controllerEventSink
+    ) {
         this.eventQueue = eventQueue;
+        this.controllerEventSink = controllerEventSink;
 
         init();
         registerInput();
@@ -198,8 +205,11 @@ public class Canvas {
      *
      * @param eventQueue To pass events into the created thread.
      */
-    public static void run(EventConsumer<CanvasEvent> eventQueue) {
-        Canvas canvas = new Canvas(eventQueue);
+    public static void run(
+        EventConsumer<CanvasEvent> eventQueue,
+        EventProducer<ControllerEvent> controllerEventSink
+    ) {
+        Canvas canvas = new Canvas(eventQueue, controllerEventSink);
 
         while (canvas.isRunning()) {
             canvas.loop();

@@ -3,6 +3,7 @@
  */
 package com.blackbox.app;
 
+import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventQueue;
 import com.blackbox.eventqueue.ProducerConsumerPair;
 import com.blackbox.graph.Canvas;
@@ -12,12 +13,18 @@ import javafx.application.Application;
 
 public class App {
     public static void main(String[] args) {
+        // Create 1 directional link from canvas -> controller
+        ProducerConsumerPair<ControllerEvent> controllerEventQueue = EventQueue.createPair();
         // Create 1 directional link from controller -> canvas
         ProducerConsumerPair<CanvasEvent> canvasEventQueue = EventQueue.createPair();
 
         // Setup MVC
         Model model = new Model();
-        Controller controller = new Controller(model, canvasEventQueue.producer);
+        Controller controller = new Controller(
+            model,
+            controllerEventQueue.consumer,
+            canvasEventQueue.producer
+        );
         View.controller = controller;
 
         // Start JavaFX thread
@@ -28,7 +35,7 @@ public class App {
         javafxThread.start();
 
         // Run Canvas
-        Canvas.run(canvasEventQueue.consumer);
+        Canvas.run(canvasEventQueue.consumer, controllerEventQueue.producer);
 
         // Wait for JavaFX to exit
         try {

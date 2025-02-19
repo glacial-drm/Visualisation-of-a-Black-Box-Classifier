@@ -1,5 +1,7 @@
 package com.blackbox.app;
 
+import com.blackbox.app.events.ControllerEvent;
+import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.generators.CircleGenerator;
 import com.blackbox.generators.DataGenerator;
@@ -24,6 +26,7 @@ import java.util.Objects;
 import org.tinylog.Logger;
 
 public class Controller {
+  private final EventConsumer<ControllerEvent> eventQueue;
   /**
    * A message queue going to the {@link com.blackbox.graph.Canvas Canvas}.
    * <p>
@@ -43,8 +46,13 @@ public class Controller {
    *
    * @param model the model instance to work with
    */
-  public Controller(Model model, EventProducer<CanvasEvent> canvasEventSink) {
+  public Controller(
+    Model model,
+    EventConsumer<ControllerEvent> eventQueue,
+    EventProducer<CanvasEvent> canvasEventSink
+  ) {
     this.model = model;
+    this.eventQueue = eventQueue;
     this.canvasEventSink = canvasEventSink;
 
     model.setGenerators(new DataGenerator[] {
@@ -89,7 +97,9 @@ public class Controller {
    * Check for received events and respond to them.
    */
   public void checkForEvents() {
-    Logger.info("Checking for events");
+    while (!eventQueue.isEmpty()) {
+      eventQueue.poll();
+    }
   }
 
   /**
