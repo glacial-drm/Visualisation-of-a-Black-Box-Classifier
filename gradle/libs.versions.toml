@@ -9,6 +9,8 @@ guava = "33.2.1-jre"
 junit = "5.10.3"
 jacoco = "0.8.12"
 
+tinylog = "2.7.0"
+
 javafx-plugin = "0.1.0"
 javafx-lib = "23.0.2"
 joml = "1.10.8"
@@ -25,11 +27,17 @@ grpc = "1.70.0"
 javax-annotation = { module = "javax.annotation:javax.annotation-api", version.ref = "javax-annotation" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 joml = { group = "org.joml", name = "joml", version.ref = "joml" }
+
+tinylog-api = { group = "org.tinylog", name = "tinylog-api", version.ref = "tinylog" }
+tinylog-impl = { group = "org.tinylog", name = "tinylog-impl", version.ref = "tinylog" }
+
 lwjgl-bom = { group = "org.lwjgl", name = "lwjgl-bom", version.ref = "lwjgl" }
 lwjgl-lib = { group = "org.lwjgl", name = "lwjgl" }
 # List of modules can be found here: https://www.lwjgl.org/customize
 lwjgl-opengl = { group = "org.lwjgl", name = "lwjgl-opengl" }
 lwjgl-glfw = { group = "org.lwjgl", name = "lwjgl-glfw" }
+lwjgl-tinyfd = { group = "org.lwjgl", name = "lwjgl-tinyfd" }
+
 onnxruntime = { module = "com.microsoft.onnxruntime:onnxruntime", version.ref = "onnxruntime"}
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
