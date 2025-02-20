@@ -5,6 +5,8 @@ import com.blackbox.app.ui_elements.UI_Mode;
 import com.blackbox.generators.DataGenerator;
 import com.google.protobuf.GeneratedMessage.Builder;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
@@ -22,6 +24,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
@@ -31,6 +34,11 @@ import java.util.List;
 
 public class View extends Application {
     /**
+     * Time between allowing the controller to check for events.
+     */
+    private final Duration eventCheckInterval = Duration.millis(250);
+
+    /**
      * The controller.
      */
     static Controller controller;
@@ -38,8 +46,20 @@ public class View extends Application {
     private VBox requestBox;
     public static UI_Mode mode = UI_Mode.DARK;
 
+    public void setupTimer() {
+        // JavaFX's Timeline and KeyFrame are used instead of a normal
+        // Java Timer so that this runs on the main JavaFX application thread.
+        Timeline timer = new Timeline(
+            new KeyFrame(eventCheckInterval, e -> controller.checkForEvents())
+        );
+        timer.setCycleCount(Timeline.INDEFINITE);
+        timer.play();
+    }
+
     @Override
     public void start(Stage primaryStage) {
+        setupTimer();
+
         primaryStage.setTitle("UON Blackbox Classifier");
 
         // Main layout
