@@ -4,6 +4,7 @@ import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.generators.CircleGenerator;
+import com.blackbox.generators.CubeGenerator;
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.graph.events.CanvasEvent;
@@ -56,7 +57,7 @@ public class Controller {
     this.canvasEventSink = canvasEventSink;
 
     model.setGenerators(new DataGenerator[] {
-      new CircleGenerator()
+      new CircleGenerator(), new CubeGenerator(),
     });
     for (DataGenerator generator : getGenerators()) {
       generator.setOnChange(_v -> {

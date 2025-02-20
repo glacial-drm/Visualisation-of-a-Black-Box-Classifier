@@ -137,6 +137,21 @@ protobuf {
     }
 }
 
+tasks.register<Exec>("pythonPrechecks") {
+    // Set the working directory to the project root
+    workingDir = project.rootDir
+
+    val osName = System.getProperty("os.name").lowercase()
+    val pythonExecutable = if (osName.contains("win")) "python" else "python3"
+
+    // run python script
+    commandLine(pythonExecutable, "python/precheck.py")
+}
+
+tasks.named("run") {
+    dependsOn("pythonPrechecks")
+}
+
 application {
     // Define the main class for the application.
     mainClass = "com.blackbox.app.App"
