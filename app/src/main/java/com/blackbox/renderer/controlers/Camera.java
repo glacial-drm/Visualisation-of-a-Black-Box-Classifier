@@ -9,6 +9,9 @@ import java.util.Map;
 
 public class Camera {
     private final Vector3f position = new Vector3f(0, 0, (float) InputHandler.getZoom());
+    private final Vector3f forward = new Vector3f(0, 0, 1);
+    private final Vector3f right = new Vector3f(1, 0, 0);
+    private final Vector3f up = new Vector3f(0, 1, 0);
     private final float moveSpeed = 0.2f;
     private final float fov;
     private final float near;
@@ -88,9 +91,9 @@ public class Camera {
      */
     public Matrix4f createViewMatrix() {
         viewChanged = true;
-        return new Matrix4f()
-                .identity()
-                .translate(position);
+
+        Vector3f target = new Vector3f(position).add(forward);
+        return new Matrix4f().lookAt(position, target, new Vector3f(0, 1, 0));
     }
 
     /**
@@ -101,6 +104,7 @@ public class Camera {
     public Matrix4f getViewMatrix() {
         return viewMatrix;
     }
+
 
     /**
      * Handles moving the camera by changing the position which effects the
@@ -150,34 +154,38 @@ public class Camera {
     }
 
     private boolean keyboardMovement2D() {
-        boolean moved = false;
+        Vector3f movement = new Vector3f();
 
-        if(InputHandler.getKeyState('W')){
-            moved = true;
-            position.y -= moveSpeed;
+        if (InputHandler.getKeyState('W')) {
+            movement.add(new Vector3f(up));
         }
-        if(InputHandler.getKeyState('S')){
-            moved = true;
-            position.y += moveSpeed;
+        if (InputHandler.getKeyState('S')) {
+            movement.sub(new Vector3f(up));
         }
-        if(InputHandler.getKeyState('A')){
-            moved = true;
-            position.x += moveSpeed;
+        if (InputHandler.getKeyState('D')) {
+            movement.sub(new Vector3f(right));
         }
-        if(InputHandler.getKeyState('D')){
-            moved = true;
-            position.x -= moveSpeed;
+        if (InputHandler.getKeyState('A')) {
+            movement.add(new Vector3f(right));
         }
-        if(InputHandler.getKeyState('E')){
-            InputHandler.incZoom(moveSpeed);
-            position.z = (float) InputHandler.getZoom();
+
+        if (movement.length() > 0) {
+            movement.normalize();
         }
-        if(InputHandler.getKeyState('Q')){
+        movement.mul(moveSpeed);
+
+        if (InputHandler.getKeyState('Q')) {
             InputHandler.incZoom(-moveSpeed);
-            position.z = (float) InputHandler.getZoom();
+            position.z = (float)InputHandler.getZoom();
+        }
+        if (InputHandler.getKeyState('E')) {
+            InputHandler.incZoom(moveSpeed);
+            position.z = (float)InputHandler.getZoom();
         }
 
-        return moved;
+        position.add(movement);
+
+        return !movement.equals(new Vector3f());
     }
 
     /**
