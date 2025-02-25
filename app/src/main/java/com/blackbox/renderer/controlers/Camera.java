@@ -156,6 +156,8 @@ public class Camera {
     private boolean keyboardMovement2D() {
         Vector3f movement = new Vector3f();
 
+        // Handle linear movement up-down and side-to-side
+
         if (InputHandler.getKeyState('W')) {
             movement.add(new Vector3f(up));
         }
@@ -173,6 +175,8 @@ public class Camera {
             movement.normalize();
         }
         movement.mul(moveSpeed);
+
+        // Handle zooming forward-backward
 
         if (InputHandler.getKeyState('Q')) {
             InputHandler.incZoom(-moveSpeed);
@@ -213,5 +217,9 @@ public class Camera {
 
     public Matrix4f getActiveProjection() {
         return activeMatrix;
+    }
+
+    public Matrix4f getPerspective() {
+        return perspectiveMatrix;
     }
 }
