@@ -18,7 +18,7 @@ public class Camera {
     private Matrix4f perspectiveMatrix;
     private Matrix4f viewMatrix;
     private boolean viewChanged = false;
-    private boolean activeMatrix;
+    private Matrix4f activeMatrix;
 
     /**
      * Sets up the projection and view matrix
@@ -37,6 +37,7 @@ public class Camera {
 
         orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
         perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
+        activeMatrix = orthogonalMatrix;
 
         viewMatrix = createViewMatrix();
     }
@@ -93,25 +94,12 @@ public class Camera {
     }
 
     /**
-     * getter for the projection matrix
-     *
-     * @return projectionMatrix
-     */
-    public Matrix4f getOrthogonalMatrix() {
-        return orthogonalMatrix;
-    }
-
-    /**
      * Getter for the view matrix
      *
      * @return viewMatrix
      */
     public Matrix4f getViewMatrix() {
         return viewMatrix;
-    }
-
-    public Matrix4f getPerspectiveMatrix() {
-        return perspectiveMatrix;
     }
 
     /**
@@ -134,6 +122,8 @@ public class Camera {
         if (moved) {
             viewMatrix = createViewMatrix();
         }
+        activeMatrix = orthogonalMatrix;
+
         return moved;
     }
 
@@ -207,5 +197,13 @@ public class Camera {
     public void resize(int width, int height) {
         perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
         orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
+    }
+
+    public void setActiveMatrix(Matrix4f activeMatrix) {
+        this.activeMatrix = activeMatrix;
+    }
+
+    public Matrix4f getActiveProjection() {
+        return activeMatrix;
     }
 }
