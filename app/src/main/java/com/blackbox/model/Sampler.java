@@ -45,8 +45,11 @@ public class Sampler {
         // Run model
         OrtSession session = onnxModel.getSession();
         Logger.info("Running sampler for sampleBC");
+        Logger.info(onnxModel.getTensorInfos());
+        Logger.info("Input data shape: [" + data.length + ", " + data[1].length + "]" );
         try (OrtSession.Result outputs = session.run(Collections.singletonMap(inputName, inputTensor))) {
             // Not used again, data is accessed from the function param
+            Logger.info("Closing tensor");
             inputTensor.close();
 
             OnnxTensor outputTensor = StreamSupport.stream(outputs.spliterator(), false)
@@ -80,7 +83,7 @@ public class Sampler {
             Logger.info("Returning sampled data from sampling");
             return combinedData;
         } catch (Exception e) {
-            Logger.error("Error gathering results from input tensor after running model",e);
+            Logger.error("Error sampling the model",e);
             return null;
         }
     }
