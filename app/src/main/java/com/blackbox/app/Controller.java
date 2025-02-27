@@ -1,5 +1,7 @@
 package com.blackbox.app;
 
+import ai.onnxruntime.NodeInfo;
+import ai.onnxruntime.TensorInfo;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
@@ -21,7 +23,9 @@ import com.google.protobuf.GeneratedMessage.Builder;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.tinylog.Logger;
@@ -304,6 +308,11 @@ public class Controller {
 
     // Prepare input data
 
+    //Check number of features of the model
+    Logger.info("input shape of loaded model: " + Arrays.toString(onnx.getInputShapes().getFirst()));
+    int num_features = onnx.getNumInputFeatures();
+    Logger.info("number of featuers: " + num_features);
+
     // Total numbers of points will be resolution * resolution
     int resolution = 40;
     // Input data will start be from -range .. +range
@@ -313,7 +322,7 @@ public class Controller {
     // Needed for the outer edge
     float epsilon = 0.00001f;
 
-    float[][] input = new float[resolution * resolution][2];
+    float[][] input = new float[resolution * resolution][num_features];
 
     int index = 0;
     for (float x = -range; x <= range + epsilon; x += pointGap) {

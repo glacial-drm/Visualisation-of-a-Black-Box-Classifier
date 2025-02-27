@@ -30,6 +30,7 @@ public class OnnxModel {
             this.environment = OrtEnvironment.getEnvironment();
             environment.setTelemetry(false);
             this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
+            Logger.info("Created environment and session for onnx file");
         } catch (Exception e) {
             Logger.error("Onnx file for creating environment could not be found", e);
             throw new FileNotFoundException("Onnx file not found");
@@ -54,8 +55,10 @@ public class OnnxModel {
     // Get the number of features.
     public int getNumInputFeatures() {
         try {
-            Map<String, NodeInfo> inputInfo = session.getInputInfo();
-            return inputInfo.size();
+            //Get list of all shapes, then take feature number from first one
+            List<long[]> shapes = getInputShapes();
+            long[] shape = shapes.getFirst();
+            return (int) shape[1];
         } catch (Exception e) {
             Logger.error("Failed to obtain feature information for model", e);
             return 0;
