@@ -77,8 +77,10 @@ public class Sampler {
 
             long[] label = (long[]) outputTensor.getValue();
 
+            Logger.info("data has dimensions: " + data[0].length);
+            int dimensions = data[0].length;
             // Use DataCombination to create a list of points from label
-            List<PointData> combinedData = DataCombination.combineData(data, label);
+            List<PointData> combinedData = DataCombination.combineData(data, label, dimensions);
 
             Logger.info("Returning sampled data from sampling");
             return combinedData;
