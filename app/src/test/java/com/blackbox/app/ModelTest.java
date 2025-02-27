@@ -142,10 +142,12 @@ public class ModelTest {
     @Test
     void testAddChangeListeners(){
         // No current way to get change listeners
+        fail("Not yet implemented");
     }
     @Test
     void testNotifyChangeListeners(){
         // No current way to get change listeners
+        fail("Not yet implemented");
     }
 
     @Test
