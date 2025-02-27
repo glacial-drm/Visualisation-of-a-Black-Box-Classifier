@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.tinylog.Logger;
+
 public class OnnxModel {
 
     private final OrtEnvironment environment;
@@ -29,6 +31,7 @@ public class OnnxModel {
             environment.setTelemetry(false);
             this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
         } catch (Exception e) {
+            Logger.error("Onnx file for creating environment could not be found", e);
             throw new FileNotFoundException("Onnx file not found");
         }
     }
@@ -44,7 +47,7 @@ public class OnnxModel {
             session.close();
             environment.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("Could not close onnx session", e);
         }
     }
 
@@ -54,7 +57,7 @@ public class OnnxModel {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return inputInfo.size();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("Failed to obtain feature information for model", e);
             return 0;
         }
     }
@@ -65,7 +68,7 @@ public class OnnxModel {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return new ArrayList<>(inputInfo.keySet());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("Failed to obtain input information for model", e);
             return null;
         }
     }
@@ -76,7 +79,7 @@ public class OnnxModel {
         try {
             inputInfo = session.getInputInfo();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("Failed to obtain tensor information for model", e);
             return null;
         }
 
@@ -105,7 +108,7 @@ public class OnnxModel {
         try {
             metadata = session.getMetadata();
         } catch (OrtException e) {
-            System.err.println(e);
+            Logger.error("Could not obtain onnx session metadata", e);
             return Optional.empty();
         }
 
@@ -114,7 +117,7 @@ public class OnnxModel {
 
         if (opX.isEmpty() || opy.isEmpty()) {
             // This isn't a critical error
-            System.err.println("No training data found");
+            Logger.error("No training data found for model");
             return Optional.empty();
         }
 
