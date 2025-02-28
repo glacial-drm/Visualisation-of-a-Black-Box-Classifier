@@ -17,11 +17,8 @@ public class Camera {
     private final float near;
     private final float far;
     private final float sensitivity;
-    private Matrix4f orthogonalMatrix;
     private Matrix4f perspectiveMatrix;
     private Matrix4f viewMatrix;
-    private boolean viewChanged = false;
-    private Matrix4f activeMatrix;
 
     /**
      * Sets up the projection and view matrix
@@ -32,15 +29,13 @@ public class Camera {
      * @param near   how close objects should be and still be rendered
      * @param far    how far objects should be to still be rendered
      */
-    public Camera(float width, float height, float fov, float near, float far) {
+    public Camera(int width, int height, float fov, float near, float far) {
         this.fov = fov;
         this.near = near;
         this.far = far;
         this.sensitivity = 0.01f;
 
-        orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
         perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
-        activeMatrix = orthogonalMatrix;
 
         viewMatrix = createViewMatrix();
     }
@@ -59,29 +54,10 @@ public class Camera {
     }
 
 
-    public Matrix4f createPerspectiveProjection(float width, float height, float FOV, float near, float far) {
+    public Matrix4f createPerspectiveProjection(int width, int height, float FOV, float near, float far) {
         perspectiveMatrix = new Matrix4f();
-        perspectiveMatrix.setPerspective(FOV, width / height, near, far);
+        perspectiveMatrix.setPerspective(FOV, (float) width / height, near, far);
         return perspectiveMatrix;
-    }
-
-    /**
-     * Creates a perspective camera
-     *
-     * @param width  viewport width
-     * @param height viewport height
-     * @param fov    field of view
-     * @param near   how close objects can be and still be rendered
-     * @param far    how far objects can be and still be rendered
-     * @return a perspective matrix
-     */
-    public Matrix4f createOrthogonalProjection(float width, float height, float fov, float near, float far) {
-        float aspectRatio = width / height;
-        float yScale = (float) ((1.0f / Math.toRadians(fov / 2.0f))) * aspectRatio;
-        float xScale = yScale / aspectRatio;
-        float frustum = far - near;
-
-        return new Matrix4f().m00(xScale).m11(yScale).m22(-((far - near) / frustum)).m23(-1).m32(-((2 * far * near) / frustum)).m33(0);
     }
 
     /**
@@ -90,8 +66,6 @@ public class Camera {
      * @return Matrix4f which is a viewMatrix
      */
     public Matrix4f createViewMatrix() {
-        viewChanged = true;
-
         Vector3f target = new Vector3f(position).add(forward);
         return new Matrix4f().lookAt(position, target, new Vector3f(0, 1, 0));
     }
@@ -126,7 +100,6 @@ public class Camera {
         if (moved) {
             viewMatrix = createViewMatrix();
         }
-        activeMatrix = orthogonalMatrix;
 
         return moved;
     }
@@ -180,11 +153,11 @@ public class Camera {
 
         if (InputHandler.getKeyState('Q')) {
             InputHandler.incZoom(-moveSpeed);
-            position.z = (float)InputHandler.getZoom();
+            position.z = (float) InputHandler.getZoom();
         }
         if (InputHandler.getKeyState('E')) {
             InputHandler.incZoom(moveSpeed);
-            position.z = (float)InputHandler.getZoom();
+            position.z = (float) InputHandler.getZoom();
         }
 
         position.add(movement);
@@ -192,31 +165,12 @@ public class Camera {
         return !movement.equals(new Vector3f());
     }
 
-    /**
-     * Getter for the viewChanged
-     */
-    public boolean getViewChanged() {
-        return viewChanged;
-    }
-
-    /**
-     * Set viewChanged to false
-     */
-    public void resetViewChanged() {
-        viewChanged = false;
-    }
-
     public void resize(int width, int height) {
         perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
-        orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
-    }
-
-    public void setActiveMatrix(Matrix4f activeMatrix) {
-        this.activeMatrix = activeMatrix;
     }
 
     public Matrix4f getActiveProjection() {
-        return activeMatrix;
+        return perspectiveMatrix;
     }
 
     public Matrix4f getPerspective() {
