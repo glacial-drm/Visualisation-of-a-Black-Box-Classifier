@@ -57,6 +57,18 @@ public class View extends Application {
         timer.play();
     }
 
+    /**
+     * This runs the action in a new thread,
+     * once completed it schedules the callback to run on the main UI thread,
+     * so it can manipulate the UI safely.
+     */
+    private void runAsync(Runnable action, Runnable callback) {
+        new Thread(() -> {
+            action.run();
+            Platform.runLater(callback);
+        }).start();
+    }
+
     @Override
     public void start(Stage primaryStage) {
         setupTimer();
@@ -360,9 +372,10 @@ public class View extends Application {
         UI_Button trainButton = new UI_Button("Train");
         trainButton.setOnAction(_event -> {
             trainButton.setText("Training...");
-            controller.trainModel(() -> Platform.runLater(() -> {
-                trainButton.setText("Train");
-            }));
+            runAsync(
+                controller::trainModel,
+                () -> trainButton.setText("Train")
+            );
         });
         gridBox.getChildren().add(trainButton);
 

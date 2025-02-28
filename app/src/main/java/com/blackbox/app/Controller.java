@@ -174,18 +174,13 @@ public class Controller {
   }
 
   /**
-   * Trains a model with the currently selected settings.
-   * This rungs in a separate thread,
-   * then runs the callback once training is complete.
+   * Trains a model with the currently selected settings and training data.
    */
-  public void trainModel(Runnable callback) {
-    new Thread(() -> {
-      connector.trainModel(
-        model.getSelectedTrainingRequest(),
-        model.getTrainingData()
-      );
-      callback.run();
-    }).start();
+  public void trainModel() {
+    connector.trainModel(
+      model.getSelectedTrainingRequest(),
+      model.getTrainingData()
+    );
   }
 
   private void initFileLoader() {
