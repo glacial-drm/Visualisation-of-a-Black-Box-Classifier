@@ -8,6 +8,7 @@ import com.google.protobuf.GeneratedMessage.Builder;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -357,8 +358,11 @@ public class View extends Application {
         // Train button
 
         UI_Button trainButton = new UI_Button("Train");
-        trainButton.setOnAction(event -> {
-            controller.trainModel();
+        trainButton.setOnAction(_event -> {
+            trainButton.setText("Training...");
+            controller.trainModel(() -> Platform.runLater(() -> {
+                trainButton.setText("Train");
+            }));
         });
         gridBox.getChildren().add(trainButton);
 

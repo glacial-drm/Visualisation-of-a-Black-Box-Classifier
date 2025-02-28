@@ -173,10 +173,19 @@ public class Controller {
     model.setSelectedTrainingRequest(index);
   }
 
-  public void trainModel() {
-    Logger.info("Training model...");
-    connector.trainModel(model.getSelectedTrainingRequest(), model.getTrainingData());
-    Logger.info("Finished training!");
+  /**
+   * Trains a model with the currently selected settings.
+   * This rungs in a separate thread,
+   * then runs the callback once training is complete.
+   */
+  public void trainModel(Runnable callback) {
+    new Thread(() -> {
+      connector.trainModel(
+        model.getSelectedTrainingRequest(),
+        model.getTrainingData()
+      );
+      callback.run();
+    }).start();
   }
 
   private void initFileLoader() {
