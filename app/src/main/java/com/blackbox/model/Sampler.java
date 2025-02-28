@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import org.tinylog.Logger;
+
 public class Sampler {
     private final OnnxModel onnxModel;
 
@@ -22,6 +24,7 @@ public class Sampler {
         // Checking the model has input features
         List<String> inputNames = onnxModel.getInputNames();
         if (inputNames == null || inputNames.isEmpty()) {
+            Logger.error("Returning from sampling method due to invalid or insufficient input names");
             return null;
         }
 
@@ -31,17 +34,22 @@ public class Sampler {
         // Create input tensor
         OrtEnvironment environment = OrtEnvironment.getEnvironment();
         OnnxTensor inputTensor;
+        Logger.info("Creating input tensor for sampling model");
         try {
             inputTensor = OnnxTensor.createTensor(environment, data);
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("Failed to create Onnx Tensor object", e);
             return null;
         }
 
         // Run model
         OrtSession session = onnxModel.getSession();
+        Logger.info("Running sampler for sampleBC");
+        Logger.info(onnxModel.getTensorInfos());
+        Logger.info("Input data shape: [" + data.length + ", " + data[1].length + "]" );
         try (OrtSession.Result outputs = session.run(Collections.singletonMap(inputName, inputTensor))) {
             // Not used again, data is accessed from the function param
+            Logger.info("Closing tensor");
             inputTensor.close();
 
             OnnxTensor outputTensor = StreamSupport.stream(outputs.spliterator(), false)
@@ -63,17 +71,20 @@ public class Sampler {
                 .orElse(null);
 
             if (outputTensor == null) {
+                Logger.error("Could not retrieve data from output tensor as this was found to be null");
                 return null;
             }
 
             long[] label = (long[]) outputTensor.getValue();
 
+            Logger.info("data has dimensions: " + data[0].length);
+            int dimensions = data[0].length;
             // Use DataCombination to create a list of points from label
-            List<PointData> combinedData = DataCombination.combineData(data, label);
+            List<PointData> combinedData = DataCombination.combineData(data, label, dimensions);
 
             return combinedData;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error("Error sampling the model",e);
             return null;
         }
     }
