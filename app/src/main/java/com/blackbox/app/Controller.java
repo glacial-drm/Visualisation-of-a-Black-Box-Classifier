@@ -309,9 +309,8 @@ public class Controller {
     // Prepare input data
 
     //Check number of features of the model
-    Logger.info("input shape of loaded model: " + Arrays.toString(onnx.getInputShapes().getFirst()));
     int num_features = onnx.getNumInputFeatures();
-    Logger.info("number of featuers: " + num_features);
+    Logger.info("number of features: " + num_features);
 
     // Total numbers of points will be resolution * resolution
     int resolution = 40;

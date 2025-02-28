@@ -82,7 +82,6 @@ public class Sampler {
             // Use DataCombination to create a list of points from label
             List<PointData> combinedData = DataCombination.combineData(data, label, dimensions);
 
-            Logger.info("Returning sampled data from sampling");
             return combinedData;
         } catch (Exception e) {
             Logger.error("Error sampling the model",e);
