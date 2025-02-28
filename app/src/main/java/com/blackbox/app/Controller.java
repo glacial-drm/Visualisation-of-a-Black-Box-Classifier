@@ -173,10 +173,14 @@ public class Controller {
     model.setSelectedTrainingRequest(index);
   }
 
+  /**
+   * Trains a model with the currently selected settings and training data.
+   */
   public void trainModel() {
-    Logger.info("Training model...");
-    connector.trainModel(model.getSelectedTrainingRequest(), model.getTrainingData());
-    Logger.info("Finished training!");
+    connector.trainModel(
+      model.getSelectedTrainingRequest(),
+      model.getTrainingData()
+    );
   }
 
   private void initFileLoader() {

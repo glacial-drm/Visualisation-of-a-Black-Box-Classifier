@@ -8,6 +8,7 @@ import com.google.protobuf.GeneratedMessage.Builder;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -54,6 +55,18 @@ public class View extends Application {
         );
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
+    }
+
+    /**
+     * This runs the action in a new thread,
+     * once completed it schedules the callback to run on the main UI thread,
+     * so it can manipulate the UI safely.
+     */
+    private void runAsync(Runnable action, Runnable callback) {
+        new Thread(() -> {
+            action.run();
+            Platform.runLater(callback);
+        }).start();
     }
 
     @Override
@@ -357,8 +370,12 @@ public class View extends Application {
         // Train button
 
         UI_Button trainButton = new UI_Button("Train");
-        trainButton.setOnAction(event -> {
-            controller.trainModel();
+        trainButton.setOnAction(_event -> {
+            trainButton.setText("Training...");
+            runAsync(
+                controller::trainModel,
+                () -> trainButton.setText("Train")
+            );
         });
         gridBox.getChildren().add(trainButton);
 
