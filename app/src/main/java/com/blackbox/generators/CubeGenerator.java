@@ -29,6 +29,8 @@ public class CubeGenerator extends DataGenerator {
     private boolean brb = true;
     private boolean blb = true;
 
+    @Override
+    public int getDimension() { return 3; }
 
     private void newCheckBox(boolean initial, Consumer<Boolean> consumer) {
         CheckBox checkBox = new CheckBox();

@@ -25,6 +25,9 @@ public class CircleGenerator extends DataGenerator {
     private boolean bl = true;
     private boolean br = true;
 
+    @Override
+    public int getDimension() { return 2; }
+
     private void newCheckBox(boolean initial, Consumer<Boolean> consumer) {
         CheckBox checkBox = new CheckBox();
         checkBox.setSelected(initial);
