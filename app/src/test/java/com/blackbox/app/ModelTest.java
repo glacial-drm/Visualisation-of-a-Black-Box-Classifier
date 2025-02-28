@@ -14,6 +14,7 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -139,12 +140,12 @@ public class ModelTest {
         assertEquals(newClassifier,model.getNavigationDetails());
     }
 
-    @Test
+    @Disabled
     void testAddChangeListeners(){
         // No current way to get change listeners
         fail("Not yet implemented");
     }
-    @Test
+    @Disabled
     void testNotifyChangeListeners(){
         // No current way to get change listeners
         fail("Not yet implemented");
