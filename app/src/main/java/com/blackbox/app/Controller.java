@@ -1,7 +1,5 @@
 package com.blackbox.app;
 
-import ai.onnxruntime.NodeInfo;
-import ai.onnxruntime.TensorInfo;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
@@ -23,9 +21,7 @@ import com.google.protobuf.GeneratedMessage.Builder;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.tinylog.Logger;
