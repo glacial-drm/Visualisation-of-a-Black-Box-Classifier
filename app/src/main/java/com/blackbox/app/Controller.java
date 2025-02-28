@@ -141,6 +141,13 @@ public class Controller {
     return model.getSelectedGenerator();
   }
 
+  /**
+   * Get the dimension of the selected generator.
+   */
+  public int getDimension() {
+    return getSelectedGenerator().getDimension();
+  }
+
   public DataGenerator getGeneratorByName(String name) {
     DataGenerator target = null;
     for (DataGenerator generator : model.getGenerators()) {
