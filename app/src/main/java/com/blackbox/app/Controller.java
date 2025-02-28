@@ -322,14 +322,32 @@ public class Controller {
     // Needed for the outer edge
     float epsilon = 0.00001f;
 
-    float[][] input = new float[resolution * resolution][num_features];
+    int totalPoints = (int) Math.pow(resolution, num_features);
+
+    float[][] input = new float[totalPoints][num_features];
 
     int index = 0;
-    for (float x = -range; x <= range + epsilon; x += pointGap) {
-      for (float y = -range; y <= range + epsilon; y += pointGap) {
-        input[index][0] = x;
-        input[index][1] = y;
-        index++;
+
+    if(num_features == 3 ) {
+      for (float x = -range; x <= range + epsilon; x += pointGap) {
+        for (float y = -range; y <= range + epsilon; y += pointGap) {
+          for (float z = -range; z <= range + epsilon; z += pointGap) {
+            input[index][0] = x;
+            input[index][1] = y;
+            input[index][2] = z;
+            index++;
+          }
+        }
+      }
+    }
+    else {
+      for (float x = -range; x <= range + epsilon; x += pointGap) {
+        for (float y = -range; y <= range + epsilon; y += pointGap) {
+          input[index][0] = x;
+          input[index][1] = y;
+          index++;
+
+        }
       }
     }
 
