@@ -227,16 +227,18 @@ public class View extends Application {
     }
 
     private Pane modelInfoPanel() {
-        return new VBox(new Label("Model Info"));
+        Label title = new Label("Model Info");
+        title.getStyleClass().add("title");
+
+        return new VBox(title);
     }
 
     private Pane globalDataGenSettingsPanel() {
         VBox pane = new VBox();
 
-        Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
-        globalGeneratorSettingsLabel.setPrefWidth(400);
-        globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
-        pane.getChildren().add(globalGeneratorSettingsLabel);
+        Label title = new Label("Global Generator Settings");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
         pane.getChildren().add(controller.getGenOptions().createNode());
 
@@ -248,10 +250,9 @@ public class View extends Application {
 
         // Selector
 
-        Label generatorSettingsLabel = new Label("Generator Settings");
-        generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
-        generatorSettingsLabel.setPrefWidth(400);
-        pane.getChildren().add(generatorSettingsLabel);
+        Label title = new Label("Generator Settings");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
         ComboBox<DataGenerator> generatorSelector = new ComboBox<>();
         generatorSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getGenerators())));
@@ -299,9 +300,9 @@ public class View extends Application {
 
         // Selector
 
-        Label trainingSettingsLabel = new Label("Training Settings");
-        trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
-        pane.getChildren().add(trainingSettingsLabel);
+        Label title = new Label("Training Settings");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
         ComboBox<Builder<?>> requestSelector = new ComboBox<>();
         requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
