@@ -16,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -90,10 +91,23 @@ public class View extends Application {
         root.setHgap(8);
         root.setVgap(8);
 
+        ColumnConstraints colConstraints = new ColumnConstraints();
+        colConstraints.setPercentWidth(25);
+        root.getColumnConstraints().addAll(
+            colConstraints,
+            colConstraints,
+            colConstraints,
+            colConstraints
+        );
+
         root.add(leftPanel(), 0, 0);
         root.add(modelInfoPanel(), 1, 0);
         root.add(dataGenSettingsPanel(), 2, 0);
         root.add(trainingSettingsPanel(), 3, 0);
+
+        root.getChildren().forEach(node ->
+            GridPane.setVgrow(node, Priority.ALWAYS)
+        );
 
         scene = new Scene(root, 800, 600);
         loadLightMode();
