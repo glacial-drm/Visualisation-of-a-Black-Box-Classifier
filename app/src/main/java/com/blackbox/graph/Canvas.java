@@ -6,12 +6,14 @@ import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.ClearPoints;
+import com.blackbox.graph.events.DimensionChange;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
 import com.blackbox.renderer.controlers.Renderer;
 import com.blackbox.renderer.model.Model;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.tinylog.Logger;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -175,8 +177,10 @@ public class Canvas {
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
                 rendererModel.addPoint(pointsLoaded.point, pointsLoaded.isTraining);
-            } else if (canvasEvent instanceof ClearPoints ){
+            } else if (canvasEvent instanceof ClearPoints ) {
                 rendererModel.getPointManager().clearPoints();
+            } else if (canvasEvent instanceof DimensionChange dimensionChange) {
+                Logger.info("Dimension changed to " + dimensionChange.dimension);
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;
