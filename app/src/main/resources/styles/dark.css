@@ -1,6 +1,6 @@
 
 .root {
-    -fx-background-color: #101014;
+    -fx-background-color: #08080F;
 }
 
 .panel {
@@ -13,5 +13,9 @@
 
 .label {
     -fx-text-fill: #F6F6FA;
+}
+
+.selected {
+    -fx-background-color: #08080F;
 }
 

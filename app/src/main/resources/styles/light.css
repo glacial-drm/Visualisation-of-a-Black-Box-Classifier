@@ -12,6 +12,10 @@
 }
 
 .label {
-    -fx-text-fill: #101014;
+    -fx-text-fill: #08080F;
+}
+
+.selected {
+    -fx-background-color: #F6F6FA;
 }
 

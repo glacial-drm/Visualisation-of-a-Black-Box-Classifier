@@ -20,12 +20,10 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -151,10 +149,7 @@ public class View extends Application {
         pane.getChildren().add(folderLabel);
 
         // Classifiers
-        classifierBox = new VBox(15);
-        VBox.setVgrow(classifierBox, Priority.ALWAYS);
-        classifierBox.setAlignment(Pos.TOP_CENTER);
-        classifierBox.setStyle("-fx-padding: 20 0 20 0;");
+        classifierBox = new VBox(4);
         pane.getChildren().add(classifierBox);
 
         List<String> classifiers = controller.getClassifiers();
@@ -231,33 +226,27 @@ public class View extends Application {
         classifierBox.getChildren().clear();
         if (classifiers.isEmpty()) {
             Label emptyLabel = new Label("No classifiers available");
-            emptyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-            emptyLabel.setTextFill(Color.GRAY);
             classifierBox.getChildren().add(emptyLabel);
         } else {
             for (String classifier : classifiers) {
-                Label classifierLabel = new Label(classifier);
-                classifierLabel.setMaxWidth(Double.MAX_VALUE);
-                classifierLabel.setPrefHeight(40);
-                classifierLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-                classifierLabel.setTextFill(Color.PURPLE);
-                classifierLabel.setAlignment(Pos.CENTER);
+                HBox box = new HBox();
+                box.setPadding(new Insets(4));
+                Label label = new Label(classifier);
 
-                // While selected, background color become same as right
                 String selectedClassifier = controller.getSelectedClassifier();
                 if (classifier.equals(selectedClassifier)) {
-                    classifierLabel.setStyle("-fx-background-color: #2c2c2c;");
-
-                } else {
-                    classifierLabel.setStyle("-fx-background-color: #1e1e1e;");
+                    box.getStyleClass().add("selected");
                 }
 
-                classifierLabel.setOnMouseClicked(event -> {
+                box.setOnMouseClicked(event -> {
                     controller.setSelectedClassifier(classifier);
-                    updateClassifierBox(classifierBox, classifiers); // Refresh styles
+                    // Refresh the styles
+                    updateClassifierBox(classifierBox, classifiers);
                 });
 
-                classifierBox.getChildren().add(classifierLabel);
+                box.getChildren().add(label);
+                HBox.setHgrow(label, Priority.ALWAYS);
+                classifierBox.getChildren().add(box);
             }
         }
     }

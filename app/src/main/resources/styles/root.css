@@ -6,7 +6,16 @@
     -fx-padding: 8;
 }
 
+.label {
+    -fx-font-size: 1.1em;
+}
+
 .title {
     -fx-font-size: 1.5em;
+    -fx-font-weight: bold;
+}
+
+.selected {
+    -fx-background-radius: 4;
 }
 
