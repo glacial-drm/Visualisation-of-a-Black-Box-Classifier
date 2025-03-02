@@ -40,7 +40,7 @@ public class Controller {
    */
   private final Model model;
 
-  Connector connector = new Connector();
+  private final Connector connector;
 
   /**
    * Constructor for the Controller.
@@ -50,11 +50,13 @@ public class Controller {
   public Controller(
     Model model,
     EventConsumer<ControllerEvent> eventQueue,
-    EventProducer<CanvasEvent> canvasEventSink
+    EventProducer<CanvasEvent> canvasEventSink,
+    Connector connector
   ) {
     this.model = model;
     this.eventQueue = eventQueue;
     this.canvasEventSink = canvasEventSink;
+    this.connector = connector;
 
     model.setGenerators(new DataGenerator[] {
       new CircleGenerator(), new CubeGenerator(),
