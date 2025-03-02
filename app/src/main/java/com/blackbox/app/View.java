@@ -92,18 +92,16 @@ public class View extends Application {
         root.setVgap(8);
 
         ColumnConstraints colConstraints = new ColumnConstraints();
-        colConstraints.setPercentWidth(25);
+        colConstraints.setPercentWidth(100 / 3);
         root.getColumnConstraints().addAll(
-            colConstraints,
             colConstraints,
             colConstraints,
             colConstraints
         );
 
         root.add(leftPanel(), 0, 0);
-        root.add(modelInfoPanel(), 1, 0);
-        root.add(dataGenSettingsPanel(), 2, 0);
-        root.add(trainingSettingsPanel(), 3, 0);
+        root.add(dataGenSettingsPanel(), 1, 0);
+        root.add(trainingSettingsPanel(), 2, 0);
 
         root.getChildren().forEach(node ->
             GridPane.setVgrow(node, Priority.ALWAYS)
@@ -165,7 +163,6 @@ public class View extends Application {
 
     private Pane optionsPanel() {
         VBox pane = new VBox();
-        pane.getStyleClass().add("panel");
 
         Label title = new Label("Options");
         title.getStyleClass().add("title");
@@ -217,6 +214,8 @@ public class View extends Application {
         pane.getChildren().addAll(
             modelPanel(),
             new Separator(),
+            modelInfoPanel(),
+            new Separator(),
             optionsPanel(),
             new Separator(),
             trainingPanel()
@@ -261,7 +260,6 @@ public class View extends Application {
 
     private Pane modelInfoPanel() {
         VBox pane = new VBox();
-        pane.getStyleClass().add("panel");
 
         Label title = new Label("Model Info");
         title.getStyleClass().add("title");
