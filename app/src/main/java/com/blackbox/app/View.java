@@ -14,7 +14,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -161,38 +160,8 @@ public class View extends Application {
         detailsBox.setPrefWidth(90);
         detailsBox.setPrefHeight(90);
 
-        // VBox Stores Navigation information (xyz and zoom) and any other relevant output
-        VBox navBox = new VBox();
-        navBox.setStyle("-fx-background-color: #1e1e1e;");
-        navBox.setPrefWidth(300);
-        navBox.setPrefHeight(90);
-
-        Label navigationLabel = new Label("Navigation");
-        navigationLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        navigationLabel.setTextFill(Color.PURPLE);
-        navigationLabel.setPrefWidth(300);
-
-        navBox.getChildren().addAll(navigationLabel);
-
-        // VBox Stores ___
-        VBox placeholderBox = new VBox();
-        placeholderBox.setStyle("-fx-background-color: #1e1e1e;");
-        placeholderBox.setPrefWidth(300);
-        placeholderBox.setPrefHeight(90);
-
-        Label placeholderLabel = new Label("Placeholder");
-        placeholderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        placeholderLabel.setTextFill(Color.PURPLE);
-        placeholderLabel.setPrefWidth(300);
-
-        placeholderBox.getChildren().addAll(placeholderLabel);
-
-        detailsBox.getChildren().addAll(navBox/*, placeholderBox*/);
-
-
         bottomPane.setLeft(modelBox);
         bottomPane.setCenter(detailsBox);
-        bottomPane.setRight(placeholderBox);
 
         // Set layout
         root.setBottom(bottomPane);
@@ -249,22 +218,6 @@ public class View extends Application {
         activeModelLabel.setTextFill(Color.PURPLE);
         BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
         rightPane.setTop(activeModelLabel);
-
-        // Left section: Feature Listing
-
-        VBox featureBox = new VBox();
-        featureBox.setStyle("-fx-background-color: #2c2c2c;");
-
-        Label featureLabel = new Label("Features");
-        featureLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        featureLabel.setTextFill(Color.PURPLE);
-        featureLabel.setPrefWidth(200);
-        BorderPane.setAlignment(featureLabel, Pos.CENTER);
-
-        ScrollPane featurePane = new ScrollPane();
-
-        featureBox.getChildren().addAll(featureLabel);
-        rightPane.setLeft(featureBox);
 
         // Right Section : Creating a grid of points
         // Global generator settings
