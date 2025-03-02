@@ -244,7 +244,7 @@ public class View extends Application {
 
         gridBox.getChildren().add(controller.getGenOptions().createNode());
 
-        // Date generator selector
+        // Data generator selector
 
         Label generatorSettingsLabel = new Label("Generator Settings");
         generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
