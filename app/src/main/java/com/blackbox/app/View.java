@@ -1,7 +1,5 @@
 package com.blackbox.app;
 
-import com.blackbox.app.ui_elements.UI_Button;
-import com.blackbox.app.ui_elements.UI_Mode;
 import com.blackbox.generators.DataGenerator;
 import com.google.protobuf.GeneratedMessage.Builder;
 
@@ -35,6 +33,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class View extends Application {
+    private static enum Theme {
+        LIGHT,
+        DARK,
+    }
+    private Theme theme = Theme.LIGHT;
+
     /**
      * Time between allowing the controller to check for events.
      */
@@ -46,7 +50,6 @@ public class View extends Application {
     static Controller controller;
     private VBox classifierBox;
     private VBox requestBox;
-    public static UI_Mode mode = UI_Mode.LIGHT;
     private Stage primaryStage;
     private Scene scene;
 
@@ -124,12 +127,12 @@ public class View extends Application {
 
         Button themeBtn = new Button("Light Mode");
         themeBtn.setOnAction(_e -> {
-            if (mode == UI_Mode.LIGHT) {
-                mode = UI_Mode.DARK;
+            if (theme == Theme.LIGHT) {
+                theme = Theme.DARK;
                 loadDarkMode();
                 themeBtn.setText("Dark Mode");
             } else {
-                mode = UI_Mode.LIGHT;
+                theme = Theme.LIGHT;
                 loadLightMode();
                 themeBtn.setText("Light Mode");
             }
@@ -159,7 +162,7 @@ public class View extends Application {
 
         pane.getChildren().addAll(new Separator(), optionsPanel());
 
-        UI_Button loadButton = new UI_Button("Load");
+        Button loadButton = new Button("Load");
         loadButton.setOnAction(event -> {
             File folder = folderSelector(primaryStage);
             if (folder != null) {
@@ -169,14 +172,14 @@ public class View extends Application {
         });
         pane.getChildren().add(loadButton);
 
-        UI_Button sampleButton = new UI_Button("Sample");
+        Button sampleButton = new Button("Sample");
         sampleButton.setOnAction(event -> {
             controller.sampleCurrentModel();
         });
         BorderPane.setAlignment(sampleButton, Pos.CENTER);
         pane.getChildren().add(sampleButton);
 
-        UI_Button trainButton = new UI_Button("Train");
+        Button trainButton = new Button("Train");
         trainButton.setOnAction(_event -> {
             trainButton.setText("Training...");
             runAsync(
