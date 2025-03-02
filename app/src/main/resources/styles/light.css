@@ -1,5 +1,13 @@
 
+.root {
+    -fx-background-color: #F6F6FA;
+}
+
+.panel {
+    -fx-background-color: #E0E0E8;
+}
+
 .label {
-    -fx-text-fill: "black";
+    -fx-text-fill: #101014;
 }
 

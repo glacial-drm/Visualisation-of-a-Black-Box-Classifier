@@ -8,6 +8,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -84,12 +85,15 @@ public class View extends Application {
 
         // Main layout
         GridPane root = new GridPane();
-        root.setStyle("-fx-background-color: #2c2c2c;");
+        root.getStyleClass().add("root");
+        root.setPadding(new Insets(8));
+        root.setHgap(8);
+        root.setVgap(8);
 
         // Left Pane
         VBox leftPane = new VBox();
         leftPane.setPrefWidth(200);
-        leftPane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 0;");
+        leftPane.getStyleClass().add("panel");
         root.add(leftPane, 0, 0);
         leftPanel(leftPane);
 
@@ -120,6 +124,7 @@ public class View extends Application {
 
     private Pane optionsPanel() {
         VBox pane = new VBox();
+        pane.getStyleClass().add("panel");
 
         Label title = new Label("Options");
         title.getStyleClass().add("title");
@@ -227,10 +232,14 @@ public class View extends Application {
     }
 
     private Pane modelInfoPanel() {
+        VBox pane = new VBox();
+        pane.getStyleClass().add("panel");
+
         Label title = new Label("Model Info");
         title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
-        return new VBox(title);
+        return pane;
     }
 
     private Pane globalDataGenSettingsPanel() {
@@ -289,14 +298,17 @@ public class View extends Application {
     }
 
     public Pane dataGenSettingsPanel() {
-        return new VBox(
+        VBox pane = new VBox(
             globalDataGenSettingsPanel(),
             specificDataGenSettingsPanel()
         );
+        pane.getStyleClass().add("panel");
+        return pane;
     }
 
     private Pane trainingSettingsPanel() {
         VBox pane = new VBox();
+        pane.getStyleClass().add("panel");
 
         // Selector
 
