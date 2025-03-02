@@ -98,19 +98,6 @@ public class View extends Application {
         List<String> classifiers = controller.getClassifiers();
         updateClassifierBox(classifierBox, classifiers);
 
-        // Set active model
-        UI_Button setButton = new UI_Button("Set");
-        setButton.setOnAction(event -> {
-            // Update Right Part
-            String selectedClassifier = controller.getSelectedClassifier();
-            if (selectedClassifier != null) {
-                updateRightPane(root, selectedClassifier);
-            } else {
-                updateRightPane(root, "No classifier selected");
-            }
-        });
-
-
         UI_Button loadButton = new UI_Button("Load");
         loadButton.setOnAction(event -> {
             File folder = folderSelector(primaryStage);
@@ -127,8 +114,10 @@ public class View extends Application {
         BorderPane.setAlignment(sampleButton, Pos.CENTER);
 
         VBox.setVgrow(classifierBox, Priority.ALWAYS);
-        updateRightPane(root, "No classifier selected");
-        leftPane.getChildren().addAll(folderLabel, classifierBox, setButton, loadButton);
+        VBox centerBox = new VBox();
+        root.setCenter(centerBox);
+        settingsPanel(centerBox);
+        leftPane.getChildren().addAll(folderLabel, classifierBox, loadButton);
 
         // Bottom Pane
         BorderPane bottomPane = new BorderPane();
@@ -153,7 +142,7 @@ public class View extends Application {
 
         // VBox stores above dropdown and buttons
         VBox modelBox = new VBox();
-        modelBox.getChildren().addAll(dropdown, loadButton, setButton, sampleButton);
+        modelBox.getChildren().addAll(dropdown, loadButton, sampleButton);
 
         // HNox stores BorderPane bottom elements horizontally
         HBox detailsBox = new HBox();
@@ -320,28 +309,6 @@ public class View extends Application {
             );
         });
         pane.getChildren().add(trainButton);
-    }
-
-    private void updateRightPane(BorderPane root, String classifier) {
-        BorderPane rightPane = new BorderPane();
-        rightPane.setStyle("-fx-background-color: #2c2c2c;");
-
-        // Top section: Active model name
-
-        Label activeModelLabel = new Label("Active model - " + classifier);
-        activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        activeModelLabel.setTextFill(Color.PURPLE);
-        BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
-        rightPane.setTop(activeModelLabel);
-
-        // Right Section : Creating a grid of points
-        // Global generator settings
-        VBox gridBox = new VBox();
-        gridBox.setStyle("-fx-background-color: #2c2c2c; border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e");
-        settingsPanel(gridBox);
-        rightPane.setCenter(gridBox);
-
-        root.setCenter(rightPane);
     }
 
     public void updateClassifiers() {
