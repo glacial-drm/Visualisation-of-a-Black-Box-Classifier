@@ -15,7 +15,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -45,6 +45,7 @@ public class View extends Application {
     private VBox classifierBox;
     private VBox requestBox;
     public static UI_Mode mode = UI_Mode.DARK;
+    private Stage primaryStage;
 
     public void setupTimer() {
         // JavaFX's Timeline and KeyFrame are used instead of a normal
@@ -70,30 +71,46 @@ public class View extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         setupTimer();
 
         primaryStage.setTitle("UON Blackbox Classifier");
 
         // Main layout
-        BorderPane root = new BorderPane();
+        GridPane root = new GridPane();
         root.setStyle("-fx-background-color: #2c2c2c;");
 
         // Left Pane
         VBox leftPane = new VBox();
-        leftPane.setAlignment(Pos.TOP_CENTER);
         leftPane.setPrefWidth(200);
         leftPane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 0;");
+        root.add(leftPane, 0, 0);
+        leftPanel(leftPane);
 
-        // Folder Name ()
+        VBox centerBox = new VBox();
+        root.add(centerBox, 1, 0);
+
+        settingsPanel(centerBox);
+
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void leftPanel(Pane pane) {
+        // Folder Name
         Label folderLabel = new Label("Folder Name");
         folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         folderLabel.setTextFill(Color.PURPLE);
         folderLabel.setStyle(" -fx-padding: 20;");
+        pane.getChildren().add(folderLabel);
 
         // Classifiers
         classifierBox = new VBox(15);
+        VBox.setVgrow(classifierBox, Priority.ALWAYS);
         classifierBox.setAlignment(Pos.TOP_CENTER);
         classifierBox.setStyle("-fx-padding: 20 0 20 0;");
+        pane.getChildren().add(classifierBox);
 
         List<String> classifiers = controller.getClassifiers();
         updateClassifierBox(classifierBox, classifiers);
@@ -106,46 +123,15 @@ public class View extends Application {
             }
             updateClassifiers();
         });
+        pane.getChildren().add(loadButton);
 
         UI_Button sampleButton = new UI_Button("Sample");
         sampleButton.setOnAction(event -> {
             controller.sampleCurrentModel();
         });
         BorderPane.setAlignment(sampleButton, Pos.CENTER);
+        pane.getChildren().add(sampleButton);
 
-        VBox.setVgrow(classifierBox, Priority.ALWAYS);
-        VBox centerBox = new VBox();
-        root.setCenter(centerBox);
-        settingsPanel(centerBox);
-        leftPane.getChildren().addAll(folderLabel, classifierBox, loadButton);
-
-        // Bottom Pane
-        BorderPane bottomPane = new BorderPane();
-
-        bottomPane.setPrefWidth(200);
-        bottomPane.setPrefHeight(125);
-        bottomPane.setStyle("-fx-background-color: #1e1e1e;");
-
-        // VBox stores above dropdown and buttons
-        VBox modelBox = new VBox();
-        modelBox.getChildren().addAll(loadButton, sampleButton);
-
-        // HNox stores BorderPane bottom elements horizontally
-        HBox detailsBox = new HBox();
-        detailsBox.setStyle("-fx-background-color: #1e1e1e;");
-        detailsBox.setPrefWidth(90);
-        detailsBox.setPrefHeight(90);
-
-        bottomPane.setLeft(modelBox);
-        bottomPane.setCenter(detailsBox);
-
-        // Set layout
-        root.setBottom(bottomPane);
-        root.setLeft(leftPane);
-
-        Scene scene = new Scene(root, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
