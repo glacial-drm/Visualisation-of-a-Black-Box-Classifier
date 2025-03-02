@@ -41,6 +41,13 @@ public class View extends Application {
     }
     private Theme theme = Theme.LIGHT;
 
+    private static enum Layout {
+        STACKED,
+        COLUMNS,
+    }
+    private Layout layout = Layout.COLUMNS;
+    private final int layoutBoundaryWidth = 500;
+
     /**
      * Time between allowing the controller to check for events.
      */
@@ -54,6 +61,7 @@ public class View extends Application {
     private VBox requestBox;
     private Stage primaryStage;
     private Scene scene;
+    private Node[] content;
 
     public void setupTimer() {
         // JavaFX's Timeline and KeyFrame are used instead of a normal
@@ -85,6 +93,52 @@ public class View extends Application {
         primaryStage.setTitle("UON Blackbox Classifier");
 
         // Main layout
+
+        content = new Node[] {
+            leftPanel(),
+            dataGenSettingsPanel(),
+            trainingSettingsPanel(),
+        };
+
+        scene = new Scene(new VBox(), 800, 600);
+        loadLightMode();
+
+        scene.widthProperty().addListener((_observable, _old, value) -> {
+            int width = value.intValue();
+
+            if (width > layoutBoundaryWidth && layout == Layout.STACKED) {
+                loadColumnsLayout();
+            } else if (width < layoutBoundaryWidth && layout == Layout.COLUMNS) {
+                loadStackedLayout();
+            }
+        });
+        loadColumnsLayout();
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void loadStackedLayout() {
+        layout = Layout.STACKED;
+
+        VBox box = new VBox(8);
+        box.setPadding(new Insets(8));
+        ScrollPane root = new ScrollPane(box);
+        root.getStyleClass().add("root");
+        root.setFitToWidth(true);
+
+        for (Node node : content) {
+            node.getStyleClass().add("panel");
+            box.getChildren().add(node);
+            VBox.setVgrow(node, Priority.ALWAYS);
+        }
+
+        scene.setRoot(root);
+    }
+
+    private void loadColumnsLayout() {
+        layout = Layout.COLUMNS;
+
         GridPane root = new GridPane();
         root.getStyleClass().add("root");
         root.setPadding(new Insets(8));
@@ -99,18 +153,15 @@ public class View extends Application {
             colConstraints
         );
 
-        root.add(leftPanel(), 0, 0);
-        root.add(dataGenSettingsPanel(), 1, 0);
-        root.add(trainingSettingsPanel(), 2, 0);
+        int i = 0;
+        for (Node node : content) {
+            ScrollPane scrollPane = new ScrollPane(node);
+            scrollPane.getStyleClass().add("panel");
+            root.add(scrollPane, i++, 0);
+            GridPane.setVgrow(scrollPane, Priority.ALWAYS);
+        }
 
-        root.getChildren().forEach(node ->
-            GridPane.setVgrow(node, Priority.ALWAYS)
-        );
-
-        scene = new Scene(root, 800, 600);
-        loadLightMode();
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        scene.setRoot(root);
     }
 
     private void loadLightMode() {
@@ -216,10 +267,7 @@ public class View extends Application {
             new Separator(),
             trainingPanel()
         );
-
-        ScrollPane scrollPane = new ScrollPane(pane);
-        scrollPane.getStyleClass().add("panel");
-        return scrollPane;
+        return pane;
     }
 
     private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
@@ -321,10 +369,7 @@ public class View extends Application {
             globalDataGenSettingsPanel(),
             specificDataGenSettingsPanel()
         );
-
-        ScrollPane scrollPane = new ScrollPane(pane);
-        scrollPane.getStyleClass().add("panel");
-        return scrollPane;
+        return pane;
     }
 
     private Node trainingSettingsPanel() {
@@ -367,9 +412,7 @@ public class View extends Application {
         });
         requestSelector.getSelectionModel().select(0);
 
-        ScrollPane scrollPane = new ScrollPane(pane);
-        scrollPane.getStyleClass().add("panel");
-        return scrollPane;
+        return pane;
     }
 
     public void updateClassifiers() {

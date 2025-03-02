@@ -3,6 +3,10 @@
     -fx-background-color: #08080F;
 }
 
+.root .viewport {
+    -fx-background-color: #08080F;
+}
+
 .panel {
     -fx-background-color: #17171D;
 }
