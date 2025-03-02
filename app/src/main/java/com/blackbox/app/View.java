@@ -115,12 +115,25 @@ public class View extends Application {
 
     private Pane modelPanel() {
         VBox pane = new VBox();
+        Label folderLabel = new Label();
+
+        Button loadButton = new Button("Load Folder");
+        loadButton.setOnAction(_e -> {
+            File folder = folderSelector(primaryStage);
+            if (folder != null) {
+                controller.loadAllOnnx(folder);
+                String text = folder.toString();
+                if (text.length() > 15) {
+                    text = "..." + text.substring(text.length() - 12);
+                }
+                folderLabel.setText(text);
+            }
+            updateClassifiers();
+        });
+        pane.getChildren().add(loadButton);
 
         // Folder Name
-        Label folderLabel = new Label("Folder Name");
-        folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        folderLabel.setTextFill(Color.PURPLE);
-        folderLabel.setStyle(" -fx-padding: 20;");
+        folderLabel.getStyleClass().add("title");
         pane.getChildren().add(folderLabel);
 
         // Classifiers
@@ -163,16 +176,6 @@ public class View extends Application {
 
     private Pane trainingPanel() {
         VBox pane = new VBox();
-
-        Button loadButton = new Button("Load");
-        loadButton.setOnAction(event -> {
-            File folder = folderSelector(primaryStage);
-            if (folder != null) {
-                controller.loadAllOnnx(folder);
-            }
-            updateClassifiers();
-        });
-        pane.getChildren().add(loadButton);
 
         Button sampleButton = new Button("Sample");
         sampleButton.setOnAction(event -> {
