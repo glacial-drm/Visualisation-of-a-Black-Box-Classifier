@@ -16,6 +16,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -207,49 +208,28 @@ public class View extends Application {
         }
     }
 
-    private void updateRightPane(BorderPane root, String classifier) {
-        BorderPane rightPane = new BorderPane();
-        rightPane.setStyle("-fx-background-color: #2c2c2c;");
-
-        // Top section: Active model name
-
-        Label activeModelLabel = new Label("Active model - " + classifier);
-        activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        activeModelLabel.setTextFill(Color.PURPLE);
-        BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
-        rightPane.setTop(activeModelLabel);
-
-        // Right Section : Creating a grid of points
-        // Global generator settings
-        VBox gridBox = new VBox();
-
-        gridBox.setStyle("-fx-background-color: #2c2c2c; border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e");
-
+    private void settingsPanel(Pane pane) {
         Label gridLabel = new Label("Create Grid Points");
         gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         gridLabel.setTextFill(Color.PURPLE);
         gridLabel.setPrefWidth(400);
         BorderPane.setAlignment(gridLabel, Pos.CENTER);
 
-        gridBox.getChildren().addAll(gridLabel);
-        rightPane.setCenter(gridBox);
-
-        rightPane.setCenter(gridBox);
-
+        pane.getChildren().addAll(gridLabel);
 
         Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
         globalGeneratorSettingsLabel.setPrefWidth(400);
         globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
-        gridBox.getChildren().add(globalGeneratorSettingsLabel);
+        pane.getChildren().add(globalGeneratorSettingsLabel);
 
-        gridBox.getChildren().add(controller.getGenOptions().createNode());
+        pane.getChildren().add(controller.getGenOptions().createNode());
 
         // Data generator selector
 
         Label generatorSettingsLabel = new Label("Generator Settings");
         generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
         generatorSettingsLabel.setPrefWidth(400);
-        gridBox.getChildren().add(generatorSettingsLabel);
+        pane.getChildren().add(generatorSettingsLabel);
 
         ComboBox<DataGenerator> generatorSelector = new ComboBox<>();
         generatorSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getGenerators())));
@@ -266,12 +246,12 @@ public class View extends Application {
                         : "";
             }
         });
-        gridBox.getChildren().add(generatorSelector);
+        pane.getChildren().add(generatorSelector);
 
         // Data generator settings
 
         VBox generatorBox = new VBox();
-        gridBox.getChildren().add(generatorBox);
+        pane.getChildren().add(generatorBox);
 
         generatorSelector.getSelectionModel().selectedItemProperty().addListener((_observer, _old, generator) -> {
             generatorBox.getChildren().clear();
@@ -286,7 +266,7 @@ public class View extends Application {
 
         Label trainingSettingsLabel = new Label("Training Settings");
         trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
-        gridBox.getChildren().add(trainingSettingsLabel);
+        pane.getChildren().add(trainingSettingsLabel);
 
         ComboBox<Builder<?>> requestSelector = new ComboBox<>();
         requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
@@ -303,12 +283,12 @@ public class View extends Application {
                         : "";
             }
         });
-        gridBox.getChildren().add(requestSelector);
+        pane.getChildren().add(requestSelector);
 
         // Training request settings
 
         requestBox = new VBox();
-        gridBox.getChildren().add(requestBox);
+        pane.getChildren().add(requestBox);
 
         requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
             requestBox.getChildren().clear();
@@ -329,7 +309,27 @@ public class View extends Application {
                 () -> trainButton.setText("Train")
             );
         });
-        gridBox.getChildren().add(trainButton);
+        pane.getChildren().add(trainButton);
+    }
+
+    private void updateRightPane(BorderPane root, String classifier) {
+        BorderPane rightPane = new BorderPane();
+        rightPane.setStyle("-fx-background-color: #2c2c2c;");
+
+        // Top section: Active model name
+
+        Label activeModelLabel = new Label("Active model - " + classifier);
+        activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        activeModelLabel.setTextFill(Color.PURPLE);
+        BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
+        rightPane.setTop(activeModelLabel);
+
+        // Right Section : Creating a grid of points
+        // Global generator settings
+        VBox gridBox = new VBox();
+        gridBox.setStyle("-fx-background-color: #2c2c2c; border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e");
+        settingsPanel(gridBox);
+        rightPane.setCenter(gridBox);
 
         root.setCenter(rightPane);
     }
