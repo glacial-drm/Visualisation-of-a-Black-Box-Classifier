@@ -126,23 +126,9 @@ public class View extends Application {
         bottomPane.setPrefHeight(125);
         bottomPane.setStyle("-fx-background-color: #1e1e1e;");
 
-        // ComboBox (Dropdown) to select Model type
-        ComboBox<String> dropdown = new ComboBox<>();
-        dropdown.getItems().addAll("Support Vector Machine (SVM)","Decision Tree", "Neural Network (NN)");
-
-        dropdown.setValue("Select Model");
-    /*
-      Dropdown default text styling seems awkward in inline css
-     */
-        dropdown.setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial; -fx-text-fill: #ffffff;");
-        //dropdown.getButtonCell().setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial;");
-
-        dropdown.setPrefWidth(200);
-        dropdown.setPrefHeight(50);
-
         // VBox stores above dropdown and buttons
         VBox modelBox = new VBox();
-        modelBox.getChildren().addAll(dropdown, loadButton, sampleButton);
+        modelBox.getChildren().addAll(loadButton, sampleButton);
 
         // HNox stores BorderPane bottom elements horizontally
         HBox detailsBox = new HBox();
