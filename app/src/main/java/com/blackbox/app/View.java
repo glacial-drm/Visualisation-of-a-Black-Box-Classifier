@@ -12,8 +12,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -44,8 +46,9 @@ public class View extends Application {
     static Controller controller;
     private VBox classifierBox;
     private VBox requestBox;
-    public static UI_Mode mode = UI_Mode.DARK;
+    public static UI_Mode mode = UI_Mode.LIGHT;
     private Stage primaryStage;
+    private Scene scene;
 
     public void setupTimer() {
         // JavaFX's Timeline and KeyFrame are used instead of a normal
@@ -94,9 +97,46 @@ public class View extends Application {
         root.add(dataGenSettingsPanel(), 2, 0);
         root.add(trainingSettingsPanel(), 3, 0);
 
-        Scene scene = new Scene(root, 800, 600);
+        scene = new Scene(root, 800, 600);
+        loadLightMode();
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void loadLightMode() {
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(getClass().getResource("/styles/root.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/light.css").toExternalForm());
+    }
+
+    private void loadDarkMode() {
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(getClass().getResource("/styles/root.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/dark.css").toExternalForm());
+    }
+
+    private Pane optionsPanel() {
+        VBox pane = new VBox();
+
+        Label title = new Label("Options");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
+
+        Button themeBtn = new Button("Light Mode");
+        themeBtn.setOnAction(_e -> {
+            if (mode == UI_Mode.LIGHT) {
+                mode = UI_Mode.DARK;
+                loadDarkMode();
+                themeBtn.setText("Dark Mode");
+            } else {
+                mode = UI_Mode.LIGHT;
+                loadLightMode();
+                themeBtn.setText("Light Mode");
+            }
+        });
+        pane.getChildren().add(themeBtn);
+
+        return pane;
     }
 
     private void leftPanel(Pane pane) {
@@ -116,6 +156,8 @@ public class View extends Application {
 
         List<String> classifiers = controller.getClassifiers();
         updateClassifierBox(classifierBox, classifiers);
+
+        pane.getChildren().addAll(new Separator(), optionsPanel());
 
         UI_Button loadButton = new UI_Button("Load");
         loadButton.setOnAction(event -> {
