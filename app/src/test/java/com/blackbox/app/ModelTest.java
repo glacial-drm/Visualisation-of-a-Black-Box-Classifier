@@ -29,6 +29,11 @@ public class ModelTest {
     Model model = new Model();
     DataGenerator generator = new DataGenerator() {
         @Override
+        public int getDimension() {
+            return 0;
+        }
+
+        @Override
         public Node createNode() {
             return null;
         }
