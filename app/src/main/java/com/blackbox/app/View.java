@@ -90,7 +90,9 @@ public class View extends Application {
         VBox centerBox = new VBox();
         root.add(centerBox, 1, 0);
 
-        settingsPanel(centerBox);
+        root.add(modelInfoPanel(), 1, 0);
+        root.add(dataGenSettingsPanel(), 2, 0);
+        root.add(trainingSettingsPanel(), 3, 0);
 
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
@@ -132,6 +134,16 @@ public class View extends Application {
         BorderPane.setAlignment(sampleButton, Pos.CENTER);
         pane.getChildren().add(sampleButton);
 
+        UI_Button trainButton = new UI_Button("Train");
+        trainButton.setOnAction(_event -> {
+            trainButton.setText("Training...");
+            runAsync(
+                controller::trainModel,
+                () -> trainButton.setText("Train")
+            );
+        });
+        pane.getChildren().add(trainButton);
+
     }
 
     private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
@@ -169,16 +181,26 @@ public class View extends Application {
         }
     }
 
-    private void globalDataGenSettingsPanel(Pane pane) {
+    private Pane modelInfoPanel() {
+        return new VBox(new Label("Model Info"));
+    }
+
+    private Pane globalDataGenSettingsPanel() {
+        VBox pane = new VBox();
+
         Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
         globalGeneratorSettingsLabel.setPrefWidth(400);
         globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
         pane.getChildren().add(globalGeneratorSettingsLabel);
 
         pane.getChildren().add(controller.getGenOptions().createNode());
+
+        return pane;
     }
 
-    private void specificDataGenSettingsPanel(Pane pane) {
+    private Pane specificDataGenSettingsPanel() {
+        VBox pane = new VBox();
+
         // Selector
 
         Label generatorSettingsLabel = new Label("Generator Settings");
@@ -216,9 +238,20 @@ public class View extends Application {
             controller.setSelectedGenerator(index.intValue());
         });
         generatorSelector.getSelectionModel().select(0);
+
+        return pane;
     }
 
-    private void trainingSettingsPanel(Pane pane) {
+    public Pane dataGenSettingsPanel() {
+        return new VBox(
+            globalDataGenSettingsPanel(),
+            specificDataGenSettingsPanel()
+        );
+    }
+
+    private Pane trainingSettingsPanel() {
+        VBox pane = new VBox();
+
         // Selector
 
         Label trainingSettingsLabel = new Label("Training Settings");
@@ -255,32 +288,8 @@ public class View extends Application {
             controller.setSelectedTrainingRequest(index.intValue());
         });
         requestSelector.getSelectionModel().select(0);
-    }
 
-    private void settingsPanel(Pane pane) {
-        Label gridLabel = new Label("Create Grid Points");
-        gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        gridLabel.setTextFill(Color.PURPLE);
-        gridLabel.setPrefWidth(400);
-        BorderPane.setAlignment(gridLabel, Pos.CENTER);
-
-        pane.getChildren().addAll(gridLabel);
-
-        globalDataGenSettingsPanel(pane);
-        specificDataGenSettingsPanel(pane);
-        trainingSettingsPanel(pane);
-
-        // Train button
-
-        UI_Button trainButton = new UI_Button("Train");
-        trainButton.setOnAction(_event -> {
-            trainButton.setText("Training...");
-            runAsync(
-                controller::trainModel,
-                () -> trainButton.setText("Train")
-            );
-        });
-        pane.getChildren().add(trainButton);
+        return pane;
     }
 
     public void updateClassifiers() {
