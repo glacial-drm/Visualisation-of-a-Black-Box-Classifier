@@ -90,16 +90,7 @@ public class View extends Application {
         root.setHgap(8);
         root.setVgap(8);
 
-        // Left Pane
-        VBox leftPane = new VBox();
-        leftPane.setPrefWidth(200);
-        leftPane.getStyleClass().add("panel");
-        root.add(leftPane, 0, 0);
-        leftPanel(leftPane);
-
-        VBox centerBox = new VBox();
-        root.add(centerBox, 1, 0);
-
+        root.add(leftPanel(), 0, 0);
         root.add(modelInfoPanel(), 1, 0);
         root.add(dataGenSettingsPanel(), 2, 0);
         root.add(trainingSettingsPanel(), 3, 0);
@@ -120,6 +111,29 @@ public class View extends Application {
         scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/styles/root.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/styles/dark.css").toExternalForm());
+    }
+
+    private Pane modelPanel() {
+        VBox pane = new VBox();
+
+        // Folder Name
+        Label folderLabel = new Label("Folder Name");
+        folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        folderLabel.setTextFill(Color.PURPLE);
+        folderLabel.setStyle(" -fx-padding: 20;");
+        pane.getChildren().add(folderLabel);
+
+        // Classifiers
+        classifierBox = new VBox(15);
+        VBox.setVgrow(classifierBox, Priority.ALWAYS);
+        classifierBox.setAlignment(Pos.TOP_CENTER);
+        classifierBox.setStyle("-fx-padding: 20 0 20 0;");
+        pane.getChildren().add(classifierBox);
+
+        List<String> classifiers = controller.getClassifiers();
+        updateClassifierBox(classifierBox, classifiers);
+
+        return pane;
     }
 
     private Pane optionsPanel() {
@@ -147,25 +161,8 @@ public class View extends Application {
         return pane;
     }
 
-    private void leftPanel(Pane pane) {
-        // Folder Name
-        Label folderLabel = new Label("Folder Name");
-        folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        folderLabel.setTextFill(Color.PURPLE);
-        folderLabel.setStyle(" -fx-padding: 20;");
-        pane.getChildren().add(folderLabel);
-
-        // Classifiers
-        classifierBox = new VBox(15);
-        VBox.setVgrow(classifierBox, Priority.ALWAYS);
-        classifierBox.setAlignment(Pos.TOP_CENTER);
-        classifierBox.setStyle("-fx-padding: 20 0 20 0;");
-        pane.getChildren().add(classifierBox);
-
-        List<String> classifiers = controller.getClassifiers();
-        updateClassifierBox(classifierBox, classifiers);
-
-        pane.getChildren().addAll(new Separator(), optionsPanel());
+    private Pane trainingPanel() {
+        VBox pane = new VBox();
 
         Button loadButton = new Button("Load");
         loadButton.setOnAction(event -> {
@@ -194,6 +191,20 @@ public class View extends Application {
         });
         pane.getChildren().add(trainButton);
 
+        return pane;
+    }
+
+    private Pane leftPanel() {
+        VBox pane = new VBox();
+        pane.getStyleClass().add("panel");
+        pane.getChildren().addAll(
+            modelPanel(),
+            new Separator(),
+            optionsPanel(),
+            new Separator(),
+            trainingPanel()
+        );
+        return pane;
     }
 
     private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
