@@ -208,23 +208,17 @@ public class View extends Application {
         }
     }
 
-    private void settingsPanel(Pane pane) {
-        Label gridLabel = new Label("Create Grid Points");
-        gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        gridLabel.setTextFill(Color.PURPLE);
-        gridLabel.setPrefWidth(400);
-        BorderPane.setAlignment(gridLabel, Pos.CENTER);
-
-        pane.getChildren().addAll(gridLabel);
-
+    private void globalDataGenSettingsPanel(Pane pane) {
         Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
         globalGeneratorSettingsLabel.setPrefWidth(400);
         globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
         pane.getChildren().add(globalGeneratorSettingsLabel);
 
         pane.getChildren().add(controller.getGenOptions().createNode());
+    }
 
-        // Data generator selector
+    private void specificDataGenSettingsPanel(Pane pane) {
+        // Selector
 
         Label generatorSettingsLabel = new Label("Generator Settings");
         generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
@@ -248,7 +242,7 @@ public class View extends Application {
         });
         pane.getChildren().add(generatorSelector);
 
-        // Data generator settings
+        // Settings
 
         VBox generatorBox = new VBox();
         pane.getChildren().add(generatorBox);
@@ -261,8 +255,10 @@ public class View extends Application {
             controller.setSelectedGenerator(index.intValue());
         });
         generatorSelector.getSelectionModel().select(0);
+    }
 
-        // Training request selector
+    private void trainingSettingsPanel(Pane pane) {
+        // Selector
 
         Label trainingSettingsLabel = new Label("Training Settings");
         trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
@@ -285,7 +281,7 @@ public class View extends Application {
         });
         pane.getChildren().add(requestSelector);
 
-        // Training request settings
+        // Settings
 
         requestBox = new VBox();
         pane.getChildren().add(requestBox);
@@ -298,6 +294,20 @@ public class View extends Application {
             controller.setSelectedTrainingRequest(index.intValue());
         });
         requestSelector.getSelectionModel().select(0);
+    }
+
+    private void settingsPanel(Pane pane) {
+        Label gridLabel = new Label("Create Grid Points");
+        gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        gridLabel.setTextFill(Color.PURPLE);
+        gridLabel.setPrefWidth(400);
+        BorderPane.setAlignment(gridLabel, Pos.CENTER);
+
+        pane.getChildren().addAll(gridLabel);
+
+        globalDataGenSettingsPanel(pane);
+        specificDataGenSettingsPanel(pane);
+        trainingSettingsPanel(pane);
 
         // Train button
 
