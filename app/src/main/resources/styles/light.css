@@ -7,6 +7,10 @@
     -fx-background-color: #E0E0E8;
 }
 
+.panel .viewport {
+    -fx-background-color: #E0E0E8;
+}
+
 .label {
     -fx-text-fill: #101014;
 }

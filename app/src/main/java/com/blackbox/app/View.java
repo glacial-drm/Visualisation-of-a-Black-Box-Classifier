@@ -10,10 +10,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -208,9 +210,8 @@ public class View extends Application {
         return pane;
     }
 
-    private Pane leftPanel() {
+    private Node leftPanel() {
         VBox pane = new VBox();
-        pane.getStyleClass().add("panel");
         pane.getChildren().addAll(
             modelPanel(),
             new Separator(),
@@ -220,7 +221,10 @@ public class View extends Application {
             new Separator(),
             trainingPanel()
         );
-        return pane;
+
+        ScrollPane scrollPane = new ScrollPane(pane);
+        scrollPane.getStyleClass().add("panel");
+        return scrollPane;
     }
 
     private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
@@ -323,18 +327,19 @@ public class View extends Application {
         return pane;
     }
 
-    public Pane dataGenSettingsPanel() {
+    public Node dataGenSettingsPanel() {
         VBox pane = new VBox(
             globalDataGenSettingsPanel(),
             specificDataGenSettingsPanel()
         );
-        pane.getStyleClass().add("panel");
-        return pane;
+
+        ScrollPane scrollPane = new ScrollPane(pane);
+        scrollPane.getStyleClass().add("panel");
+        return scrollPane;
     }
 
-    private Pane trainingSettingsPanel() {
+    private Node trainingSettingsPanel() {
         VBox pane = new VBox();
-        pane.getStyleClass().add("panel");
 
         // Selector
 
@@ -373,7 +378,9 @@ public class View extends Application {
         });
         requestSelector.getSelectionModel().select(0);
 
-        return pane;
+        ScrollPane scrollPane = new ScrollPane(pane);
+        scrollPane.getStyleClass().add("panel");
+        return scrollPane;
     }
 
     public void updateClassifiers() {
