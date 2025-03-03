@@ -1,4 +1,4 @@
-package com.blackbox.renderer.controler;
+package com.blackbox.renderer.controller;
 
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.Input.MouseInputNames;

@@ -1,4 +1,4 @@
-package com.blackbox.renderer.controler;
+package com.blackbox.renderer.controller;
 
 import com.blackbox.renderer.controllers.Renderer;
 import com.blackbox.renderer.model.Model;
