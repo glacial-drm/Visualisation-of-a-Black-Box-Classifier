@@ -72,9 +72,9 @@ class PointManagerTest {
     @Test
     void testIndicesLengthConstant() {
         PointManager pm = new PointManager();
-        // The index buffer is part of the shared geometry and should always contain 6 indices.
+
         assertEquals(6, pm.getIndicesLength(), "Index buffer length should always be 6");
-        // After adding points, the index buffer length should remain unchanged.
+
         for (int i = 0; i < 3; i++) {
             PointData pd = new PointData(0.1f * i, 0.2f * i, 0.2f * i,0);
             pm.addPoint(pd, false);
@@ -86,12 +86,12 @@ class PointManagerTest {
     @Test
     void testPrepPointsBindsVAOAndIndexBuffer() {
         PointManager pm = new PointManager();
-        // Add a couple of points so that instance data is non-empty.
+
         PointData pd = new PointData(0.5f, 0.5f, 0.5f, 1);
         pm.addPoint(pd, false);
         pm.addPoint(pd, false);
 
-        // Calling prepPoints() should upload instance data and bind the shared VAO and index buffer.
+
         pm.prepPoints();
         int vaoBinding = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         int indexBinding = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
@@ -103,11 +103,11 @@ class PointManagerTest {
     @Test
     void testCleanUpUnbinds() {
         PointManager pm = new PointManager();
-        // Add a point so that prepPoints() binds resources.
+
         PointData pd = new PointData(0.5f, 0.5f, 0.5f, 1);
         pm.addPoint(pd, false);
         pm.prepPoints();
-        // Calling cleanUp() should disable vertex attributes and unbind VAO and index buffer.
+
         pm.cleanUp();
         int vaoBinding = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         int indexBinding = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
@@ -140,13 +140,13 @@ class PointManagerTest {
             pm.addPoint(pd, false);
         }
         assertEquals(initialCount + 7, pm.getPointCount(), "Point count should update correctly after adding points");
-        // Call prepPoints() to upload instance data and bind VAO/index buffer.
+
         pm.prepPoints();
         int vaoBinding = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         int indexBinding = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
         assertNotEquals(0, vaoBinding, "After prepPoints(), the VAO should be bound");
         assertNotEquals(0, indexBinding, "After prepPoints(), the index buffer should be bound");
-        // Now, call cleanUp() to unbind.
+
         pm.cleanUp();
         assertEquals(0, glGetInteger(GL_VERTEX_ARRAY_BINDING), "After cleanUp(), no VAO should be bound");
         assertEquals(0, glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING), "After cleanUp(), no index buffer should be bound");

@@ -11,6 +11,6 @@ public record Point(Vector3f position, Vector3f rotation, float scale,
      * Returns the model transformation matrix.
      */
     public Matrix4f getModelMatrix() {
-        return Camera.createTransformMatrix(position, rotation, scale);
+        return Camera.createTransformMatrix(position, scale);
     }
 }
