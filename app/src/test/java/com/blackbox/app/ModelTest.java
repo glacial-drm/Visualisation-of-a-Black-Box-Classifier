@@ -64,7 +64,7 @@ public class ModelTest {
 
     @Test
     void testGetSetTrainingData(){
-        PointData data = new PointData(0, 0, 0, 0);
+        PointData data = new PointData(new float[] { 0, 0, 0 }, 0);
         PointData[] dataList = {data, data};
         model.setTrainingData(dataList);
         assertEquals(dataList,model.getTrainingData());

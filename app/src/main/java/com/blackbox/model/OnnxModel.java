@@ -143,7 +143,7 @@ public class OnnxModel {
             float y = XBytes.getFloat(FLOAT_SIZE * (i * FLOATS_PER_POINT + 1));
             short label = yBytes.getShort(i * 2);
 
-            points.add(new PointData(x, y, 0, label));
+            points.add(new PointData(new float[] { x, y }, label));
         }
 
         return Optional.of(points);
