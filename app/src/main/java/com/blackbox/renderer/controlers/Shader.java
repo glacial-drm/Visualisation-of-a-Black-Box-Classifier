@@ -172,7 +172,7 @@ public class Shader {
     private String readFile(String fileName) throws IOException {
         String content;
 
-        Path filePath = Paths.get("src/main/shaders/" + fileName);
+        Path filePath = Paths.get("app/src/main/resources/shaders/" + fileName);
 
         try {
             content = Files.readString(filePath);
