@@ -1,6 +1,6 @@
 package com.blackbox.renderer.controler;
 
-import com.blackbox.renderer.controlers.IndexBuffer;
+import com.blackbox.renderer.controllers.IndexBuffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
 import static org.lwjgl.opengl.GL11.glGetError;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL30.*;
 
 class IndexBufferTest {
 

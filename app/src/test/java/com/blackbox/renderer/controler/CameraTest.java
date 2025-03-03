@@ -2,7 +2,7 @@ package com.blackbox.renderer.controler;
 
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.Input.MouseInputNames;
-import com.blackbox.renderer.controlers.Camera;
+import com.blackbox.renderer.controllers.Camera;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

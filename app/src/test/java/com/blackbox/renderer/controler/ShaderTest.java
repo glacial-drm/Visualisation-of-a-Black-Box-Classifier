@@ -1,6 +1,6 @@
 package com.blackbox.renderer.controler;
 
-import com.blackbox.renderer.controlers.Shader;
+import com.blackbox.renderer.controllers.Shader;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.AfterAll;
@@ -50,8 +50,8 @@ class ShaderTest {
 
     @AfterAll
     static void clean() throws IOException {
-        Path vertexDir = Paths.get("src/main/shaders/vertex");
-        Path fragmentDir = Paths.get("src/main/shaders/fragment");
+        Path vertexDir = Paths.get("app/src/main/resources/shaders//vertex");
+        Path fragmentDir = Paths.get("app/src/main/resources/shaders//fragment");
 
         Path vertexShaderPath = vertexDir.resolve("testShader.vert");
         Path fragmentShaderPath = fragmentDir.resolve("testShader.frag");
@@ -69,8 +69,8 @@ class ShaderTest {
      * Helper method which creates minimal valid shader files in the expected locations.
      */
     private void createTestShaderFiles() throws IOException {
-        Path vertexDir = Paths.get("src/main/shaders/vertex");
-        Path fragmentDir = Paths.get("src/main/shaders/fragment");
+        Path vertexDir = Paths.get("app/src/main/resources/shaders//vertex");
+        Path fragmentDir = Paths.get("app/src/main/resources/shaders//fragment");
         if (!Files.exists(vertexDir)) {
             Files.createDirectories(vertexDir);
         }
@@ -269,8 +269,8 @@ class ShaderTest {
     @Test
     void testShaderCreationInvalidShaderCode() throws IOException {
         // Create temporary shader files with invalid GLSL code.
-        Path vertexDir = Paths.get("src/main/shaders/vertex");
-        Path fragmentDir = Paths.get("src/main/shaders/fragment");
+        Path vertexDir = Paths.get("app/src/main/resources/shaders//vertex");
+        Path fragmentDir = Paths.get("app/src/main/resources/shaders//fragment");
         Path invalidVertex = vertexDir.resolve("invalidShader.vert");
         Path invalidFragment = fragmentDir.resolve("invalidShader.frag");
         String invalidCode = "this is not valid shader code";

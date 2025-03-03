@@ -1,4 +1,4 @@
-package com.blackbox.renderer.controlers;
+package com.blackbox.renderer.controllers;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
