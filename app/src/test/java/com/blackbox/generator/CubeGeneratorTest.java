@@ -39,9 +39,9 @@ public class CubeGeneratorTest {
 
         PointData[] data = generator.buildData(options);
         for (PointData p : data) {
-            assertTrue(p.feature1 >= -3.0f && p.feature1 <= 3.0f);
-            assertTrue(p.feature2 >= -3.0f && p.feature2 <= 3.0f);
-            assertTrue(p.feature3 >= -3.0f && p.feature3 <= 3.0f);
+            assertTrue(p.features[0] >= -3.0f && p.features[0] <= 3.0f);
+            assertTrue(p.features[1] >= -3.0f && p.features[1] <= 3.0f);
+            assertTrue(p.features[2] >= -3.0f && p.features[2] <= 3.0f);
         }
     }
 
@@ -63,7 +63,7 @@ public class CubeGeneratorTest {
         rngField.set(generator, new java.util.Random(12345));
 
         PointData p = generator.buildData(options)[0];
-        double distanceSq = Math.pow(p.feature1, 2) + Math.pow(p.feature2, 2);
+        double distanceSq = Math.pow(p.features[0], 2) + Math.pow(p.features[1], 2);
         int expectedLabel = distanceSq >= 1.0 ? 0 : 1;
         assertEquals(expectedLabel, p.label);
     }
@@ -92,9 +92,9 @@ public class CubeGeneratorTest {
         PointData[] data = generator.buildData(options);
         for (PointData p : data) {
             // frt quadrant: x > 0, y > 0, z > 0 (range=4 -> offset=2)
-            assertTrue(p.feature1 >= 0 && p.feature1 <= 4, "X should be in [0,4] for frt quadrant");
-            assertTrue(p.feature2 >= 0 && p.feature2 <= 4, "Y should be in [0,4] for frt quadrant");
-            assertTrue(p.feature3 >= 0 && p.feature3 <= 4, "Z should be in [0,4] for frt quadrant");
+            assertTrue(p.features[0] >= 0 && p.features[0] <= 4, "X should be in [0,4] for frt quadrant");
+            assertTrue(p.features[1] >= 0 && p.features[1] <= 4, "Y should be in [0,4] for frt quadrant");
+            assertTrue(p.features[2] >= 0 && p.features[2] <= 4, "Z should be in [0,4] for frt quadrant");
         }
     }
 
@@ -166,9 +166,9 @@ public class CubeGeneratorTest {
 
         // Compare each field to bypass Object.equals() limitations
         for (int i = 0; i < data1.length; i++) {
-            assertEquals(data1[i].feature1, data2[i].feature1, 1e-6);
-            assertEquals(data1[i].feature2, data2[i].feature2, 1e-6);
-            assertEquals(data1[i].feature3, data2[i].feature3, 1e-6);
+            assertEquals(data1[i].features[0], data2[i].features[0], 1e-6);
+            assertEquals(data1[i].features[1], data2[i].features[1], 1e-6);
+            assertEquals(data1[i].features[2], data2[i].features[2], 1e-6);
             assertEquals(data1[i].label, data2[i].label);
         }
     }
