@@ -9,6 +9,7 @@ import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.ClearPoints;
+import com.blackbox.graph.events.DimensionChange;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
@@ -141,6 +142,13 @@ public class Controller {
     return model.getSelectedGenerator();
   }
 
+  /**
+   * Get the dimension of the selected generator.
+   */
+  public int getDimension() {
+    return getSelectedGenerator().getDimension();
+  }
+
   public DataGenerator getGeneratorByName(String name) {
     DataGenerator target = null;
     for (DataGenerator generator : model.getGenerators()) {
@@ -153,6 +161,8 @@ public class Controller {
 
   public void setSelectedGenerator(int index) {
     model.setSelectedGenerator(index);
+    DataGenerator selectedGenerator = model.getSelectedGenerator();
+    canvasEventSink.send(new DimensionChange(selectedGenerator.getDimension()));
   }
 
   public Builder<?>[] getTrainingRequests() {
