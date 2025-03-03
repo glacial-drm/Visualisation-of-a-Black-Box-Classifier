@@ -77,12 +77,11 @@ public class Connector {
     }
 
     public static Point convertPoint(PointData point) {
-        return Point.newBuilder()
-            .setLabel(point.label)
-            .addValues(point.feature1)
-            .addValues(point.feature2)
-            .addValues(point.feature3)
-            .build();
+        Point.Builder builder = Point.newBuilder().setLabel(point.label);
+        for (float feature : point.features) {
+            builder.addValues(feature);
+        }
+        return builder.build();
     }
 
     public void close() {
