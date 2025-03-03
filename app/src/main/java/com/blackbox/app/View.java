@@ -46,7 +46,7 @@ public class View extends Application {
         COLUMNS,
     }
     private Layout layout = Layout.COLUMNS;
-    private final int layoutBoundaryWidth = 500;
+    private final int layoutBoundaryWidth = 750;
 
     /**
      * Time between allowing the controller to check for events.
