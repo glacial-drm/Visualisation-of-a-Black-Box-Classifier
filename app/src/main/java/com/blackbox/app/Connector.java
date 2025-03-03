@@ -54,9 +54,9 @@ public class Connector {
     private ProcessBuilder createProcessBuilder(String port) {
         String os = System.getProperty("os.name");
         if (os.toLowerCase().contains("windows")) {
-            return new ProcessBuilder("python", "../python/server.py", port);
+            return new ProcessBuilder("python", "app/src/main/resources/python/server.py", port);
         } else {
-            return new ProcessBuilder("python3", "../python/server.py", port);
+            return new ProcessBuilder("python3", "app/src/main/resources/python/server.py", port);
         }
     }
 
