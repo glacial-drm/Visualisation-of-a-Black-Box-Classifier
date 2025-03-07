@@ -31,6 +31,8 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class View extends Application {
     private static enum Theme {
@@ -76,10 +78,10 @@ public class View extends Application {
      * once completed it schedules the callback to run on the main UI thread,
      * so it can manipulate the UI safely.
      */
-    private void runAsync(Runnable action, Runnable callback) {
+    private <T> void runAsync(Supplier<T> action, Consumer<T> callback) {
         new Thread(() -> {
-            action.run();
-            Platform.runLater(callback);
+            T value = action.get();
+            Platform.runLater(() -> callback.accept(value));
         }).start();
     }
 
@@ -246,8 +248,11 @@ public class View extends Application {
             trainButton.setText("Training...");
             runAsync(
                 controller::trainModel,
-                () -> {
+                path -> {
                     trainButton.setText("Train + Sample");
+                    controller.loadAllOnnx();
+                    controller.setSelectedClassifier(path);
+                    updateClassifiers();
                     controller.sampleCurrentModel();
                 }
             );

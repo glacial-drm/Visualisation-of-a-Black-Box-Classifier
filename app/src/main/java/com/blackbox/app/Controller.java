@@ -198,9 +198,10 @@ public class Controller {
 
   /**
    * Trains a model with the currently selected settings and training data.
+   * Returns the created ONNX path.
    */
-  public void trainModel() {
-    connector.trainModel(
+  public String trainModel() {
+    return connector.trainModel(
       model.getSelectedTrainingRequest(),
       model.getTrainingData()
     );
