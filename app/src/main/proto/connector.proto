@@ -7,7 +7,9 @@ option java_outer_classname = "ConnectorProto";
 package connector;
 
 service Connector {
-  rpc TrainSvc (SvcRequest) returns (ModelResults);
+  rpc TrainSvm (SvmRequest) returns (ModelResults);
+  rpc TrainDecisionTree (DecisionTreeRequest) returns (ModelResults);
+  rpc TrainRandomForest (RandomForestRequest) returns (ModelResults);
 }
 
 message Point {
@@ -19,7 +21,7 @@ message Points {
   repeated Point points = 1;
 }
 
-message SvcRequest {
+message SvmRequest {
   Points points = 1;
 
   enum Kernel {
@@ -29,6 +31,39 @@ message SvcRequest {
     SIGMOID = 3;
   }
   Kernel kernel = 2;
+}
+
+// Used by both decision trees and random forest
+enum Criterion {
+  GINI = 0;
+  ENTROPY = 1;
+  LOG_LOSS = 2;
+}
+
+message DecisionTreeRequest {
+  Points points = 1;
+
+  Criterion criterion = 2;
+  int32 maxDepth = 3; // -1 is None
+}
+
+message RandomForestRequest {
+  Points points = 1;
+
+  int32 nEstimators = 2;
+  Criterion criterion = 3;
+  int32 maxDepth = 4; // -1 is None
+  float minSamplesSplit = 5; // int and float have different behaviours here
+  float minSamplesLeaf = 6;  // int and float have different behaviours here
+
+  enum MaxFeatures {
+    SQRT = 0;
+    LOG2 = 1;
+    N_FEATURES = 2; // None in sklearn
+    VALUE = 3;
+  }
+  MaxFeatures maxFeatures = 7;
+  float maxFeaturesVal = 8;
 }
 
 message ModelResults {
