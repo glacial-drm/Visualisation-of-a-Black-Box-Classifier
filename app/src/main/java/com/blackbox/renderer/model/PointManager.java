@@ -32,7 +32,12 @@ public class PointManager {
      * Adds a point using your provided data.
      */
     public void addPoint(PointData pointData, boolean isTraining) {
-        Vector3f position = new Vector3f(pointData.feature1, pointData.feature2, pointData.feature3);
+        // Don't expect any number of dimensions
+        Vector3f position = new Vector3f(
+            pointData.getValue(0).orElse(0f),
+            pointData.getValue(1).orElse(0f),
+            pointData.getValue(2).orElse(0f)
+        );
 
         float brightness = isTraining ? 0.5f : 0.0f;
         Vector3f color = pointData.label == 1

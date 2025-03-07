@@ -29,6 +29,11 @@ public class ModelTest {
     Model model = new Model();
     DataGenerator generator = new DataGenerator() {
         @Override
+        public int getDimension() {
+            return 0;
+        }
+
+        @Override
         public Node createNode() {
             return null;
         }
@@ -59,7 +64,7 @@ public class ModelTest {
 
     @Test
     void testGetSetTrainingData(){
-        PointData data = new PointData(0, 0, 0, 0);
+        PointData data = new PointData(new float[] { 0, 0, 0 }, 0);
         PointData[] dataList = {data, data};
         model.setTrainingData(dataList);
         assertEquals(dataList,model.getTrainingData());

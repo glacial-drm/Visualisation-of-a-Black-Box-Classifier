@@ -9,18 +9,16 @@ import java.util.Map;
 
 public class Camera {
     private final Vector3f position = new Vector3f(0, 0, (float) InputHandler.getZoom());
-    private final float yaw = 0;
-    private final float pitch = 0;
-    private final float roll = 0;
+    private final Vector3f forward = new Vector3f(0, 0, 1);
+    private final Vector3f right = new Vector3f(1, 0, 0);
+    private final Vector3f up = new Vector3f(0, 1, 0);
     private final float moveSpeed = 0.2f;
     private final float fov;
     private final float near;
     private final float far;
     private final float sensitivity;
-    private Matrix4f orthogonalMatrix;
     private Matrix4f perspectiveMatrix;
     private Matrix4f viewMatrix;
-    private boolean viewChanged = false;
 
     /**
      * Sets up the projection and view matrix
@@ -31,13 +29,12 @@ public class Camera {
      * @param near   how close objects should be and still be rendered
      * @param far    how far objects should be to still be rendered
      */
-    public Camera(float width, float height, float fov, float near, float far) {
+    public Camera(int width, int height, float fov, float near, float far) {
         this.fov = fov;
         this.near = near;
         this.far = far;
         this.sensitivity = 0.01f;
 
-        orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
         perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
 
         viewMatrix = createViewMatrix();
@@ -47,37 +44,20 @@ public class Camera {
      * Creates a transform matrix which handle translation, rotation, and scaling the object
      *
      * @param translation Vector3 of the objects coordinates
-     * @param rotation    Vector3 of the objects wanted rotation
      * @param scale       float for resizing the object
      * @return Matrix4f transformationMatrix
      */
-    public static Matrix4f createTransformMatrix(Vector3f translation, Vector3f rotation, float scale) {
-        return new Matrix4f().translate(translation).rotate((float) Math.toRadians(rotation.x()), new Vector3f(1, 0, 0)).rotate((float) Math.toRadians(rotation.y()), new Vector3f(0, 1, 0)).rotate((float) Math.toRadians(rotation.z()), new Vector3f(0, 0, 1)).scale(scale);
+    public static Matrix4f createTransformMatrix(Vector3f translation, float scale) {
+        return new Matrix4f()
+                .translate(translation)
+                .scale(scale);
     }
 
-    public Matrix4f createPerspectiveProjection(float width, float height, float FOV, float near, float far) {
+
+    public Matrix4f createPerspectiveProjection(int width, int height, float FOV, float near, float far) {
         perspectiveMatrix = new Matrix4f();
         perspectiveMatrix.setPerspective(FOV, (float) width / height, near, far);
         return perspectiveMatrix;
-    }
-
-    /**
-     * Creates a perspective camera
-     *
-     * @param width  viewport width
-     * @param height viewport height
-     * @param fov    field of view
-     * @param near   how close objects can be and still be rendered
-     * @param far    how far objects can be and still be rendered
-     * @return a perspective matrix
-     */
-    public Matrix4f createOrthogonalProjection(float width, float height, float fov, float near, float far) {
-        float aspectRatio = width / height;
-        float yScale = (float) ((1.0f / Math.toRadians(fov / 2.0f))) * aspectRatio;
-        float xScale = yScale / aspectRatio;
-        float frustum = far - near;
-
-        return new Matrix4f().m00(xScale).m11(yScale).m22(-((far - near) / frustum)).m23(-1).m32(-((2 * far * near) / frustum)).m33(0);
     }
 
     /**
@@ -86,17 +66,8 @@ public class Camera {
      * @return Matrix4f which is a viewMatrix
      */
     public Matrix4f createViewMatrix() {
-        viewChanged = true;
-        return new Matrix4f().identity().rotate((float) Math.toRadians(pitch), new Vector3f(1, 0, 0)).rotate((float) Math.toRadians(yaw), new Vector3f(0, 1, 0)).rotate((float) Math.toRadians(roll), new Vector3f(0, 0, 1)).translate(position);
-    }
-
-    /**
-     * getter for the projection matrix
-     *
-     * @return projectionMatrix
-     */
-    public Matrix4f getOrthogonalMatrix() {
-        return orthogonalMatrix;
+        Vector3f target = new Vector3f(position).add(forward);
+        return new Matrix4f().lookAt(position, target, new Vector3f(0, 1, 0));
     }
 
     /**
@@ -108,9 +79,6 @@ public class Camera {
         return viewMatrix;
     }
 
-    public Matrix4f getPerspectiveMatrix() {
-        return perspectiveMatrix;
-    }
 
     /**
      * Handles moving the camera by changing the position which effects the
@@ -119,19 +87,24 @@ public class Camera {
     public boolean move() {
         boolean moved;
 
+        // Handle 2D vs 3D in future
+
         // Enable mouse movement
         if (InputHandler.getMouseState(MouseInputNames.LEFT_CLICK)) {
-            mouseMovement();
+            mouseMovement2D();
             moved = true;
         } else {
-            moved = keyboardMovement() || mouseZoom();
+            moved = keyboardMovement2D() || mouseZoom2D();
         }
 
-        if (moved) viewMatrix = createViewMatrix();
+        if (moved) {
+            viewMatrix = createViewMatrix();
+        }
+
         return moved;
     }
 
-    private boolean mouseZoom() {
+    private boolean mouseZoom2D() {
         // Zoom
         float zoom = (float) InputHandler.getZoom();
         if (zoom != 0) {
@@ -141,7 +114,7 @@ public class Camera {
         return false;
     }
 
-    private void mouseMovement() {
+    private void mouseMovement2D() {
         // Movement
         float dx = (float) (InputHandler.getOriginalMouseX() - InputHandler.getMouseX());
         float dy = (float) (InputHandler.getOriginalMouseY() - InputHandler.getMouseY());
@@ -153,41 +126,54 @@ public class Camera {
         position.y += dy * sensitivity;
     }
 
-    private boolean keyboardMovement() {
-        boolean moved = false;
-        Map<Character, Runnable> actions = Map.of('W', () -> position.y -= moveSpeed, 'S', () -> position.y += moveSpeed, 'A', () -> position.x += moveSpeed, 'D', () -> position.x -= moveSpeed, 'Q', () -> {
+    private boolean keyboardMovement2D() {
+        Vector3f movement = new Vector3f();
+
+        // Handle linear movement up-down and side-to-side
+
+        if (InputHandler.getKeyState('W')) {
+            movement.add(new Vector3f(up));
+        }
+        if (InputHandler.getKeyState('S')) {
+            movement.sub(new Vector3f(up));
+        }
+        if (InputHandler.getKeyState('D')) {
+            movement.sub(new Vector3f(right));
+        }
+        if (InputHandler.getKeyState('A')) {
+            movement.add(new Vector3f(right));
+        }
+
+        if (movement.length() > 0) {
+            movement.normalize();
+        }
+        movement.mul(moveSpeed);
+
+        // Handle zooming forward-backward
+
+        if (InputHandler.getKeyState('Q')) {
             InputHandler.incZoom(-moveSpeed);
             position.z = (float) InputHandler.getZoom();
-        }, 'E', () -> {
+        }
+        if (InputHandler.getKeyState('E')) {
             InputHandler.incZoom(moveSpeed);
             position.z = (float) InputHandler.getZoom();
-        });
-
-        for (Map.Entry<Character, Runnable> action : actions.entrySet()) {
-            if (InputHandler.getKeyState(action.getKey())) {
-                action.getValue().run();
-                moved = true;
-            }
         }
-        return moved;
-    }
 
-    /**
-     * Getter for the viewChanged
-     */
-    public boolean getViewChanged() {
-        return viewChanged;
-    }
+        position.add(movement);
 
-    /**
-     * Set viewChanged to false
-     */
-    public void resetViewChanged() {
-        viewChanged = false;
+        return !movement.equals(new Vector3f());
     }
 
     public void resize(int width, int height) {
         perspectiveMatrix = createPerspectiveProjection(width, height, fov, near, far);
-        orthogonalMatrix = createOrthogonalProjection(width, height, fov, near, far);
+    }
+
+    public Matrix4f getActiveProjection() {
+        return perspectiveMatrix;
+    }
+
+    public Matrix4f getPerspective() {
+        return perspectiveMatrix;
     }
 }
