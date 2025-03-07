@@ -9,7 +9,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,7 +16,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -206,6 +204,13 @@ public class View extends Application {
         List<String> classifiers = controller.getClassifiers();
         updateClassifierBox(classifierBox, classifiers);
 
+        // Sample Button
+        Button sampleButton = new Button("Sample");
+        sampleButton.setOnAction(_e -> {
+            controller.sampleCurrentModel();
+        });
+        pane.getChildren().add(sampleButton);
+
         return pane;
     }
 
@@ -235,13 +240,6 @@ public class View extends Application {
 
     private Pane trainingPanel() {
         VBox pane = new VBox();
-
-        Button sampleButton = new Button("Sample");
-        sampleButton.setOnAction(event -> {
-            controller.sampleCurrentModel();
-        });
-        BorderPane.setAlignment(sampleButton, Pos.CENTER);
-        pane.getChildren().add(sampleButton);
 
         Button trainButton = new Button("Train");
         trainButton.setOnAction(_event -> {
