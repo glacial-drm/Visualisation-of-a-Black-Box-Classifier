@@ -241,12 +241,15 @@ public class View extends Application {
     private Pane trainingPanel() {
         VBox pane = new VBox();
 
-        Button trainButton = new Button("Train");
+        Button trainButton = new Button("Train + Sample");
         trainButton.setOnAction(_event -> {
             trainButton.setText("Training...");
             runAsync(
                 controller::trainModel,
-                () -> trainButton.setText("Train")
+                () -> {
+                    trainButton.setText("Train + Sample");
+                    controller.sampleCurrentModel();
+                }
             );
         });
         pane.getChildren().add(trainButton);
