@@ -66,9 +66,9 @@ public class Connector {
 
         ModelResults res;
 
-        if (request instanceof SvcRequest.Builder svc) {
-            SvcRequest svcRequest = svc.setPoints(pointsProto).build();
-            res = stub.trainSvc(svcRequest);
+        if (request instanceof SvmRequest.Builder svm) {
+            SvmRequest svmRequest = svm.setPoints(pointsProto).build();
+            res = stub.trainSvm(svmRequest);
         } else {
             return null;
         }

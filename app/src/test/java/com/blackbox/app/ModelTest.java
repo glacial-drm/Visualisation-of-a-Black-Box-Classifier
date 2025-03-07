@@ -7,7 +7,7 @@ import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.graph.Canvas;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.model.PointData;
-import com.blackbox.proto.connector.SvcRequest;
+import com.blackbox.proto.connector.SvmRequest;
 import com.blackbox.proto.connector.UiTest;
 import com.google.protobuf.GeneratedMessage;
 import javafx.application.Application;
@@ -55,7 +55,7 @@ public class ModelTest {
                 .setI64(4)
                 .setStr("Hello world")
                 .setTestEnum(UiTest.TestEnum.OPTION2),
-                SvcRequest.newBuilder()
+                SvmRequest.newBuilder()
     };
 
     List<String> classifiers = new ArrayList<String>();

@@ -7,7 +7,7 @@ option java_outer_classname = "ConnectorProto";
 package connector;
 
 service Connector {
-  rpc TrainSvc (SvcRequest) returns (ModelResults);
+  rpc TrainSvm (SvmRequest) returns (ModelResults);
 }
 
 message Point {
@@ -19,7 +19,7 @@ message Points {
   repeated Point points = 1;
 }
 
-message SvcRequest {
+message SvmRequest {
   Points points = 1;
 
   enum Kernel {

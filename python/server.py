@@ -21,9 +21,9 @@ def parsePoints(points: connector_pb2.Points):
     return X, y
 
 class Connector(connector_pb2_grpc.ConnectorServicer):
-    def TrainSvc(self, request: connector_pb2.SvcRequest, context: grpc._server._Context):
+    def TrainSvm(self, request: connector_pb2.SvmRequest, context: grpc._server._Context):
         X, y = parsePoints(request.points)
-        kernel = connector_pb2.SvcRequest.Kernel.Name(request.kernel).lower()
+        kernel = connector_pb2.SvmRequest.Kernel.Name(request.kernel).lower()
 
         svm = SVMClassifier(kernel, C=1.0, gamma="scale", test_size=0.2, random_state=42)
         svm.fit(X, y)

@@ -15,7 +15,7 @@ import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
-import com.blackbox.proto.connector.SvcRequest;
+import com.blackbox.proto.connector.SvmRequest;
 import com.blackbox.proto.connector.UiTest;
 import com.google.protobuf.GeneratedMessage.Builder;
 
@@ -83,7 +83,7 @@ public class Controller {
         .setI64(4)
         .setStr("Hello world")
         .setTestEnum(UiTest.TestEnum.OPTION2),
-      SvcRequest.newBuilder()
+      SvmRequest.newBuilder()
     });
 
     generateTrainingData();
