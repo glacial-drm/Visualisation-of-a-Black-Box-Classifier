@@ -15,7 +15,10 @@ import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
-import com.blackbox.proto.connector.SvcRequest;
+import com.blackbox.proto.connector.SvmRequest;
+import com.blackbox.proto.connector.Criterion;
+import com.blackbox.proto.connector.DecisionTreeRequest;
+import com.blackbox.proto.connector.RandomForestRequest;
 import com.blackbox.proto.connector.UiTest;
 import com.google.protobuf.GeneratedMessage.Builder;
 
@@ -83,7 +86,17 @@ public class Controller {
         .setI64(4)
         .setStr("Hello world")
         .setTestEnum(UiTest.TestEnum.OPTION2),
-      SvcRequest.newBuilder()
+      SvmRequest.newBuilder(),
+      DecisionTreeRequest.newBuilder()
+        .setCriterion(Criterion.GINI)
+        .setMaxDepth(-1),
+      RandomForestRequest.newBuilder()
+        .setNEstimators(100)
+        .setCriterion(Criterion.GINI)
+        .setMaxDepth(-1)
+        .setMinSamplesSplit(2)
+        .setMinSamplesLeaf(1)
+        .setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT)
     });
 
     generateTrainingData();

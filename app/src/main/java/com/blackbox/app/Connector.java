@@ -66,9 +66,15 @@ public class Connector {
 
         ModelResults res;
 
-        if (request instanceof SvcRequest.Builder svc) {
-            SvcRequest svcRequest = svc.setPoints(pointsProto).build();
-            res = stub.trainSvc(svcRequest);
+        if (request instanceof SvmRequest.Builder svm) {
+            SvmRequest modelRequest = svm.setPoints(pointsProto).build();
+            res = stub.trainSvm(modelRequest);
+        } else if (request instanceof DecisionTreeRequest.Builder builder) {
+            DecisionTreeRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainDecisionTree(modelRequest);
+        } else if (request instanceof RandomForestRequest.Builder builder) {
+            RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainRandomForest(modelRequest);
         } else {
             return null;
         }
