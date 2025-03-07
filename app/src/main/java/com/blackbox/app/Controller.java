@@ -211,6 +211,15 @@ public class Controller {
     chooser.setTitle("Select Classifier");
   }
 
+  public void openNewFolder(File folder) {
+    model.setCurrentDir(folder);
+    loadAllOnnx();
+  }
+
+  public File getCurrentDir() {
+    return model.getCurrentDir();
+  }
+
   /**
    * Send the {@link com.blackbox.graph.events.PointsLoaded PointsLoaded} event.
    *
@@ -407,15 +416,14 @@ public class Controller {
     return extension;
   }
 
-  public void loadAllOnnx(File selectedDirectory) {
-    if (selectedDirectory == null) {
+  public void loadAllOnnx() {
+    if (model.getCurrentDir() == null) {
       return;
     }
 
-    model.setCurrentDir(selectedDirectory);
     model.clearClassifiers();
 
-    for (File file : Objects.requireNonNull(selectedDirectory.listFiles())) {
+    for (File file : Objects.requireNonNull(model.getCurrentDir().listFiles())) {
       if (!file.isDirectory()) {
         String ext = getExt(file);
         if (ext.equals("onnx")) {

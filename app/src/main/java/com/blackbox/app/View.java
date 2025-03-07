@@ -180,10 +180,10 @@ public class View extends Application {
 
         Button loadButton = new Button("Load Folder");
         loadButton.setOnAction(_e -> {
-            File folder = folderSelector(primaryStage);
-            if (folder != null) {
-                controller.loadAllOnnx(folder);
-                String text = folder.toString();
+            folderSelector(primaryStage);
+
+            if (controller.getCurrentDir() != null) {
+                String text = controller.getCurrentDir().toString();
                 if (text.length() > 15) {
                     text = "..." + text.substring(text.length() - 12);
                 }
@@ -425,20 +425,20 @@ public class View extends Application {
      *
      * This will use JavaFX on Windows and Mac, and tinyfd on Linux.
      *
-     * Returns null if the action was cancelled.
+     * Does nothing if the action was cancelled.
      */
-    public File folderSelector(Stage stage) {
+    public void folderSelector(Stage stage) {
         File selectedDirectory;
 
         if (System.getProperty("os.name").equals("Linux")) {
             String path = TinyFileDialogs.tinyfd_selectFolderDialog("", System.getProperty("user.dir"));
-            if (path == null) return null;
+            if (path == null) return;
             selectedDirectory = new File(path);
         } else {
             DirectoryChooser chooser = controller.getFileDialog();
             selectedDirectory = chooser.showDialog(stage);
         }
 
-        return selectedDirectory;
+        controller.openNewFolder(selectedDirectory);
     }
 }
