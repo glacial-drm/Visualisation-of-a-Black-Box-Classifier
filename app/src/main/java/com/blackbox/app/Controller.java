@@ -124,6 +124,10 @@ public class Controller {
     canvasEventSink.send(new ClearPoints());
   }
 
+  public void closeConnector() {
+    connector.close();
+  }
+
   /**
    * Generate new training data with the selected generator.
    * This doesn't show the training data on the Canvas,

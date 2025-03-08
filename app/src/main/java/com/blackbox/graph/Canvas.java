@@ -198,8 +198,8 @@ public class Canvas {
         glfwSetErrorCallback(null).free();
 
         if (stopEvent.quitAllThreads) {
-            // Stop all threads
-            System.exit(0);
+            // Stop all thread
+        //    System.exit(0);
         }
     }
 
