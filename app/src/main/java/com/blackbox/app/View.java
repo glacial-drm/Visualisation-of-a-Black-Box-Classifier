@@ -157,6 +157,13 @@ public class View extends Application {
         for (Node node : content) {
             ScrollPane scrollPane = new ScrollPane(node);
             scrollPane.getStyleClass().add("panel");
+            ((VBox)node).prefWidthProperty().bind(
+                scrollPane.widthProperty().map(width ->
+                    width.doubleValue()
+                    - scrollPane.getPadding().getLeft()
+                    - scrollPane.getPadding().getRight()
+                )
+            );
             root.add(scrollPane, i++, 0);
             GridPane.setVgrow(scrollPane, Priority.ALWAYS);
         }
@@ -211,6 +218,7 @@ public class View extends Application {
         sampleButton.setOnAction(_e -> {
             controller.sampleCurrentModel();
         });
+        sampleButton.prefWidthProperty().bind(pane.widthProperty());
         pane.getChildren().add(sampleButton);
 
         return pane;
@@ -235,6 +243,7 @@ public class View extends Application {
                 themeBtn.setText("Light Mode");
             }
         });
+        themeBtn.prefWidthProperty().bind(pane.widthProperty());
         pane.getChildren().add(themeBtn);
 
         return pane;
@@ -257,6 +266,7 @@ public class View extends Application {
                 }
             );
         });
+        trainButton.prefWidthProperty().bind(pane.widthProperty());
         pane.getChildren().add(trainButton);
 
         return pane;
@@ -337,6 +347,7 @@ public class View extends Application {
         pane.getChildren().add(title);
 
         ComboBox<DataGenerator> generatorSelector = new ComboBox<>();
+        generatorSelector.prefWidthProperty().bind(pane.widthProperty());
         generatorSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getGenerators())));
         generatorSelector.setConverter(new StringConverter<DataGenerator>() {
             @Override
@@ -388,6 +399,7 @@ public class View extends Application {
         pane.getChildren().add(title);
 
         ComboBox<Builder<?>> requestSelector = new ComboBox<>();
+        requestSelector.prefWidthProperty().bind(pane.widthProperty());
         requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
         requestSelector.setConverter(new StringConverter<Builder<?>>() {
             @Override
