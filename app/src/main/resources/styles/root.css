@@ -19,3 +19,8 @@
     -fx-background-radius: 4;
 }
 
+.button {
+    -fx-min-height: 30px;
+    -fx-font-size: 1.3em;
+} 
+
