@@ -189,6 +189,7 @@ public class View extends Application {
 
     private Pane modelPanel() {
         VBox pane = new VBox();
+        pane.setSpacing(8);
         Label folderLabel = new Label();
 
         Button loadButton = new Button("Load Folder");
@@ -230,6 +231,7 @@ public class View extends Application {
 
     private Pane optionsPanel() {
         VBox pane = new VBox();
+        pane.setSpacing(8);
 
         Label title = new Label("Options");
         title.getStyleClass().add("title");
@@ -255,6 +257,7 @@ public class View extends Application {
 
     private Pane trainingPanel() {
         VBox pane = new VBox();
+        pane.setSpacing(8);
 
         Button trainButton = new Button("Train + Sample");
         trainButton.setOnAction(_event -> {
@@ -287,6 +290,7 @@ public class View extends Application {
             new Separator(),
             trainingPanel()
         );
+        pane.setSpacing(16);
         return pane;
     }
 
@@ -321,6 +325,7 @@ public class View extends Application {
 
     private Pane modelInfoPanel() {
         VBox pane = new VBox();
+        pane.setSpacing(8);
 
         Label title = new Label("Model Info");
         title.getStyleClass().add("title");
@@ -331,6 +336,7 @@ public class View extends Application {
 
     private Pane globalDataGenSettingsPanel() {
         VBox pane = new VBox();
+        pane.setSpacing(8);
 
         Label title = new Label("Global Generator Settings");
         title.getStyleClass().add("title");
@@ -343,6 +349,7 @@ public class View extends Application {
 
     private Pane specificDataGenSettingsPanel() {
         VBox pane = new VBox();
+        pane.setSpacing(8);
 
         // Selector
 
@@ -390,6 +397,7 @@ public class View extends Application {
             globalDataGenSettingsPanel(),
             specificDataGenSettingsPanel()
         );
+        pane.setSpacing(16);
         return pane;
     }
 
