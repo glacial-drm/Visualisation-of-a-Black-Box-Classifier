@@ -39,7 +39,7 @@ public class View extends Application {
         LIGHT,
         DARK,
     }
-    private Theme theme = Theme.LIGHT;
+    private Theme theme = Theme.DARK;
 
     private static enum Layout {
         STACKED,
@@ -101,7 +101,11 @@ public class View extends Application {
         };
 
         scene = new Scene(new VBox(), 800, 600);
-        loadLightMode();
+        if (theme == Theme.LIGHT) {
+            loadLightMode();
+        } else {
+            loadDarkMode();
+        }
 
         scene.widthProperty().addListener((_observable, _old, value) -> {
             int width = value.intValue();
