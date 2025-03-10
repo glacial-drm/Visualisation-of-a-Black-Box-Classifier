@@ -55,7 +55,7 @@ public class Controller {
     this.canvasEventSink = canvasEventSink;
 
     model.setGenerators(new DataGenerator[] {
-      new CircleGenerator(), new CubeGenerator(), new TriangleGenerator()
+      new CircleGenerator(), new CubeGenerator()
     });
     for (DataGenerator generator : getGenerators()) {
       generator.setOnChange(_v -> {
