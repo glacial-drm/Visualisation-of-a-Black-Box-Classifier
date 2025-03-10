@@ -86,7 +86,8 @@ public class Controller {
         .setI64(4)
         .setStr("Hello world")
         .setTestEnum(UiTest.TestEnum.OPTION2),
-      SvmRequest.newBuilder(),
+      SvmRequest.newBuilder()
+        .setPolyDegree(3),
       DecisionTreeRequest.newBuilder()
         .setCriterion(Criterion.GINI)
         .setMaxDepth(-1),
