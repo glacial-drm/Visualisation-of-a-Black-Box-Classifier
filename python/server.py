@@ -37,7 +37,14 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
         X, y = parsePoints(request.points)
         kernel = connector_pb2.SvmRequest.Kernel.Name(request.kernel).lower()
 
-        model = SVMClassifier(kernel, C=1.0, gamma="scale", test_size=0.2, random_state=42)
+        model = SVMClassifier(
+            kernel,
+            degree = request.polyDegree,
+            C=1.0,
+            gamma="scale",
+            test_size=0.2,
+            random_state=42
+        )
         model.fit(X, y)
         model.save(X, y)
         onnxPath = "SVM.onnx"
