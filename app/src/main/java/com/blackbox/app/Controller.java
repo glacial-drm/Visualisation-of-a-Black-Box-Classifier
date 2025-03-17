@@ -1,5 +1,6 @@
 package com.blackbox.app;
 
+import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
@@ -12,10 +13,11 @@ import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
-import com.blackbox.proto.connector.SvcRequest;
 import com.blackbox.proto.connector.UiTest;
+import com.blackbox.proto.connector.SvmRequest;
 import com.google.protobuf.GeneratedMessage.Builder;
 
+import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -80,7 +82,7 @@ public class Controller {
         .setI64(4)
         .setStr("Hello world")
         .setTestEnum(UiTest.TestEnum.OPTION2),
-      SvcRequest.newBuilder()
+       SvmRequest.newBuilder()
     });
 
     generateTrainingData();
@@ -97,7 +99,14 @@ public class Controller {
    */
   public void checkForEvents() {
     while (!eventQueue.isEmpty()) {
-      eventQueue.poll();
+      ControllerEvent event = eventQueue.poll();
+
+      if(event == null) {
+        continue;
+      }
+      if(event instanceof CloseGUI){
+        stop();
+      }
     }
   }
 
@@ -211,6 +220,7 @@ public class Controller {
     // Called with true to also kill this thread
     // May be changed in the future when windows can be open independently.
     canvasEventSink.send(new StopEvent(true));
+    Platform.exit();
   }
 
   /**
@@ -418,5 +428,9 @@ public class Controller {
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
     Logger.info("Selected classifier: " + path);
     runSampler(path);
+  }
+
+  public void closeConnector() {
+    connector.close();
   }
 }

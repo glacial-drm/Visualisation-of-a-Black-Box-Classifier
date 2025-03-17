@@ -1,11 +1,12 @@
 package com.blackbox.graph;
 
+import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.*;
-import com.blackbox.renderer.controlers.Renderer;
+import com.blackbox.renderer.controllers.Renderer;
 import com.blackbox.renderer.model.Model;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -193,6 +194,7 @@ public class Canvas {
         glfwTerminate();
         glfwSetErrorCallback(null).free();
 
+        Logger.debug("Sending close message to GUI");
         controllerEventSink.send(new CloseGUI() );
     }
 
