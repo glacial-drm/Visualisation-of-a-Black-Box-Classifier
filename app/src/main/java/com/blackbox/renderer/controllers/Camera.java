@@ -1,11 +1,9 @@
-package com.blackbox.renderer.controlers;
+package com.blackbox.renderer.controllers;
 
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.Input.MouseInputNames;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
-import java.util.Map;
 
 public class Camera {
     private final Vector3f position = new Vector3f(0, 0, (float) InputHandler.getZoom());
