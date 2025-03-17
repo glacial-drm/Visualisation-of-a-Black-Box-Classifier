@@ -13,8 +13,7 @@ import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
-import com.blackbox.proto.connector.UiTest;
-import com.blackbox.proto.connector.SvmRequest;
+import com.blackbox.proto.connector.*;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 import javafx.application.Platform;
@@ -72,18 +71,9 @@ public class Controller {
       showTrainingData();
     });
 
-    model.setTrainingRequests(new Builder[] {
-      // This specifies the default values for all the training requests
-      UiTest.newBuilder()
-        .setBoolean(true)
-        .setF32(1f)
-        .setF64(2.0)
-        .setI32(3)
-        .setI64(4)
-        .setStr("Hello world")
-        .setTestEnum(UiTest.TestEnum.OPTION2),
-       SvmRequest.newBuilder()
-    });
+    model.setTrainingRequests(new Builder[]{
+    // This specifies the default values for all the training requests
+    UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2), SvmRequest.newBuilder(), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1), RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT)});
 
     generateTrainingData();
     showTrainingData();
@@ -92,6 +82,7 @@ public class Controller {
     model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
     initFileLoader();
+
   }
 
   /**
