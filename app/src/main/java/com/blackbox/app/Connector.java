@@ -70,9 +70,11 @@ public class Connector {
         String tmpPath = System.getProperty("java.io.tmpdir") + File.separator + "blackbox-python";
 
         // Delete old tmp folder
-        Files.walk(Path.of(tmpPath))
-            .sorted(Comparator.reverseOrder())
-            .forEachOrdered(path -> path.toFile().delete());
+        if (Path.of(tmpPath).toFile().exists()) {
+            Files.walk(Path.of(tmpPath))
+                .sorted(Comparator.reverseOrder())
+                .forEachOrdered(path -> path.toFile().delete());
+        }
 
         // Create tmp folder
         File tmpDir = new File(tmpPath);
