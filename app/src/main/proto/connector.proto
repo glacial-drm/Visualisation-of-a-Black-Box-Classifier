@@ -31,6 +31,8 @@ message SvmRequest {
     SIGMOID = 3;
   }
   Kernel kernel = 2;
+
+  int32 polyDegree = 3;
 }
 
 // Used by both decision trees and random forest

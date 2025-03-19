@@ -5,8 +5,8 @@ from sklearn.model_selection import train_test_split
 from SAO import SaveAsONNX
 
 class SVMClassifier:
-    def __init__(self, kernel='rbf', C=1.0, gamma='scale', test_size=0.2, random_state=42):
-        self.model = svm.SVC(kernel=kernel, C=C, gamma=gamma, probability=True)
+    def __init__(self, kernel='rbf', degree=3, C=1.0, gamma='scale', test_size=0.2, random_state=42):
+        self.model = svm.SVC(kernel=kernel, degree=degree, C=C, gamma=gamma, probability=True)
         self.test_size = test_size
         self.random_state = random_state
         self.is_trained = False

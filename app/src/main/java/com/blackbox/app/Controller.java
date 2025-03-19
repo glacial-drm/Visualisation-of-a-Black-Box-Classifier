@@ -1,12 +1,10 @@
 package com.blackbox.app;
 
+import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
-import com.blackbox.generators.CircleGenerator;
-import com.blackbox.generators.CubeGenerator;
-import com.blackbox.generators.DataGenerator;
-import com.blackbox.generators.GlobalGenOptions;
+import com.blackbox.generators.*;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.ClearPoints;
 import com.blackbox.graph.events.DimensionChange;
@@ -15,13 +13,10 @@ import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
-import com.blackbox.proto.connector.SvmRequest;
-import com.blackbox.proto.connector.Criterion;
-import com.blackbox.proto.connector.DecisionTreeRequest;
-import com.blackbox.proto.connector.RandomForestRequest;
-import com.blackbox.proto.connector.UiTest;
+import com.blackbox.proto.connector.*;
 import com.google.protobuf.GeneratedMessage.Builder;
 
+import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -61,7 +56,7 @@ public class Controller {
     this.canvasEventSink = canvasEventSink;
 
     model.setGenerators(new DataGenerator[] {
-      new CircleGenerator(), new CubeGenerator(),
+      new CircleGenerator(), new CubeGenerator()
     });
     for (DataGenerator generator : getGenerators()) {
       generator.setOnChange(_v -> {
@@ -76,28 +71,9 @@ public class Controller {
       showTrainingData();
     });
 
-    model.setTrainingRequests(new Builder[] {
-      // This specifies the default values for all the training requests
-      UiTest.newBuilder()
-        .setBoolean(true)
-        .setF32(1f)
-        .setF64(2.0)
-        .setI32(3)
-        .setI64(4)
-        .setStr("Hello world")
-        .setTestEnum(UiTest.TestEnum.OPTION2),
-      SvmRequest.newBuilder(),
-      DecisionTreeRequest.newBuilder()
-        .setCriterion(Criterion.GINI)
-        .setMaxDepth(-1),
-      RandomForestRequest.newBuilder()
-        .setNEstimators(100)
-        .setCriterion(Criterion.GINI)
-        .setMaxDepth(-1)
-        .setMinSamplesSplit(2)
-        .setMinSamplesLeaf(1)
-        .setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT)
-    });
+    model.setTrainingRequests(new Builder[]{
+    // This specifies the default values for all the training requests
+    UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2), SvmRequest.newBuilder(), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1), RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT)});
 
     generateTrainingData();
     showTrainingData();
@@ -106,6 +82,7 @@ public class Controller {
     model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
     initFileLoader();
+
   }
 
   /**
@@ -113,7 +90,14 @@ public class Controller {
    */
   public void checkForEvents() {
     while (!eventQueue.isEmpty()) {
-      eventQueue.poll();
+      ControllerEvent event = eventQueue.poll();
+
+      if(event == null) {
+        continue;
+      }
+      if(event instanceof CloseGUI){
+        stop();
+      }
     }
   }
 
@@ -237,6 +221,7 @@ public class Controller {
     // Called with true to also kill this thread
     // May be changed in the future when windows can be open independently.
     canvasEventSink.send(new StopEvent(true));
+    Platform.exit();
   }
 
   /**
@@ -443,5 +428,9 @@ public class Controller {
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
     Logger.info("Selected classifier: " + path);
     runSampler(path);
+  }
+
+  public void closeConnector() {
+    connector.close();
   }
 }

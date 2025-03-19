@@ -1,6 +1,6 @@
 package com.blackbox.renderer.model.primitives;
 
-import com.blackbox.renderer.controlers.Camera;
+import com.blackbox.renderer.controllers.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 

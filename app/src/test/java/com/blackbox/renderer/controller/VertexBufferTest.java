@@ -1,6 +1,6 @@
-package com.blackbox.renderer.controler;
+package com.blackbox.renderer.controller;
 
-import com.blackbox.renderer.controlers.VertexBuffer;
+import com.blackbox.renderer.controllers.VertexBuffer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL30.*;
 
 class VertexBufferTest {
     private long window;

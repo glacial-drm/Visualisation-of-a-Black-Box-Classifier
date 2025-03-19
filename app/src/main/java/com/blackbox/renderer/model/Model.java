@@ -1,8 +1,8 @@
 package com.blackbox.renderer.model;
 
 import com.blackbox.model.PointData;
-import com.blackbox.renderer.controlers.Camera;
-import com.blackbox.renderer.controlers.Shader;
+import com.blackbox.renderer.controllers.Camera;
+import com.blackbox.renderer.controllers.Shader;
 import com.blackbox.renderer.model.primitives.Point;
 
 import java.util.HashMap;
