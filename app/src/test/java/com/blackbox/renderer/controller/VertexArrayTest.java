@@ -1,6 +1,6 @@
-package com.blackbox.renderer.controler;
+package com.blackbox.renderer.controller;
 
-import com.blackbox.renderer.controlers.VertexArray;
+import com.blackbox.renderer.controllers.VertexArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

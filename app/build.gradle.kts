@@ -145,7 +145,7 @@ tasks.register<Exec>("pythonPrechecks") {
     val pythonExecutable = if (osName.contains("win")) "python" else "python3"
 
     // run python script
-    commandLine(pythonExecutable, "python/precheck.py")
+    commandLine(pythonExecutable, "app/src/main/resources/python/precheck.py")
 }
 
 tasks.named("run") {

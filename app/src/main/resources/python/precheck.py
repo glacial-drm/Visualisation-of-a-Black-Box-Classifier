@@ -1,6 +1,7 @@
 import importlib.metadata
 import subprocess
 import sys
+import os
 
 def check_import(library):
     version = importlib.metadata.version(library)
@@ -10,9 +11,9 @@ def check_import(library):
         raise ImportError(f"Failed to import: {library}")
 
 def build_protobuf_files():
-    proto_file = "app/src/main/proto/connector.proto"
-    output_dir = "python"
-    proto_include = "-Iapp/src/main/proto"
+    proto_file = "../../proto/connector.proto"
+    output_dir = "."
+    proto_include = "-I../../proto"
 
     command = [
         sys.executable, "-m", "grpc_tools.protoc",
@@ -32,9 +33,12 @@ def build_protobuf_files():
         
 
 def main():
+    # Set the current working directory to where this file is
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
     print("Checking if all library are installed")
 
-    with open("python/requirements.txt") as file:
+    with open("requirements.txt") as file:
         libraries = file.readlines()
         for lib in libraries:
             try:

@@ -1,9 +1,9 @@
 package com.blackbox.renderer.model;
 
 import com.blackbox.model.PointData;
-import com.blackbox.renderer.controlers.IndexBuffer;
-import com.blackbox.renderer.controlers.VertexArray;
-import com.blackbox.renderer.controlers.VertexBuffer;
+import com.blackbox.renderer.controllers.IndexBuffer;
+import com.blackbox.renderer.controllers.VertexArray;
+import com.blackbox.renderer.controllers.VertexBuffer;
 import com.blackbox.renderer.model.primitives.Point;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

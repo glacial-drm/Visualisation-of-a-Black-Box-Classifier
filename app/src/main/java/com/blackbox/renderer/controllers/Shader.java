@@ -1,4 +1,4 @@
-package com.blackbox.renderer.controlers;
+package com.blackbox.renderer.controllers;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -6,9 +6,6 @@ import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -170,17 +167,7 @@ public class Shader {
      * @throws IOException if the file fails to read
      */
     private String readFile(String fileName) throws IOException {
-        String content;
-
-        Path filePath = Paths.get("src/main/shaders/" + fileName);
-
-        try {
-            content = Files.readString(filePath);
-        } catch (IOException e) {
-            throw new IOException("Failed to read shader with file name: " + e.getMessage());
-        }
-
-        return content;
+        return new String(getClass().getResourceAsStream("/shaders/" + fileName).readAllBytes());
     }
 
     /**

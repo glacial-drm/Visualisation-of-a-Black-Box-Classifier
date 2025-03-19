@@ -5,7 +5,14 @@ import io.grpc.Grpc;
 import io.grpc.InsecureChannelCredentials;
 import io.grpc.ManagedChannel;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -51,12 +58,72 @@ public class Connector {
         stub = ConnectorGrpc.newBlockingStub(channel);
     }
 
+    /**
+     * The python scripts are stored in resources,
+     * meaning they could be inside the .jar file.
+     * Python can't execute from their directly (is is effectively a zip),
+     * so we copy the python scripts to a temporary folder before execution.
+     *
+     * Returns the absolute path of the server python script.
+     */
+    private String loadPython() throws IOException {
+        String tmpPath = System.getProperty("java.io.tmpdir") + File.separator + "blackbox-python";
+
+        // Delete old tmp folder
+        if (Path.of(tmpPath).toFile().exists()) {
+            Files.walk(Path.of(tmpPath))
+                .sorted(Comparator.reverseOrder())
+                .forEachOrdered(path -> path.toFile().delete());
+        }
+
+        // Create tmp folder
+        File tmpDir = new File(tmpPath);
+        tmpDir.mkdirs();
+        Logger.info("Created tmp folder at {}", tmpDir.getAbsolutePath());
+
+        // All the needed python files
+        // Auto generating this from resources was not easy
+        String[] paths = new String[] {
+            "connector_pb2.py",
+            "connector_pb2.pyi",
+            "connector_pb2_grpc.py",
+            "SAO.py",
+            "server.py",
+            "TrainDecisionTree.py",
+            "TrainRF.py",
+            "TrainSVM.py",
+            "TrainModel.py",
+        };
+
+        // Copy from resources to the temporary folder
+        for (String path : paths) {
+            InputStream input = getClass().getResourceAsStream("/python/" + path);
+
+            File output = new File(tmpDir, path);
+            output.createNewFile();
+
+            try (FileWriter outputWriter = new FileWriter(output)) {
+                outputWriter.write(new String(input.readAllBytes()));
+            }
+        }
+
+        return tmpDir.getAbsolutePath() + File.separator + "server.py";
+    }
+
     private ProcessBuilder createProcessBuilder(String port) {
+        String serverPath;
+        try {
+            serverPath = loadPython();
+        } catch (Exception e) {
+            Logger.error("Failed to load python : {}", e);
+            return null;
+        }
+
         String os = System.getProperty("os.name");
         if (os.toLowerCase().contains("windows")) {
-            return new ProcessBuilder("python", "../python/server.py", port);
+            return new ProcessBuilder("python", serverPath, port);
         } else {
-            return new ProcessBuilder("python3", "../python/server.py", port);
+            return new ProcessBuilder("python3", serverPath, port);
         }
     }
 
@@ -66,9 +133,15 @@ public class Connector {
 
         ModelResults res;
 
-        if (request instanceof SvcRequest.Builder svc) {
-            SvcRequest svcRequest = svc.setPoints(pointsProto).build();
-            res = stub.trainSvc(svcRequest);
+        if (request instanceof SvmRequest.Builder svm) {
+            SvmRequest modelRequest = svm.setPoints(pointsProto).build();
+            res = stub.trainSvm(modelRequest);
+        } else if (request instanceof DecisionTreeRequest.Builder builder) {
+            DecisionTreeRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainDecisionTree(modelRequest);
+        } else if (request instanceof RandomForestRequest.Builder builder) {
+            RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainRandomForest(modelRequest);
         } else {
             return null;
         }

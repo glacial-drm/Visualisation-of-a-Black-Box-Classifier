@@ -1,4 +1,4 @@
-package com.blackbox.renderer.controlers;
+package com.blackbox.renderer.controllers;
 
 import org.lwjgl.BufferUtils;
 
