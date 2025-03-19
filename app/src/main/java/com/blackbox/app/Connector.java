@@ -93,6 +93,7 @@ public class Connector {
             "TrainRF.py",
             "TrainSVM.py",
             "TrainModel.py",
+            "TrainNeighbors.py"
         };
 
         // Copy from resources to the temporary folder
@@ -142,6 +143,9 @@ public class Connector {
         } else if (request instanceof RandomForestRequest.Builder builder) {
             RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
             res = stub.trainRandomForest(modelRequest);
+        } else if (request instanceof KNeighborsRequest.Builder builder) {
+            KNeighborsRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainKNeighbors(modelRequest);
         } else {
             return null;
         }

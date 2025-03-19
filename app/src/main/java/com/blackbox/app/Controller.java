@@ -73,7 +73,10 @@ public class Controller {
 
     model.setTrainingRequests(new Builder[]{
     // This specifies the default values for all the training requests
-    UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2), SvmRequest.newBuilder(), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1), RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT)});
+    UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2),
+            SvmRequest.newBuilder(), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1),
+            RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT),
+            KNeighborsRequest.newBuilder().setNNeighbors(5).setWeights(KNeighborsRequest.Weights.UNIFORM).setAlgorithm(KNeighborsRequest.Algorithm.AUTO).setLeafSize(30).setP(2).setMetric(KNeighborsRequest.Metric.MINKOWSKI).setNJobs(1)});
 
     generateTrainingData();
     showTrainingData();

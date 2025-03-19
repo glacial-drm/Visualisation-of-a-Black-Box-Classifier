@@ -10,6 +10,7 @@ import numpy as np
 from TrainSVM import SVMClassifier
 from TrainDecisionTree import DecisionTreeClassifierWrapper
 from TrainRF import RFClassifier
+from TrainNeighbors import KNClassifier
 
 def parsePoints(points: connector_pb2.Points):
     points = points.points
@@ -82,6 +83,25 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
         model.fit(X, y)
         model.save(X, y)
         onnxPath = "RandomForest.onnx"
+
+        return connector_pb2.ModelResults(onnxPath=onnxPath)
+
+    def TrainKNeighbors(self, request: connector_pb2.KNeighborsRequest, context: grpc._server._Context):
+        X, y = parsePoints(request.points)
+
+        model = KNClassifier(
+            n_neighbors = request.nNeighbors,
+            weights = connector_pb2.KNeighborsRequest.Weights.Name(request.weights).lower(),
+            algorithm = connector_pb2.KNeighborsRequest.Algorithm.Name(request.algorithm).lower(),
+            leaf_size = request.leaf_size,
+            p = request.p,
+            metric = connector_pb2.KNeighborsRequest.Metric.Name(request.metric).lower(),
+            n_jobs = request.nJobs
+        )
+
+        model.fit(X, y)
+        model.save(X, y)
+        onnxPath = "KNeighbors.onnx"
 
         return connector_pb2.ModelResults(onnxPath=onnxPath)
 

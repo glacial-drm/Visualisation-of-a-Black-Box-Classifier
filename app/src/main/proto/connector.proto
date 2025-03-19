@@ -10,6 +10,7 @@ service Connector {
   rpc TrainSvm (SvmRequest) returns (ModelResults);
   rpc TrainDecisionTree (DecisionTreeRequest) returns (ModelResults);
   rpc TrainRandomForest (RandomForestRequest) returns (ModelResults);
+  rpc TrainKNeighbors (KNeighborsRequest) returns (ModelResults);
 }
 
 message Point {
@@ -66,6 +67,43 @@ message RandomForestRequest {
   }
   MaxFeatures maxFeatures = 7;
   float maxFeaturesVal = 8;
+}
+
+message KNeighborsRequest {
+
+  Points points = 1;
+
+  int32 nNeighbors = 2;
+
+  enum Weights {
+    UNIFORM = 0;
+    DISTANCE = 1;
+  }
+  Weights weights = 3;
+
+  enum Algorithm {
+    AUTO = 0;
+    BALL_TREE = 1;
+    KD_TREE = 2;
+    BRUTE = 3;
+  }
+  Algorithm algorithm = 4;
+
+  int32 leaf_size = 5;
+  float p = 6;
+
+  enum Metric {
+    CITYBLOCK = 0;
+    COSINE = 1;
+    EUCLIDEAN = 2;
+    L1 = 3;
+    L2 = 4;
+    MANHATTAN = 5;
+    MINKOWSKI = 6;
+  }
+  Metric metric = 7;
+  int32 nJobs = 8;
+
 }
 
 message ModelResults {
