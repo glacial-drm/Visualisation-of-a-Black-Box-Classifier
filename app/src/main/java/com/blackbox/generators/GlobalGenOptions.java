@@ -35,6 +35,7 @@ public class GlobalGenOptions {
 
     public Node createNode() {
         VBox box = new VBox();
+        box.setSpacing(8);
 
         TextField countInput = new TextField(Integer.toString(count));
         countInput.prefWidthProperty().bind(box.widthProperty());
