@@ -48,6 +48,7 @@ public class CubeGenerator extends DataGenerator {
 
         box.getChildren().add(new Label("Radius"));
         TextField radiusInput = new TextField(Float.toString(radius));
+        radiusInput.prefWidthProperty().bind(box.widthProperty());
         radiusInput.textProperty().addListener((_observer, _old, value) -> {
             try {
                 radius = Float.parseFloat(value);
