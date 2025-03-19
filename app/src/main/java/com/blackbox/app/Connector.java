@@ -92,6 +92,7 @@ public class Connector {
             "TrainDecisionTree.py",
             "TrainRF.py",
             "TrainSVM.py",
+            "TrainModel.py",
         };
 
         // Copy from resources to the temporary folder
