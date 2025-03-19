@@ -44,11 +44,38 @@ public class ProtoUi {
         addListener(field, property, x -> x);
     }
 
+    /**
+     * Adds a label to the UI.
+     *
+     * Converts a field name from camelCase (upper or lower)
+     * to capitalised words with spaces.
+     *
+     * e.g. camelCase -> Camel Case
+     * and CamelCase -> Camel Case
+     */
+    private void addLabel(String fieldName) {
+        char[] fieldChars = fieldName.toCharArray();
+        StringBuilder name = new StringBuilder();
+        name.append(Character.toUpperCase(fieldChars[0]));
+
+        for (int i = 1; i < fieldChars.length; i++) {
+            char c = fieldChars[i];
+
+            if (Character.isUpperCase(c)) {
+                name.append(' ');
+            }
+
+            name.append(c);
+        }
+
+        addNode(new Label(name.toString()));
+    }
+
     public Node build() {
         List<FieldDescriptor> fields = builder.getDescriptorForType().getFields();
 
         for (var field : fields) {
-            addNode(new Label(field.getName()));
+            addLabel(field.getName());
 
             switch (field.getJavaType()) {
 				case BOOLEAN: {
