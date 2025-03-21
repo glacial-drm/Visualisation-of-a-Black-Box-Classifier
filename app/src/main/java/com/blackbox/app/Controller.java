@@ -344,7 +344,8 @@ public class Controller {
         // which involves taking its derivative
         // which results in (y/0.8) ^ (2/3)
 
-        float range = (float)Math.pow(Math.abs(InputHandler.getZoom()) / 0.8f, (2.0f/3.0f));
+        float range = (float)Math.pow((float)Math.abs(InputHandler.getZoom()) / 0.8f, (float)(2.0f/3.0f));
+        Logger.debug("range: {}", range);
 
         float pointGap = range * 2f / (float) (resolution - 1);
         // Needed for the outer edge

@@ -1,5 +1,6 @@
 package com.blackbox.renderer.model;
 
+import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.model.PointData;
 import com.blackbox.renderer.controllers.IndexBuffer;
 import com.blackbox.renderer.controllers.VertexArray;
@@ -44,7 +45,12 @@ public class PointManager {
             ? new Vector3f(1.0f, brightness, brightness)
             : new Vector3f(brightness, brightness, 1.0f);
 
-        float scale = isTraining ? 0.05f : 0.1f;
+        float scale;
+        if(isTraining) {
+            scale = 0.05f;
+        } else{
+            scale = 0.05f * (float)Math.pow((float)Math.abs(InputHandler.getZoom()) / 0.8f, (float)(2.0f/3.0f));;
+        }
         points.add(new Point(position, new Vector3f(0, 0, 0), scale, color));
     }
 
