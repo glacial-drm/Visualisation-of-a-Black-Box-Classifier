@@ -43,7 +43,7 @@ public class Model {
 
     private int canvasWidth;
     private int canvasHeight;
-
+    private String activeModelPath;
     private double previousZoom;
 
     public void setTrainingData(PointData[] data) {
@@ -237,6 +237,14 @@ public class Model {
 
     public void setPreviousZoom(double previousZoom) {
         this.previousZoom = previousZoom;
+    }
+
+    public void setActiveModel(String path) {
+        activeModelPath = path;
+    }
+
+    public String getActiveModel() {
+        return activeModelPath;
     }
 }
 

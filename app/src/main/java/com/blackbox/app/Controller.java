@@ -92,13 +92,14 @@ public class Controller {
                 stop();
             } else if (event instanceof CanvasResize canvasResize) {
                 model.setCanvasSize(canvasResize.width, canvasResize.height);
+                runSampler(model.getActiveModel());
                 // Should try and sample the model
             }
         }
 
         if(InputHandler.getZoom() != model.getPreviousZoom()){
             model.setPreviousZoom(InputHandler.getZoom());
-            Logger.debug("Previous zoom: " + model.getPreviousZoom());
+            runSampler(model.getActiveModel());
             // Should try and resample
         }
     }
@@ -313,6 +314,12 @@ public class Controller {
      * This makes input data spread across a hard-coded range.
      */
     public void runSampler(String path) {
+
+        // Done so that the changing of window size and zoom does not try and sample
+        if(path == null){
+            return;
+        }
+
         OnnxModel onnx;
         try {
             onnx = new OnnxModel(path);
@@ -424,6 +431,7 @@ public class Controller {
         showTrainingData();
         Logger.info("Sampling");
         String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
+        model.setActiveModel(path);
         Logger.info("Selected classifier: {}", path);
         runSampler(path);
     }
