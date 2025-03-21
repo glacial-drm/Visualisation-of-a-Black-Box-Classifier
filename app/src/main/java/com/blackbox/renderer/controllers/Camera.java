@@ -121,7 +121,7 @@ public class Camera {
         InputHandler.setOriginalMouseY(InputHandler.getMouseY());
 
         position.x -= dx * sensitivity;
-        position.y += dy * sensitivity;
+        position.y -= dy * sensitivity;
     }
 
     private boolean keyboardMovement2D() {
