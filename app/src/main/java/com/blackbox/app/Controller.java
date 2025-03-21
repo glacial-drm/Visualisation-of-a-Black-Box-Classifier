@@ -339,7 +339,7 @@ public class Controller {
         // Total numbers of points will be resolution * resolution
         int resolution = 40;
         // Input data will start be from -range .. +range
-        float range = 3.0f;
+        float range = 3.0f + (float)Math.abs(InputHandler.getZoom());
 
         float pointGap = range * 2f / (float) (resolution - 1);
         // Needed for the outer edge
@@ -372,6 +372,10 @@ public class Controller {
                 }
             }
         }
+
+        // Send a clear message to the canvas
+        clearPoints();
+        showTrainingData();
 
         // Get output
 
