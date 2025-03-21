@@ -1,5 +1,6 @@
 from sklearn.neighbors import KNeighborsClassifier
 from TrainModel import TrainModel
+import numpy as np
 
 class KNClassifier(TrainModel):
     def __init__(self, n_neighbors = 5, weights = "uniform", algorithm = "auto", leaf_size = 30,
@@ -10,3 +11,8 @@ class KNClassifier(TrainModel):
                                      n_jobs = n_jobs)
 
         super().__init__(model = model, random_state = random_state, test_size = test_size)
+
+    def fit(self, X, y):
+        # This gets round an issue with skl2onnx
+        super().fit(X, y.astype(np.int32))
+
