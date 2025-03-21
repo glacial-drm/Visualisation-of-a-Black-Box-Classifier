@@ -158,12 +158,12 @@ class ControllerTest {
         when(mockFile.getName()).thenReturn("test.onnx");
         when(mockFile.isDirectory()).thenReturn(false);
         when(mockFile.listFiles()).thenReturn(new File[]{mockFile});
+        when(model.getCurrentDir()).thenReturn(mockFile);
 
-        controller.loadAllOnnx(mockFile);
+        controller.loadAllOnnx();
 
         verify(model, times(1)).clearClassifiers();
         verify(model, times(1)).addClassifier("test.onnx");
-        verify(model, times(1)).setCurrentDir(mockFile);
     }
 
     /**
