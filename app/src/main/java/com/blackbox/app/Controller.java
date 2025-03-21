@@ -9,6 +9,7 @@ import com.blackbox.generators.CircleGenerator;
 import com.blackbox.generators.CubeGenerator;
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
+import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.events.*;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
@@ -91,7 +92,14 @@ public class Controller {
                 stop();
             } else if (event instanceof CanvasResize canvasResize) {
                 model.setCanvasSize(canvasResize.width, canvasResize.height);
+                // Should try and sample the model
             }
+        }
+
+        if(InputHandler.getZoom() != model.getPreviousZoom()){
+            model.setPreviousZoom(InputHandler.getZoom());
+            Logger.debug("Previous zoom: " + model.getPreviousZoom());
+            // Should try and resample
         }
     }
 

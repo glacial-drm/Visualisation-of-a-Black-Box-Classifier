@@ -44,6 +44,8 @@ public class Model {
     private int canvasWidth;
     private int canvasHeight;
 
+    private double previousZoom;
+
     public void setTrainingData(PointData[] data) {
         trainingData = data;
     }
@@ -227,6 +229,14 @@ public class Model {
 
     public int getCanvasWidth() {
         return canvasWidth;
+    }
+
+    public double getPreviousZoom() {
+        return previousZoom;
+    }
+
+    public void setPreviousZoom(double previousZoom) {
+        this.previousZoom = previousZoom;
     }
 }
 
