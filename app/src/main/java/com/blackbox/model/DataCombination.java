@@ -10,11 +10,10 @@ public class DataCombination {
         int length = data.length;
 
         for (int i = 0; i < length; i++) {
-            float f1 = data[i][0];
-            float f2 = data[i][1];
+            float[] features = data[i];
             long lab = labels[i];
 
-            dataToSend.add(new PointData(f1, f2, 0, lab));
+            dataToSend.add(new PointData(features, lab));
         }
         return dataToSend;
     }

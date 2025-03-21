@@ -1,21 +1,37 @@
 package com.blackbox.model;
 
-public class PointData {
+import java.util.Optional;
 
-    public final float feature1;
-    public final float feature2;
-    public final float feature3;
+public class PointData {
+    public final float[] features;
     public final long label;
 
-    public PointData(float f1, float f2, float f3, long lab) {
-        this.feature1 = f1;
-        this.feature2 = f2;
-        this.feature3 = f3;
-        this.label = lab;
+    public PointData(float[] features, long label) {
+        this.features = features;
+        this.label = label;
+    }
+
+    /**
+     * Try and get a value.
+     * The array itself is available, but this is useful for not assuming the size.
+     */
+    public Optional<Float> getValue(int index) {
+        if (index < features.length) {
+            return Optional.of(features[index]);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
     public String toString() {
-        return label + " : " + feature1 + ", " + feature2;
+        StringBuilder output = new StringBuilder(label + " : ");
+        for (int i = 0; i < features.length; i++) {
+            output.append(features[i]);
+            if (i != features.length - 1) {
+                output.append(", ");
+            }
+        }
+        return output.toString();
     }
 }

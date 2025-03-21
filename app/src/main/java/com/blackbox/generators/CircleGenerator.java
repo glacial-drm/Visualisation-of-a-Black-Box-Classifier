@@ -25,6 +25,9 @@ public class CircleGenerator extends DataGenerator {
     private boolean bl = true;
     private boolean br = true;
 
+    @Override
+    public int getDimension() { return 2; }
+
     private void newCheckBox(boolean initial, Consumer<Boolean> consumer) {
         CheckBox checkBox = new CheckBox();
         checkBox.setSelected(initial);
@@ -41,6 +44,7 @@ public class CircleGenerator extends DataGenerator {
 
         box.getChildren().add(new Label("Radius"));
         TextField radiusInput = new TextField(Float.toString(radius));
+        radiusInput.prefWidthProperty().bind(box.widthProperty());
         radiusInput.textProperty().addListener((_observer, _old, value) -> {
             try {
                 radius = Float.parseFloat(value);
@@ -79,7 +83,7 @@ public class CircleGenerator extends DataGenerator {
             float[] point = genQuadrant(options.getRange(), quadrantOffsets.get(rng.nextInt(quadrantOffsets.size())));
             int label = Math.pow((double)point[0], 2) + Math.pow((double)point[1], 2) >= radius_2 ? 0 : 1;
 
-            data[i] = new PointData(point[0], point[1], 0, label);
+            data[i] = new PointData(point, label);
         }
 
         return data;

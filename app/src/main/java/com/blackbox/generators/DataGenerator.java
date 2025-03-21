@@ -16,6 +16,8 @@ public abstract class DataGenerator {
     protected static Random rng = new Random();
     protected Consumer<DataGenerator> onChange;
 
+    public abstract int getDimension();
+
     public void setOnChange(Consumer<DataGenerator> onChange) {
         this.onChange = onChange;
     } 

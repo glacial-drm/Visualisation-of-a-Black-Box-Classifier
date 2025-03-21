@@ -1,23 +1,22 @@
 package com.blackbox.app;
 
+import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
-import com.blackbox.generators.CircleGenerator;
-import com.blackbox.generators.CubeGenerator;
-import com.blackbox.generators.DataGenerator;
-import com.blackbox.generators.GlobalGenOptions;
+import com.blackbox.generators.*;
 import com.blackbox.graph.events.CanvasEvent;
 import com.blackbox.graph.events.ClearPoints;
+import com.blackbox.graph.events.DimensionChange;
 import com.blackbox.graph.events.PointsLoaded;
 import com.blackbox.graph.events.StopEvent;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
-import com.blackbox.proto.connector.SvcRequest;
-import com.blackbox.proto.connector.UiTest;
+import com.blackbox.proto.connector.*;
 import com.google.protobuf.GeneratedMessage.Builder;
 
+import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
@@ -59,7 +58,7 @@ public class Controller {
     this.connector = connector;
 
     model.setGenerators(new DataGenerator[] {
-      new CircleGenerator(), new CubeGenerator(),
+      new CircleGenerator(), new CubeGenerator()
     });
     for (DataGenerator generator : getGenerators()) {
       generator.setOnChange(_v -> {
@@ -74,18 +73,9 @@ public class Controller {
       showTrainingData();
     });
 
-    model.setTrainingRequests(new Builder[] {
-      // This specifies the default values for all the training requests
-      UiTest.newBuilder()
-        .setBoolean(true)
-        .setF32(1f)
-        .setF64(2.0)
-        .setI32(3)
-        .setI64(4)
-        .setStr("Hello world")
-        .setTestEnum(UiTest.TestEnum.OPTION2),
-      SvcRequest.newBuilder()
-    });
+    model.setTrainingRequests(new Builder[]{
+    // This specifies the default values for all the training requests
+    UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2), SvmRequest.newBuilder(), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1), RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT)});
 
     generateTrainingData();
     showTrainingData();
@@ -94,6 +84,7 @@ public class Controller {
     model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
     initFileLoader();
+
   }
 
   /**
@@ -101,7 +92,14 @@ public class Controller {
    */
   public void checkForEvents() {
     while (!eventQueue.isEmpty()) {
-      eventQueue.poll();
+      ControllerEvent event = eventQueue.poll();
+
+      if(event == null) {
+        continue;
+      }
+      if(event instanceof CloseGUI){
+        stop();
+      }
     }
   }
 
@@ -143,6 +141,13 @@ public class Controller {
     return model.getSelectedGenerator();
   }
 
+  /**
+   * Get the dimension of the selected generator.
+   */
+  public int getDimension() {
+    return getSelectedGenerator().getDimension();
+  }
+
   public DataGenerator getGeneratorByName(String name) {
     DataGenerator target = null;
     for (DataGenerator generator : model.getGenerators()) {
@@ -155,6 +160,8 @@ public class Controller {
 
   public void setSelectedGenerator(int index) {
     model.setSelectedGenerator(index);
+    DataGenerator selectedGenerator = model.getSelectedGenerator();
+    canvasEventSink.send(new DimensionChange(selectedGenerator.getDimension()));
   }
 
   public Builder<?>[] getTrainingRequests() {
@@ -175,15 +182,29 @@ public class Controller {
     model.setSelectedTrainingRequest(index);
   }
 
-  public void trainModel() {
-    Logger.info("Training model...");
-    connector.trainModel(model.getSelectedTrainingRequest(), model.getTrainingData());
-    Logger.info("Finished training!");
+  /**
+   * Trains a model with the currently selected settings and training data.
+   * Returns the created ONNX path.
+   */
+  public String trainModel() {
+    return connector.trainModel(
+      model.getSelectedTrainingRequest(),
+      model.getTrainingData()
+    );
   }
 
   private void initFileLoader() {
     chooser = new DirectoryChooser();
     chooser.setTitle("Select Classifier");
+  }
+
+  public void openNewFolder(File folder) {
+    model.setCurrentDir(folder);
+    loadAllOnnx();
+  }
+
+  public File getCurrentDir() {
+    return model.getCurrentDir();
   }
 
   /**
@@ -202,6 +223,7 @@ public class Controller {
     // Called with true to also kill this thread
     // May be changed in the future when windows can be open independently.
     canvasEventSink.send(new StopEvent(true));
+    Platform.exit();
   }
 
   /**
@@ -279,7 +301,7 @@ public class Controller {
    * @param selectedClassifier the selected classifier name
    */
   public void onClassifierSelected(String selectedClassifier) {
-    Logger.info("Selected classifier: " + selectedClassifier);
+    Logger.info("Selected classifier: {}", selectedClassifier);
   }
 
   /**
@@ -306,6 +328,10 @@ public class Controller {
 
     // Prepare input data
 
+    //Check number of features of the model
+    int num_features = onnx.getNumInputFeatures();
+    Logger.info("number of features: {}", num_features);
+
     // Total numbers of points will be resolution * resolution
     int resolution = 40;
     // Input data will start be from -range .. +range
@@ -315,14 +341,32 @@ public class Controller {
     // Needed for the outer edge
     float epsilon = 0.00001f;
 
-    float[][] input = new float[resolution * resolution][2];
+    int totalPoints = (int) Math.pow(resolution, num_features);
+
+    float[][] input = new float[totalPoints][num_features];
 
     int index = 0;
-    for (float x = -range; x <= range + epsilon; x += pointGap) {
-      for (float y = -range; y <= range + epsilon; y += pointGap) {
-        input[index][0] = x;
-        input[index][1] = y;
-        index++;
+
+    if(num_features == 3 ) {
+      for (float x = -range; x <= range + epsilon; x += pointGap) {
+        for (float y = -range; y <= range + epsilon; y += pointGap) {
+          for (float z = -range; z <= range + epsilon; z += pointGap) {
+            input[index][0] = x;
+            input[index][1] = y;
+            input[index][2] = z;
+            index++;
+          }
+        }
+      }
+    }
+    else {
+      for (float x = -range; x <= range + epsilon; x += pointGap) {
+        for (float y = -range; y <= range + epsilon; y += pointGap) {
+          input[index][0] = x;
+          input[index][1] = y;
+          index++;
+
+        }
       }
     }
 
@@ -360,20 +404,19 @@ public class Controller {
     return extension;
   }
 
-  public void loadAllOnnx(File selectedDirectory) {
-    if (selectedDirectory == null) {
+  public void loadAllOnnx() {
+    if (model.getCurrentDir() == null) {
       return;
     }
 
-    model.setCurrentDir(selectedDirectory);
     model.clearClassifiers();
 
-    for (File file : Objects.requireNonNull(selectedDirectory.listFiles())) {
+    for (File file : Objects.requireNonNull(model.getCurrentDir().listFiles())) {
       if (!file.isDirectory()) {
         String ext = getExt(file);
         if (ext.equals("onnx")) {
           model.addClassifier(file.getName());
-          Logger.info("Loading onnx file: " + file.getName());
+          Logger.info("Loading onnx file: {}", file.getName());
         }
       }
     }
@@ -385,7 +428,11 @@ public class Controller {
     showTrainingData();
     Logger.info("Sampling");
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
-    Logger.info("Selected classifier: " + path);
+    Logger.info("Selected classifier: {}", path);
     runSampler(path);
+  }
+
+  public void closeConnector() {
+    connector.close();
   }
 }

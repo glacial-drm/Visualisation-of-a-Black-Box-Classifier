@@ -1,5 +1,6 @@
 package com.blackbox;
 
+import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.eventqueue.ProducerConsumerPair;
@@ -16,21 +17,32 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CanvasTest {
     ProducerConsumerPair<CanvasEvent> eventQueuePair;
-    EventProducer<CanvasEvent> eventProducer;
-    EventConsumer<CanvasEvent> eventConsumer;
+    ProducerConsumerPair<ControllerEvent> controllerEventQueuePair;
+
+    EventProducer<CanvasEvent> canvasEventProducer;
+    EventConsumer<CanvasEvent> canvasEventConsumer;
+
+    EventProducer<ControllerEvent> controllerEventProducer;
+    EventConsumer<ControllerEvent> controllerEventConsumer;
+
 
     @BeforeEach
     void init() {
         eventQueuePair = new ProducerConsumerPair<>();
-        eventProducer = eventQueuePair.producer;
-        eventConsumer = eventQueuePair.consumer;
+        controllerEventQueuePair = new ProducerConsumerPair<>();
+
+        canvasEventProducer = eventQueuePair.producer;
+        canvasEventConsumer = eventQueuePair.consumer;
+
+        controllerEventProducer = controllerEventQueuePair.producer;
+        controllerEventConsumer = controllerEventQueuePair.consumer;
     }
 
     @AfterEach
     void cleanup() {
         eventQueuePair = null;
-        eventProducer = null;
-        eventConsumer = null;
+        canvasEventProducer = null;
+        canvasEventConsumer = null;
     }
 
     /**
@@ -40,8 +52,8 @@ public class CanvasTest {
      */
     @Test
     void testStartStop() {
-        eventProducer.send(new StopEvent(false));
-        Canvas.run(eventConsumer, null);
+        canvasEventProducer.send(new StopEvent(false));
+        Canvas.run(canvasEventConsumer, controllerEventProducer);
         assertTrue(true);
     }
 
@@ -51,9 +63,9 @@ public class CanvasTest {
      */
     @Test
     void testPointsLoaded() {
-        eventProducer.send(new PointsLoaded(new PointData(0f, 0f, 0f, 0), false));
-        eventProducer.send(new StopEvent(false));
-        Canvas.run(eventConsumer, null);
+        canvasEventProducer.send(new PointsLoaded(new PointData(new float[] { 0f, 0f, 0f }, 0), false));
+        canvasEventProducer.send(new StopEvent(false));
+        Canvas.run(canvasEventConsumer, controllerEventProducer);
         assertTrue(true);
     }
 }

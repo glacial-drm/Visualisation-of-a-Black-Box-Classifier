@@ -1,0 +1,25 @@
+
+.root {
+    -fx-background-color: #F6F6FA;
+}
+
+.root .viewport {
+    -fx-background-color: #F6F6FA;
+}
+
+.panel {
+    -fx-background-color: #E0E0E8;
+}
+
+.panel .viewport {
+    -fx-background-color: #E0E0E8;
+}
+
+.label {
+    -fx-text-fill: #08080F;
+}
+
+.selected {
+    -fx-background-color: #F6F6FA;
+}
+

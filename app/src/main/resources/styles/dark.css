@@ -1,0 +1,65 @@
+
+* {
+    -fx-color-bg: #04040A;
+    -fx-color-panel: #1D1D1D;
+    -fx-color-btn: #2B2B2B;
+    -fx-color-hover: #404040;
+    -fx-color-text: #F6F6F6;
+    -fx-color-accent: #B15AFC;
+
+    /* Defaults */
+    -fx-text-fill: -fx-color-text;
+}
+
+.selected, .separator, .text-field, .combo-box {
+    -fx-background-color: -fx-color-btn;
+    -fx-text-fill: -fx-color-text;
+}
+
+.text-field:hover, .combo-box:hover {
+    -fx-background-color: -fx-color-hover;
+}
+
+.root {
+    -fx-background-color: -fx-color-bg;
+}
+
+.root .viewport {
+    -fx-background-color: -fx-color-bg;
+}
+
+.panel {
+    -fx-background-color: -fx-color-panel;
+}
+
+.panel .viewport {
+    -fx-background-color: -fx-color-panel;
+}
+
+.label {
+    -fx-text-fill: -fx-color-text;
+}
+
+.button {
+    -fx-background-color: -fx-color-btn;
+    -fx-text-fill: -fx-color-accent;
+}
+
+.button:hover {
+    -fx-background-color: -fx-color-accent;
+    -fx-text-fill: -fx-color-btn;
+}
+
+.list-view {
+    -fx-background-color: -fx-color-btn;
+}
+
+.list-cell {
+    -fx-background-color: -fx-color-btn;
+    -fx-text-fill: -fx-color-text;
+}
+
+.list-cell:hover {
+    -fx-background-color: -fx-color-hover;
+}
+

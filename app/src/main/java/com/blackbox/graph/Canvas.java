@@ -1,17 +1,16 @@
 package com.blackbox.graph;
 
+import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.graph.Input.InputHandler;
-import com.blackbox.graph.events.CanvasEvent;
-import com.blackbox.graph.events.ClearPoints;
-import com.blackbox.graph.events.PointsLoaded;
-import com.blackbox.graph.events.StopEvent;
-import com.blackbox.renderer.controlers.Renderer;
+import com.blackbox.graph.events.*;
+import com.blackbox.renderer.controllers.Renderer;
 import com.blackbox.renderer.model.Model;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.tinylog.Logger;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -175,8 +174,10 @@ public class Canvas {
             // Process event
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
                 rendererModel.addPoint(pointsLoaded.point, pointsLoaded.isTraining);
-            } else if (canvasEvent instanceof ClearPoints ){
+            } else if (canvasEvent instanceof ClearPoints ) {
                 rendererModel.getPointManager().clearPoints();
+            } else if (canvasEvent instanceof DimensionChange dimensionChange) {
+                Logger.info("Dimension changed to {}", dimensionChange.dimension);
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;
@@ -193,10 +194,8 @@ public class Canvas {
         glfwTerminate();
         glfwSetErrorCallback(null).free();
 
-        if (stopEvent.quitAllThreads) {
-            // Stop all threads
-            System.exit(0);
-        }
+        Logger.debug("Sending close message to GUI");
+        controllerEventSink.send(new CloseGUI() );
     }
 
     /**

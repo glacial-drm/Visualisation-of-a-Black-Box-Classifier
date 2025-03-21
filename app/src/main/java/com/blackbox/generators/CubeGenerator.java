@@ -29,6 +29,8 @@ public class CubeGenerator extends DataGenerator {
     private boolean brb = true;
     private boolean blb = true;
 
+    @Override
+    public int getDimension() { return 3; }
 
     private void newCheckBox(boolean initial, Consumer<Boolean> consumer) {
         CheckBox checkBox = new CheckBox();
@@ -46,6 +48,7 @@ public class CubeGenerator extends DataGenerator {
 
         box.getChildren().add(new Label("Radius"));
         TextField radiusInput = new TextField(Float.toString(radius));
+        radiusInput.prefWidthProperty().bind(box.widthProperty());
         radiusInput.textProperty().addListener((_observer, _old, value) -> {
             try {
                 radius = Float.parseFloat(value);
@@ -92,7 +95,7 @@ public class CubeGenerator extends DataGenerator {
             float[] point = genQuadrant(options.getRange(), quadrantOffsets.get(rng.nextInt(quadrantOffsets.size())));
             int label = Math.pow((double)point[0], 2) + Math.pow((double)point[1], 2) >= radius_2 ? 0 : 1;
 
-            data[i] = new PointData(point[0], point[1], point[2], label);
+            data[i] = new PointData(point, label);
         }
 
         return data;

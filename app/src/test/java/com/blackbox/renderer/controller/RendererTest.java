@@ -1,10 +1,8 @@
-package com.blackbox.renderer.controler;
+package com.blackbox.renderer.controller;
 
-import com.blackbox.renderer.controlers.Renderer;
+import com.blackbox.renderer.controllers.Renderer;
 import com.blackbox.renderer.model.Model;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.lwjgl.opengl.GL;
 
 import static java.sql.Types.NULL;

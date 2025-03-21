@@ -35,8 +35,10 @@ public class GlobalGenOptions {
 
     public Node createNode() {
         VBox box = new VBox();
+        box.setSpacing(8);
 
         TextField countInput = new TextField(Integer.toString(count));
+        countInput.prefWidthProperty().bind(box.widthProperty());
         countInput.textProperty().addListener((_observer, _old, value) -> {
           try {
             count = Integer.parseInt(value);
@@ -46,6 +48,7 @@ public class GlobalGenOptions {
         box.getChildren().add(countInput);
 
         TextField rangeInput = new TextField(Float.toString(range));
+        rangeInput.prefWidthProperty().bind(box.widthProperty());
         rangeInput.textProperty().addListener((_observer, _old, value) -> {
           try {
             range = Float.parseFloat(value);

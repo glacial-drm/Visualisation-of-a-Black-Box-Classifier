@@ -1,27 +1,27 @@
 package com.blackbox.app;
 
-import com.blackbox.app.ui_elements.UI_Button;
-import com.blackbox.app.ui_elements.UI_Mode;
 import com.blackbox.generators.DataGenerator;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.geometry.Pos;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -31,8 +31,23 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class View extends Application {
+    private static enum Theme {
+        LIGHT,
+        DARK,
+    }
+    private Theme theme = Theme.DARK;
+
+    private static enum Layout {
+        STACKED,
+        COLUMNS,
+    }
+    private Layout layout = Layout.COLUMNS;
+    private final int layoutBoundaryWidth = 750;
+
     /**
      * Time between allowing the controller to check for events.
      */
@@ -44,7 +59,9 @@ public class View extends Application {
     static Controller controller;
     private VBox classifierBox;
     private VBox requestBox;
-    public static UI_Mode mode = UI_Mode.DARK;
+    private Stage primaryStage;
+    private Scene scene;
+    private Node[] content;
 
     public void setupTimer() {
         // JavaFX's Timeline and KeyFrame are used instead of a normal
@@ -56,237 +73,292 @@ public class View extends Application {
         timer.play();
     }
 
+    /**
+     * This runs the action in a new thread,
+     * once completed it schedules the callback to run on the main UI thread,
+     * so it can manipulate the UI safely.
+     */
+    private <T> void runAsync(Supplier<T> action, Consumer<T> callback) {
+        new Thread(() -> {
+            T value = action.get();
+            Platform.runLater(() -> callback.accept(value));
+        }).start();
+    }
+
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
         setupTimer();
 
         primaryStage.setTitle("UON Blackbox Classifier");
 
         // Main layout
-        BorderPane root = new BorderPane();
-        root.setStyle("-fx-background-color: #2c2c2c;");
 
-        // Left Pane
-        VBox leftPane = new VBox();
-        leftPane.setAlignment(Pos.TOP_CENTER);
-        leftPane.setPrefWidth(200);
-        leftPane.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 0;");
+        content = new Node[] {
+            leftPanel(),
+            dataGenSettingsPanel(),
+            trainingSettingsPanel(),
+        };
 
-        // Folder Name ()
-        Label folderLabel = new Label("Folder Name");
-        folderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        folderLabel.setTextFill(Color.PURPLE);
-        folderLabel.setStyle(" -fx-padding: 20;");
+        scene = new Scene(new VBox(), 800, 600);
+        if (theme == Theme.LIGHT) {
+            loadLightMode();
+        } else {
+            loadDarkMode();
+        }
+
+        scene.widthProperty().addListener((_observable, _old, value) -> {
+            int width = value.intValue();
+
+            if (width > layoutBoundaryWidth && layout == Layout.STACKED) {
+                loadColumnsLayout();
+            } else if (width < layoutBoundaryWidth && layout == Layout.COLUMNS) {
+                loadStackedLayout();
+            }
+        });
+        loadColumnsLayout();
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    private void loadStackedLayout() {
+        layout = Layout.STACKED;
+
+        VBox box = new VBox(8);
+        box.setPadding(new Insets(8));
+        ScrollPane root = new ScrollPane(box);
+        root.getStyleClass().add("root");
+        root.setFitToWidth(true);
+
+        for (Node node : content) {
+            node.getStyleClass().add("panel");
+            box.getChildren().add(node);
+            VBox.setVgrow(node, Priority.ALWAYS);
+        }
+
+        scene.setRoot(root);
+    }
+
+    private void loadColumnsLayout() {
+        layout = Layout.COLUMNS;
+
+        GridPane root = new GridPane();
+        root.getStyleClass().add("root");
+        root.setPadding(new Insets(8));
+        root.setHgap(8);
+        root.setVgap(8);
+
+        ColumnConstraints colConstraints = new ColumnConstraints();
+        colConstraints.setPercentWidth(100 / 3);
+        root.getColumnConstraints().addAll(
+            colConstraints,
+            colConstraints,
+            colConstraints
+        );
+
+        int i = 0;
+        for (Node node : content) {
+            ScrollPane scrollPane = new ScrollPane(node);
+            scrollPane.getStyleClass().add("panel");
+            ((VBox)node).prefWidthProperty().bind(
+                scrollPane.widthProperty().map(width ->
+                    width.doubleValue()
+                    - scrollPane.getPadding().getLeft()
+                    - scrollPane.getPadding().getRight()
+                )
+            );
+            root.add(scrollPane, i++, 0);
+            GridPane.setVgrow(scrollPane, Priority.ALWAYS);
+        }
+
+        scene.setRoot(root);
+    }
+
+    private void loadLightMode() {
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(getClass().getResource("/styles/root.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/light.css").toExternalForm());
+    }
+
+    private void loadDarkMode() {
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(getClass().getResource("/styles/root.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/styles/dark.css").toExternalForm());
+    }
+
+    private Pane modelPanel() {
+        VBox pane = new VBox();
+        pane.setSpacing(8);
+        Label folderLabel = new Label();
+
+        Button loadButton = new Button("Load Folder");
+        loadButton.setOnAction(_e -> {
+            folderSelector(primaryStage);
+
+            if (controller.getCurrentDir() != null) {
+                String text = controller.getCurrentDir().toString();
+                if (text.length() > 15) {
+                    text = "..." + text.substring(text.length() - 12);
+                }
+                folderLabel.setText(text);
+            }
+            updateClassifiers();
+        });
+        pane.getChildren().add(loadButton);
+
+        // Folder Name
+        folderLabel.getStyleClass().add("title");
+        pane.getChildren().add(folderLabel);
 
         // Classifiers
-        classifierBox = new VBox(15);
-        classifierBox.setAlignment(Pos.TOP_CENTER);
-        classifierBox.setStyle("-fx-padding: 20 0 20 0;");
+        classifierBox = new VBox(4);
+        pane.getChildren().add(classifierBox);
 
         List<String> classifiers = controller.getClassifiers();
         updateClassifierBox(classifierBox, classifiers);
 
-        // Set active model
-        UI_Button setButton = new UI_Button("Set");
-        setButton.setOnAction(event -> {
-            // Update Right Part
-            String selectedClassifier = controller.getSelectedClassifier();
-            if (selectedClassifier != null) {
-                updateRightPane(root, selectedClassifier);
-            } else {
-                updateRightPane(root, "No classifier selected");
-            }
-        });
-
-
-        UI_Button loadButton = new UI_Button("Load");
-        loadButton.setOnAction(event -> {
-            File folder = folderSelector(primaryStage);
-            if (folder != null) {
-                controller.loadAllOnnx(folder);
-            }
-            updateClassifiers();
-        });
-
-        UI_Button sampleButton = new UI_Button("Sample");
-        sampleButton.setOnAction(event -> {
+        // Sample Button
+        Button sampleButton = new Button("Sample");
+        sampleButton.setOnAction(_e -> {
             controller.sampleCurrentModel();
         });
-        BorderPane.setAlignment(sampleButton, Pos.CENTER);
+        sampleButton.prefWidthProperty().bind(pane.widthProperty());
+        pane.getChildren().add(sampleButton);
 
-        VBox.setVgrow(classifierBox, Priority.ALWAYS);
-        updateRightPane(root, "No classifier selected");
-        leftPane.getChildren().addAll(folderLabel, classifierBox, setButton, loadButton);
+        return pane;
+    }
 
-        // Bottom Pane
-        BorderPane bottomPane = new BorderPane();
+    private Pane optionsPanel() {
+        VBox pane = new VBox();
+        pane.setSpacing(8);
 
-        bottomPane.setPrefWidth(200);
-        bottomPane.setPrefHeight(125);
-        bottomPane.setStyle("-fx-background-color: #1e1e1e;");
+        Label title = new Label("Options");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
-        // ComboBox (Dropdown) to select Model type
-        ComboBox<String> dropdown = new ComboBox<>();
-        dropdown.getItems().addAll("Support Vector Machine (SVM)","Decision Tree", "Neural Network (NN)");
+        Button themeBtn = new Button("Light Mode");
+        themeBtn.setOnAction(_e -> {
+            if (theme == Theme.LIGHT) {
+                theme = Theme.DARK;
+                loadDarkMode();
+                themeBtn.setText("Dark Mode");
+            } else {
+                theme = Theme.LIGHT;
+                loadLightMode();
+                themeBtn.setText("Light Mode");
+            }
+        });
+        themeBtn.prefWidthProperty().bind(pane.widthProperty());
+        pane.getChildren().add(themeBtn);
 
-        dropdown.setValue("Select Model");
-    /*
-      Dropdown default text styling seems awkward in inline css
-     */
-        dropdown.setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial; -fx-text-fill: #ffffff;");
-        //dropdown.getButtonCell().setStyle("-fx-background-color: #2c2c2c; -fx-font-family: Arial;");
+        return pane;
+    }
 
-        dropdown.setPrefWidth(200);
-        dropdown.setPrefHeight(50);
+    private Pane trainingPanel() {
+        VBox pane = new VBox();
+        pane.setSpacing(8);
 
-        // VBox stores above dropdown and buttons
-        VBox modelBox = new VBox();
-        modelBox.getChildren().addAll(dropdown, loadButton, setButton, sampleButton);
+        Button trainButton = new Button("Train + Sample");
+        trainButton.setOnAction(_event -> {
+            trainButton.setText("Training...");
+            runAsync(
+                controller::trainModel,
+                path -> {
+                    trainButton.setText("Train + Sample");
+                    controller.loadAllOnnx();
+                    controller.setSelectedClassifier(path);
+                    updateClassifiers();
+                    controller.sampleCurrentModel();
+                }
+            );
+        });
+        trainButton.prefWidthProperty().bind(pane.widthProperty());
+        pane.getChildren().add(trainButton);
 
-        // HNox stores BorderPane bottom elements horizontally
-        HBox detailsBox = new HBox();
-        detailsBox.setStyle("-fx-background-color: #1e1e1e;");
-        detailsBox.setPrefWidth(90);
-        detailsBox.setPrefHeight(90);
+        return pane;
+    }
 
-        // VBox Stores Navigation information (xyz and zoom) and any other relevant output
-        VBox navBox = new VBox();
-        navBox.setStyle("-fx-background-color: #1e1e1e;");
-        navBox.setPrefWidth(300);
-        navBox.setPrefHeight(90);
-
-        Label navigationLabel = new Label("Navigation");
-        navigationLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        navigationLabel.setTextFill(Color.PURPLE);
-        navigationLabel.setPrefWidth(300);
-
-        navBox.getChildren().addAll(navigationLabel);
-
-        // VBox Stores ___
-        VBox placeholderBox = new VBox();
-        placeholderBox.setStyle("-fx-background-color: #1e1e1e;");
-        placeholderBox.setPrefWidth(300);
-        placeholderBox.setPrefHeight(90);
-
-        Label placeholderLabel = new Label("Placeholder");
-        placeholderLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        placeholderLabel.setTextFill(Color.PURPLE);
-        placeholderLabel.setPrefWidth(300);
-
-        placeholderBox.getChildren().addAll(placeholderLabel);
-
-        detailsBox.getChildren().addAll(navBox/*, placeholderBox*/);
-
-
-        bottomPane.setLeft(modelBox);
-        bottomPane.setCenter(detailsBox);
-        bottomPane.setRight(placeholderBox);
-
-        // Set layout
-        root.setBottom(bottomPane);
-        root.setLeft(leftPane);
-
-        Scene scene = new Scene(root, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    private Node leftPanel() {
+        VBox pane = new VBox();
+        pane.getChildren().addAll(
+            modelPanel(),
+            new Separator(),
+            modelInfoPanel(),
+            new Separator(),
+            optionsPanel(),
+            new Separator(),
+            trainingPanel()
+        );
+        pane.setSpacing(16);
+        return pane;
     }
 
     private void updateClassifierBox(VBox classifierBox, List<String> classifiers) {
         classifierBox.getChildren().clear();
         if (classifiers.isEmpty()) {
             Label emptyLabel = new Label("No classifiers available");
-            emptyLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-            emptyLabel.setTextFill(Color.GRAY);
             classifierBox.getChildren().add(emptyLabel);
         } else {
             for (String classifier : classifiers) {
-                Label classifierLabel = new Label(classifier);
-                classifierLabel.setMaxWidth(Double.MAX_VALUE);
-                classifierLabel.setPrefHeight(40);
-                classifierLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-                classifierLabel.setTextFill(Color.PURPLE);
-                classifierLabel.setAlignment(Pos.CENTER);
+                HBox box = new HBox();
+                box.setPadding(new Insets(4));
+                Label label = new Label(classifier);
 
-                // While selected, background color become same as right
                 String selectedClassifier = controller.getSelectedClassifier();
                 if (classifier.equals(selectedClassifier)) {
-                    classifierLabel.setStyle("-fx-background-color: #2c2c2c;");
-
-                } else {
-                    classifierLabel.setStyle("-fx-background-color: #1e1e1e;");
+                    box.getStyleClass().add("selected");
                 }
 
-                classifierLabel.setOnMouseClicked(event -> {
+                box.setOnMouseClicked(event -> {
                     controller.setSelectedClassifier(classifier);
-                    updateClassifierBox(classifierBox, classifiers); // Refresh styles
+                    // Refresh the styles
+                    updateClassifierBox(classifierBox, classifiers);
                 });
 
-                classifierBox.getChildren().add(classifierLabel);
+                box.getChildren().add(label);
+                HBox.setHgrow(label, Priority.ALWAYS);
+                classifierBox.getChildren().add(box);
             }
         }
     }
 
-    private void updateRightPane(BorderPane root, String classifier) {
-        BorderPane rightPane = new BorderPane();
-        rightPane.setStyle("-fx-background-color: #2c2c2c;");
+    private Pane modelInfoPanel() {
+        VBox pane = new VBox();
+        pane.setSpacing(8);
 
-        // Top section: Active model name
+        Label title = new Label("Model Info");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
-        Label activeModelLabel = new Label("Active model - " + classifier);
-        activeModelLabel.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        activeModelLabel.setTextFill(Color.PURPLE);
-        BorderPane.setAlignment(activeModelLabel, Pos.CENTER);
-        rightPane.setTop(activeModelLabel);
+        return pane;
+    }
 
-        // Left section: Feature Listing
+    private Pane globalDataGenSettingsPanel() {
+        VBox pane = new VBox();
+        pane.setSpacing(8);
 
-        VBox featureBox = new VBox();
-        featureBox.setStyle("-fx-background-color: #2c2c2c;");
+        Label title = new Label("Global Generator Settings");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
-        Label featureLabel = new Label("Features");
-        featureLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        featureLabel.setTextFill(Color.PURPLE);
-        featureLabel.setPrefWidth(200);
-        BorderPane.setAlignment(featureLabel, Pos.CENTER);
+        pane.getChildren().add(controller.getGenOptions().createNode());
 
-        ScrollPane featurePane = new ScrollPane();
+        return pane;
+    }
 
-        featureBox.getChildren().addAll(featureLabel);
-        rightPane.setLeft(featureBox);
+    private Pane specificDataGenSettingsPanel() {
+        VBox pane = new VBox();
+        pane.setSpacing(8);
 
-        // Right Section : Creating a grid of points
-        // Global generator settings
-        VBox gridBox = new VBox();
+        // Selector
 
-        gridBox.setStyle("-fx-background-color: #2c2c2c; border-radius: 5; border-width: 1px; -fx-border-color: #1e1e1e");
-
-        Label gridLabel = new Label("Create Grid Points");
-        gridLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        gridLabel.setTextFill(Color.PURPLE);
-        gridLabel.setPrefWidth(400);
-        BorderPane.setAlignment(gridLabel, Pos.CENTER);
-
-        gridBox.getChildren().addAll(gridLabel);
-        rightPane.setCenter(gridBox);
-
-        rightPane.setCenter(gridBox);
-
-
-        Label globalGeneratorSettingsLabel = new Label("Global Generator Settings");
-        globalGeneratorSettingsLabel.setPrefWidth(400);
-        globalGeneratorSettingsLabel.setStyle("-fx-font-size: 20px;");
-        gridBox.getChildren().add(globalGeneratorSettingsLabel);
-
-        gridBox.getChildren().add(controller.getGenOptions().createNode());
-
-        // Date generator selector
-
-        Label generatorSettingsLabel = new Label("Generator Settings");
-        generatorSettingsLabel.setStyle("-fx-font-size: 20px;");
-        generatorSettingsLabel.setPrefWidth(400);
-        gridBox.getChildren().add(generatorSettingsLabel);
+        Label title = new Label("Generator Settings");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
         ComboBox<DataGenerator> generatorSelector = new ComboBox<>();
+        generatorSelector.prefWidthProperty().bind(pane.widthProperty());
         generatorSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getGenerators())));
         generatorSelector.setConverter(new StringConverter<DataGenerator>() {
             @Override
@@ -301,12 +373,12 @@ public class View extends Application {
                         : "";
             }
         });
-        gridBox.getChildren().add(generatorSelector);
+        pane.getChildren().add(generatorSelector);
 
-        // Data generator settings
+        // Settings
 
         VBox generatorBox = new VBox();
-        gridBox.getChildren().add(generatorBox);
+        pane.getChildren().add(generatorBox);
 
         generatorSelector.getSelectionModel().selectedItemProperty().addListener((_observer, _old, generator) -> {
             generatorBox.getChildren().clear();
@@ -317,13 +389,29 @@ public class View extends Application {
         });
         generatorSelector.getSelectionModel().select(0);
 
-        // Training request selector
+        return pane;
+    }
 
-        Label trainingSettingsLabel = new Label("Training Settings");
-        trainingSettingsLabel.setStyle("-fx-font-size: 20px;");
-        gridBox.getChildren().add(trainingSettingsLabel);
+    public Node dataGenSettingsPanel() {
+        VBox pane = new VBox(
+            globalDataGenSettingsPanel(),
+            specificDataGenSettingsPanel()
+        );
+        pane.setSpacing(16);
+        return pane;
+    }
+
+    private Node trainingSettingsPanel() {
+        VBox pane = new VBox();
+
+        // Selector
+
+        Label title = new Label("Training Settings");
+        title.getStyleClass().add("title");
+        pane.getChildren().add(title);
 
         ComboBox<Builder<?>> requestSelector = new ComboBox<>();
+        requestSelector.prefWidthProperty().bind(pane.widthProperty());
         requestSelector.setItems(FXCollections.observableList(Arrays.asList(controller.getTrainingRequests())));
         requestSelector.setConverter(new StringConverter<Builder<?>>() {
             @Override
@@ -338,12 +426,12 @@ public class View extends Application {
                         : "";
             }
         });
-        gridBox.getChildren().add(requestSelector);
+        pane.getChildren().add(requestSelector);
 
-        // Training request settings
+        // Settings
 
         requestBox = new VBox();
-        gridBox.getChildren().add(requestBox);
+        pane.getChildren().add(requestBox);
 
         requestSelector.getSelectionModel().selectedItemProperty().addListener((observer, old, builder) -> {
             requestBox.getChildren().clear();
@@ -354,15 +442,7 @@ public class View extends Application {
         });
         requestSelector.getSelectionModel().select(0);
 
-        // Train button
-
-        UI_Button trainButton = new UI_Button("Train");
-        trainButton.setOnAction(event -> {
-            controller.trainModel();
-        });
-        gridBox.getChildren().add(trainButton);
-
-        root.setCenter(rightPane);
+        return pane;
     }
 
     public void updateClassifiers() {
@@ -374,20 +454,20 @@ public class View extends Application {
      *
      * This will use JavaFX on Windows and Mac, and tinyfd on Linux.
      *
-     * Returns null if the action was cancelled.
+     * Does nothing if the action was cancelled.
      */
-    public File folderSelector(Stage stage) {
+    public void folderSelector(Stage stage) {
         File selectedDirectory;
 
         if (System.getProperty("os.name").equals("Linux")) {
             String path = TinyFileDialogs.tinyfd_selectFolderDialog("", System.getProperty("user.dir"));
-            if (path == null) return null;
+            if (path == null) return;
             selectedDirectory = new File(path);
         } else {
             DirectoryChooser chooser = controller.getFileDialog();
             selectedDirectory = chooser.showDialog(stage);
         }
 
-        return selectedDirectory;
+        controller.openNewFolder(selectedDirectory);
     }
 }

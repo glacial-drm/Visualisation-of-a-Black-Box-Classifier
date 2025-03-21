@@ -43,5 +43,6 @@ public class App {
         } catch (InterruptedException e) {
             throw new RuntimeException("Canvas thread was interrupted");
         }
+        controller.closeConnector();
     }
 }

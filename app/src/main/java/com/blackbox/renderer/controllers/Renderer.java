@@ -1,4 +1,4 @@
-package com.blackbox.renderer.controlers;
+package com.blackbox.renderer.controllers;
 
 import com.blackbox.renderer.model.Model;
 import com.blackbox.renderer.model.PointManager;
@@ -58,7 +58,7 @@ public class Renderer {
         model.getShaders().values().forEach(shader -> {
             shader.bind();
             if (shader.isWorldBased()) {
-                shader.loadUniform("projectionMatrix", model.getCamera().getPerspectiveMatrix());
+                shader.loadUniform("projectionMatrix", model.getCamera().getActiveProjection());
             }
             shader.unbind();
         });
