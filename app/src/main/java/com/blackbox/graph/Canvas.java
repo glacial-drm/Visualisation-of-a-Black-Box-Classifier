@@ -1,5 +1,6 @@
 package com.blackbox.graph;
 
+import com.blackbox.app.events.CanvasResize;
 import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
@@ -98,6 +99,7 @@ public class Canvas {
 
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
+            controllerEventSink.send(new CanvasResize(width, height));
         });
     }
 

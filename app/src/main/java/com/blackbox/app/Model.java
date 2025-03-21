@@ -41,6 +41,9 @@ public class Model {
 
     private PointData[] trainingData;
 
+    private int canvasWidth;
+    private int canvasHeight;
+
     public void setTrainingData(PointData[] data) {
         trainingData = data;
     }
@@ -211,6 +214,19 @@ public class Model {
 
     public void setCurrentDir(File newDir) {
         currentDir = newDir;
+    }
+
+    public void setCanvasSize(int width, int height) {
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+    }
+
+    public int getCanvasHeight() {
+        return canvasHeight;
+    }
+
+    public int getCanvasWidth() {
+        return canvasWidth;
     }
 }
 
