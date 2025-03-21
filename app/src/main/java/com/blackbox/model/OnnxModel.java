@@ -32,7 +32,7 @@ public class OnnxModel {
             this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
             Logger.info("Created environment and session for onnx file");
         } catch (Exception e) {
-            Logger.error("Onnx file for creating environment could not be found", e);
+            Logger.error("Onnx file for creating environment could not be found: {}", e);
             throw new FileNotFoundException("Onnx file not found");
         }
     }
@@ -48,7 +48,7 @@ public class OnnxModel {
             session.close();
             environment.close();
         } catch (Exception e) {
-            Logger.error("Could not close onnx session", e);
+            Logger.error("Could not close onnx session: {}", e);
         }
     }
 
@@ -60,7 +60,7 @@ public class OnnxModel {
             long[] shape = shapes.getFirst();
             return (int) shape[1];
         } catch (Exception e) {
-            Logger.error("Failed to obtain feature information for model", e);
+            Logger.error("Failed to obtain feature information for model: {}", e);
             return 0;
         }
     }
@@ -71,7 +71,7 @@ public class OnnxModel {
             Map<String, NodeInfo> inputInfo = session.getInputInfo();
             return new ArrayList<>(inputInfo.keySet());
         } catch (Exception e) {
-            Logger.error("Failed to obtain input information for model", e);
+            Logger.error("Failed to obtain input information for model: {}", e);
             return null;
         }
     }
@@ -82,7 +82,7 @@ public class OnnxModel {
         try {
             inputInfo = session.getInputInfo();
         } catch (Exception e) {
-            Logger.error("Failed to obtain tensor information for model", e);
+            Logger.error("Failed to obtain tensor information for model: {}", e);
             return null;
         }
 
@@ -111,7 +111,7 @@ public class OnnxModel {
         try {
             metadata = session.getMetadata();
         } catch (OrtException e) {
-            Logger.error("Could not obtain onnx session metadata", e);
+            Logger.error("Could not obtain onnx session metadata: {}", e);
             return Optional.empty();
         }
 

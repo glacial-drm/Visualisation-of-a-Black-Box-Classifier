@@ -39,7 +39,7 @@ public class Connector {
             if (Logger.isDebugEnabled()) serverBuilder.inheritIO();
             server = serverBuilder.start();
         } catch (Exception e) {
-            Logger.error("Can't proceed, failed to start python server:", e);
+            Logger.error("Can't proceed, failed to start python server: {}", e);
             return;
         }
 
@@ -50,7 +50,7 @@ public class Connector {
         while (lastState != ConnectivityState.READY) {
             ConnectivityState state = channel.getState(true);
             if (state != lastState) {
-                Logger.debug(state);
+                Logger.debug("Server state: {}", state);
                 lastState = state;
             }
         }
@@ -115,7 +115,7 @@ public class Connector {
         try {
             serverPath = loadPython();
         } catch (Exception e) {
-            Logger.error("Failed to load python : {}", e);
+            Logger.error("Failed to load python: {}", e);
             return null;
         }
 

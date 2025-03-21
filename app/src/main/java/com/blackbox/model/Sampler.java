@@ -38,15 +38,15 @@ public class Sampler {
         try {
             inputTensor = OnnxTensor.createTensor(environment, data);
         } catch (Exception e) {
-            Logger.error("Failed to create Onnx Tensor object", e);
+            Logger.error("Failed to create Onnx Tensor object: {}", e);
             return null;
         }
 
         // Run model
         OrtSession session = onnxModel.getSession();
         Logger.info("Running sampler for sampleBC");
-        Logger.info(onnxModel.getTensorInfos());
-        Logger.info("Input data shape: [" + data.length + ", " + data[1].length + "]" );
+        Logger.info("Tensor info: {}", onnxModel.getTensorInfos());
+        Logger.info("Input data shape: [ {}, {} ]", data.length, data[2].length);
         try (OrtSession.Result outputs = session.run(Collections.singletonMap(inputName, inputTensor))) {
             // Not used again, data is accessed from the function param
             Logger.info("Closing tensor");
@@ -77,13 +77,13 @@ public class Sampler {
 
             long[] label = (long[]) outputTensor.getValue();
 
-            Logger.info("data has dimensions: " + data[0].length);
+            Logger.info("data has dimensions: {}", data[0].length);
             // Use DataCombination to create a list of points from label
             List<PointData> combinedData = DataCombination.combineData(data, label);
 
             return combinedData;
         } catch (Exception e) {
-            Logger.error("Error sampling the model",e);
+            Logger.error("Error sampling the model: {}", e);
             return null;
         }
     }
