@@ -48,9 +48,8 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
         )
         model.fit(X, y)
         model.save(X, y)
-        onnxPath = "SVM.onnx"
 
-        return connector_pb2.ModelResults(onnxPath=onnxPath)
+        return connector_pb2.ModelResults(onnxPath=model.output_name)
     def TrainDecisionTree(self, request: connector_pb2.DecisionTreeRequest, context: grpc._server._Context):
         X, y = parsePoints(request.points)
 
@@ -61,9 +60,8 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
         model.fit(X, y)
         model.save(X, y)
-        onnxPath = "DecisionTree.onnx"
 
-        return connector_pb2.ModelResults(onnxPath=onnxPath)
+        return connector_pb2.ModelResults(onnxPath=model.output_name)
     def TrainRandomForest(self, request: connector_pb2.RandomForestRequest, context: grpc._server._Context):
         X, y = parsePoints(request.points)
 
@@ -82,9 +80,8 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
         model.fit(X, y)
         model.save(X, y)
-        onnxPath = "RandomForest.onnx"
 
-        return connector_pb2.ModelResults(onnxPath=onnxPath)
+        return connector_pb2.ModelResults(onnxPath=model.output_name)
 
     def TrainKNeighbors(self, request: connector_pb2.KNeighborsRequest, context: grpc._server._Context):
         X, y = parsePoints(request.points)
@@ -101,9 +98,8 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
         model.fit(X, y)
         model.save(X, y)
-        onnxPath = "KNeighbors.onnx"
 
-        return connector_pb2.ModelResults(onnxPath=onnxPath)
+        return connector_pb2.ModelResults(onnxPath=model.output_name)
 
 def serve():
     if len(sys.argv) != 2:

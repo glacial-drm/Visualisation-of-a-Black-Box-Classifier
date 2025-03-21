@@ -10,7 +10,7 @@ class KNClassifier(TrainModel):
                                      leaf_size = leaf_size, p = p, metric = metric, metric_params = metric_params,
                                      n_jobs = n_jobs)
 
-        super().__init__(model = model, random_state = random_state, test_size = test_size)
+        super().__init__("KNeighbours.onnx", model = model, random_state = random_state, test_size = test_size)
 
     def fit(self, X, y):
         # This gets round an issue with skl2onnx

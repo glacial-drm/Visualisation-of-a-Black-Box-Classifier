@@ -8,4 +8,4 @@ class RFClassifier(TrainModel):
         model = RandomForestClassifier(n_estimators = n_estimators, max_depth = max_depth, min_samples_split = min_samples_split,
                                             min_samples_leaf = min_samples_leaf, max_features = max_features, criterion = criterion)
 
-        super().__init__(model = model, random_state = random_state, test_size = test_size)
+        super().__init__("RandomForest.onnx", model = model, random_state = random_state, test_size = test_size)
