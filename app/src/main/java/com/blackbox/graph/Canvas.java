@@ -177,7 +177,7 @@ public class Canvas {
             } else if (canvasEvent instanceof ClearPoints ) {
                 rendererModel.getPointManager().clearPoints();
             } else if (canvasEvent instanceof DimensionChange dimensionChange) {
-                Logger.info("Dimension changed to " + dimensionChange.dimension);
+                Logger.info("Dimension changed to {}", dimensionChange.dimension);
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;

@@ -299,7 +299,7 @@ public class Controller {
    * @param selectedClassifier the selected classifier name
    */
   public void onClassifierSelected(String selectedClassifier) {
-    Logger.info("Selected classifier: " + selectedClassifier);
+    Logger.info("Selected classifier: {}", selectedClassifier);
   }
 
   /**
@@ -328,7 +328,7 @@ public class Controller {
 
     //Check number of features of the model
     int num_features = onnx.getNumInputFeatures();
-    Logger.info("number of features: " + num_features);
+    Logger.info("number of features: {}", num_features);
 
     // Total numbers of points will be resolution * resolution
     int resolution = 40;
@@ -414,7 +414,7 @@ public class Controller {
         String ext = getExt(file);
         if (ext.equals("onnx")) {
           model.addClassifier(file.getName());
-          Logger.info("Loading onnx file: " + file.getName());
+          Logger.info("Loading onnx file: {}", file.getName());
         }
       }
     }
@@ -426,7 +426,7 @@ public class Controller {
     showTrainingData();
     Logger.info("Sampling");
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
-    Logger.info("Selected classifier: " + path);
+    Logger.info("Selected classifier: {}", path);
     runSampler(path);
   }
 
