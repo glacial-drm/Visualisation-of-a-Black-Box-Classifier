@@ -19,10 +19,11 @@ public class App {
 
         // Setup MVC
         Model model = new Model();
+        Connector connector = new Connector();
         Controller controller = new Controller(
             model,
             controllerEventQueue.consumer,
-            canvasEventQueue.producer
+            canvasEventQueue.producer, connector
         );
         View.controller = controller;
 
