@@ -339,7 +339,12 @@ public class Controller {
         // Total numbers of points will be resolution * resolution
         int resolution = 40;
         // Input data will start be from -range .. +range
-        float range = 3.0f + (float)Math.abs(InputHandler.getZoom());
+
+        // To calulate the range you need th inverse of the inputhandler zoom increase
+        // which involves taking its derivative
+        // which results in (y/0.8) ^ (2/3)
+
+        float range = (float)Math.pow(Math.abs(InputHandler.getZoom()) / 0.8f, (2.0f/3.0f));
 
         float pointGap = range * 2f / (float) (resolution - 1);
         // Needed for the outer edge
