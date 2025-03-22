@@ -1,11 +1,11 @@
 package com.blackbox.app.events;
 
-public class CenterMoved extends ControllerEvent {
-    public final int x;
-    public final int y;
+import org.joml.Vector3f;
 
-    public CenterMoved(final int x, final int y) {
-        this.x = x;
-        this.y = y;
+public class CenterMoved extends ControllerEvent {
+    public final Vector3f position;
+
+    public CenterMoved(final Vector3f position) {
+        this.position = position;
     }
 }

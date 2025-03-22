@@ -1,6 +1,7 @@
 package com.blackbox.graph;
 
 import com.blackbox.app.events.CanvasResize;
+import com.blackbox.app.events.CenterMoved;
 import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
@@ -158,6 +159,10 @@ public class Canvas {
      */
     private void loop() {
         renderer.renderSetUp();
+
+        if (renderer.move()){
+            controllerEventSink.send(new CenterMoved(renderer.getPosition()));
+        }
 
         if(rendererModel.getPointManager().isPoints()){
             renderer.render(rendererModel.getPointManager());

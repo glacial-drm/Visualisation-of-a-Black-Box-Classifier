@@ -4,6 +4,7 @@ import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.graph.Input.MouseInputNames;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.tinylog.Logger;
 
 public class Camera {
     private final Vector3f position = new Vector3f(0, 0, (float) InputHandler.getZoom());
@@ -83,22 +84,27 @@ public class Camera {
      * view matrix
      */
     public boolean move() {
-        boolean moved;
+        Vector3f ogPosition = null;
+        try {
+            ogPosition = (Vector3f) position.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
 
         // Handle 2D vs 3D in future
 
         // Enable mouse movement
         if (InputHandler.getMouseState(MouseInputNames.LEFT_CLICK)) {
             mouseMovement2D();
-            moved = true;
         } else {
-            moved = keyboardMovement2D() || mouseZoom2D();
+            keyboardMovement2D();
+            mouseZoom2D();
         }
 
+        boolean moved = !ogPosition.equals(position, 0.0001f);
         if (moved) {
             viewMatrix = createViewMatrix();
         }
-
         return moved;
     }
 
@@ -173,5 +179,9 @@ public class Camera {
 
     public Matrix4f getPerspective() {
         return perspectiveMatrix;
+    }
+
+    public Vector3f getPosition() {
+        return position;
     }
 }

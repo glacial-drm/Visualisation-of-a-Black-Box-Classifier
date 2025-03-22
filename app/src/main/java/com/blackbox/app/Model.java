@@ -9,6 +9,7 @@ import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.model.PointData;
 import com.google.protobuf.GeneratedMessage.Builder;
+import org.joml.Vector3f;
 
 /**
  * Feel free to change/enhance any of the code
@@ -45,6 +46,7 @@ public class Model {
     private int canvasHeight;
     private String activeModelPath;
     private double previousZoom;
+    private Vector3f canvasCenter = new Vector3f(0, 0, 0);
 
     public void setTrainingData(PointData[] data) {
         trainingData = data;
@@ -245,6 +247,22 @@ public class Model {
 
     public String getActiveModel() {
         return activeModelPath;
+    }
+
+    public void setCanvasCenter(Vector3f position) {
+        this.canvasCenter = position;
+    }
+
+    public float getCanvasX() {
+        return canvasCenter.x;
+    }
+
+    public float getCanvasY() {
+        return canvasCenter.y;
+    }
+
+    public float getCanvasZ() {
+        return canvasCenter.z;
     }
 }
 

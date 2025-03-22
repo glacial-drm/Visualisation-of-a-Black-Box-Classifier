@@ -1,6 +1,7 @@
 package com.blackbox.app;
 
 import com.blackbox.app.events.CanvasResize;
+import com.blackbox.app.events.CenterMoved;
 import com.blackbox.app.events.CloseGUI;
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.EventConsumer;
@@ -94,13 +95,15 @@ public class Controller {
                 model.setCanvasSize(canvasResize.width, canvasResize.height);
                 runSampler(model.getActiveModel());
                 // Should try and sample the model
+            } else if (event instanceof CenterMoved centerMoved){
+                model.setCanvasCenter(centerMoved.position);
+                runSampler(model.getActiveModel());
             }
         }
 
         if(InputHandler.getZoom() != model.getPreviousZoom()){
             model.setPreviousZoom(InputHandler.getZoom());
             runSampler(model.getActiveModel());
-            // Should try and resample
         }
     }
 
@@ -368,8 +371,8 @@ public class Controller {
                 }
             }
         } else {
-            for (float x = -range; x <= range + epsilon; x += pointGap) {
-                for (float y = -range; y <= range + epsilon; y += pointGap) {
+            for (float x = -range + model.getCanvasX(); x <= range + epsilon + model.getCanvasX(); x += pointGap) {
+                for (float y = -range + model.getCanvasY(); y <= range + epsilon + + model.getCanvasY(); y += pointGap) {
                     input[index][0] = x;
                     input[index][1] = y;
                     index++;
