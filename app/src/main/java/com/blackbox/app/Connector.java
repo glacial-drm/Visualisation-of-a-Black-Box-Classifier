@@ -89,11 +89,7 @@ public class Connector {
             "connector_pb2_grpc.py",
             "SAO.py",
             "server.py",
-            "TrainDecisionTree.py",
-            "TrainRF.py",
-            "TrainSVM.py",
             "TrainModel.py",
-            "TrainNeighbors.py",
             "Models.py"
         };
 
