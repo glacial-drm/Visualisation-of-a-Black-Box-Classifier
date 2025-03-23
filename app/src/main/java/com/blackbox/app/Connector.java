@@ -93,7 +93,8 @@ public class Connector {
             "TrainRF.py",
             "TrainSVM.py",
             "TrainModel.py",
-            "TrainNeighbors.py"
+            "TrainNeighbors.py",
+            "Models.py"
         };
 
         // Copy from resources to the temporary folder

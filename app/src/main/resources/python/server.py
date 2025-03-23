@@ -7,10 +7,10 @@ import connector_pb2
 import connector_pb2_grpc
 
 import numpy as np
-from TrainSVM import SVMClassifier
-from TrainDecisionTree import DecisionTreeClassifierWrapper
-from TrainRF import RFClassifier
-from TrainNeighbors import KNClassifier
+from Models import SVMClassifier
+from Models import DecisionTreeClassifierWrapper
+from Models import RFClassifier
+from Models import KNClassifier
 
 def parsePoints(points: connector_pb2.Points):
     points = points.points
