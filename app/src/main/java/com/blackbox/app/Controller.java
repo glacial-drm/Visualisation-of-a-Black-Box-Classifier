@@ -61,17 +61,9 @@ public class Controller {
       new CircleGenerator(), new CubeGenerator()
     });
     for (DataGenerator generator : getGenerators()) {
-      generator.setOnChange(_v -> {
-      clearPoints();
-      generateTrainingData();
-      showTrainingData();
-      });
+      generator.setOnChange(_v -> genAndShowTrainingData());
     }
-    getGenOptions().setOnChange(_v -> {
-      clearPoints();
-      generateTrainingData();
-      showTrainingData();
-    });
+    getGenOptions().setOnChange(_v -> genAndShowTrainingData());
 
     model.setTrainingRequests(new Builder[]{
     // This specifies the default values for all the training requests
@@ -85,6 +77,17 @@ public class Controller {
     model.initClassifiers();
     initFileLoader();
 
+  }
+
+  /**
+   * Clears the currently shown training data,
+   * generates new training data,
+   * and shows that on the canvas.
+   */
+  public void genAndShowTrainingData() {
+    clearPoints();
+    generateTrainingData();
+    showTrainingData();
   }
 
   /**
