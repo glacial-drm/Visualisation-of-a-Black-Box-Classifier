@@ -11,7 +11,7 @@ service Connector {
   rpc TrainDecisionTree (DecisionTreeRequest) returns (ModelResults);
   rpc TrainRandomForest (RandomForestRequest) returns (ModelResults);
   rpc TrainKNeighbors (KNeighborsRequest) returns (ModelResults);
-  rpc TrainLogisticRegression (LRRequest) returns (ModelResults);
+  rpc TrainLogisticRegression (LogisticRegressionRequest) returns (ModelResults);
 }
 
 message Point {
@@ -107,7 +107,7 @@ message KNeighborsRequest {
 
 }
 
-message LRRequest {
+message LogisticRegressionRequest {
 
   Points points = 1;
 

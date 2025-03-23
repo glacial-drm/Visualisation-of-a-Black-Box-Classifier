@@ -104,20 +104,21 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
         return connector_pb2.ModelResults(onnxPath=model.output_name)
 
-    def TrainLogisticRegression(self, request: connector_pb2.LRRequest, context: grpc._server._Context):
+    def TrainLogisticRegression(self, request: connector_pb2.LogisticRegressionRequest, context: grpc._server._Context):
 
-
-        if connector_pb2.LRRequest.Solver.Name(request.solver).lower() == "newton_cholesky":
+        # proto file does not like "-" dashes in names so this is just to convert the ones that should have dashes in them
+        # so that the model still takes the correct input
+        if connector_pb2.LogisticRegressionRequest.Solver.Name(request.solver).lower() == "newton_cholesky":
             solver_value = "newton-cholesky"
-        elif connector_pb2.LRRequest.Solver.Name(request.solver).lower() == "newton_cg":
+        elif connector_pb2.LogisticRegressionRequest.Solver.Name(request.solver).lower() == "newton_cg":
             solver_value = "newton-cg"
         else:
-            solver_value = connector_pb2.LRRequest.Solver.Name(request.solver).lower()
+            solver_value = connector_pb2.LogisticRegressionRequest.Solver.Name(request.solver).lower()
 
         X, y = parsePoints(request.points)
 
         model = LRClassifier(
-            penalty = connector_pb2.LRRequest.Penalty.Name(request.penalty).lower(),
+            penalty = connector_pb2.LogisticRegressionRequest.Penalty.Name(request.penalty).lower(),
             dual = request.dual,
             tol = request.tol,
             C = request.C,

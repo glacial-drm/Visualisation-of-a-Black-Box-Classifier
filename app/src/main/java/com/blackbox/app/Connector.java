@@ -143,8 +143,8 @@ public class Connector {
         } else if (request instanceof KNeighborsRequest.Builder builder) {
             KNeighborsRequest modelRequest = builder.setPoints(pointsProto).build();
             res = stub.trainKNeighbors(modelRequest);
-        } else if (request instanceof LRRequest.Builder builder) {
-            LRRequest modelRequest = builder.setPoints(pointsProto).build();
+        } else if (request instanceof LogisticRegressionRequest.Builder builder) {
+            LogisticRegressionRequest modelRequest = builder.setPoints(pointsProto).build();
             res = stub.trainLogisticRegression(modelRequest);
         } else {
             return null;
