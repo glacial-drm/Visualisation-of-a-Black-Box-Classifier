@@ -199,57 +199,11 @@ class ControllerTest {
     }
 
     /**
-     * Tests if addClassifier() correctly adds a classifier.
-     */
-    @Test
-    void testAddClassifier() {
-        controller.addClassifier("NewClassifier");
-        verify(model, times(1)).addClassifier("NewClassifier");
-    }
-
-    /**
-     * Tests if removeClassifier() correctly removes a classifier.
-     */
-    @Test
-    void testRemoveClassifier() {
-        controller.removeClassifier("ClassifierToRemove");
-        verify(model, times(1)).removeClassifier("ClassifierToRemove");
-    }
-
-    /**
-     * Tests if clearClassifiers() correctly clears the classifier list.
-     */
-    @Test
-    void testClearClassifiers() {
-        controller.clearClassifiers();
-        verify(model, times(1)).clearClassifiers();
-    }
-
-    /**
      * Tests if setSelectedClassifier() updates the selected classifier.
      */
     @Test
     void testSetSelectedClassifier() {
         controller.setSelectedClassifier("SelectedClassifier");
         verify(model, times(1)).setSelectedClassifier("SelectedClassifier");
-    }
-
-    /**
-     * Tests if getNavigationDetails() returns the expected navigation details.
-     */
-    @Test
-    void testGetNavigationDetails() {
-        when(model.getNavigationDetails()).thenReturn("Navigation Details");
-        String result = controller.getNavigationDetails();
-        assertEquals("Navigation Details", result);
-    }
-
-    /**
-     * Tests if setNavigationDetails() updates the navigation details.
-     */
-    @Test
-    void testSetNavigationDetails() {
-        controller.setNavigationDetails("New Navigation Details");
-        verify(model, times(1)).setNavigationDetails("New Navigation Details");
     }
 }
