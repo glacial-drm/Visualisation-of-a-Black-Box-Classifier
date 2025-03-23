@@ -386,6 +386,7 @@ public class View extends Application {
         });
         generatorSelector.getSelectionModel().selectedIndexProperty().addListener((_observer, _old, index) -> {
             controller.setSelectedGenerator(index.intValue());
+            controller.genAndShowTrainingData();
         });
         generatorSelector.getSelectionModel().select(0);
 
