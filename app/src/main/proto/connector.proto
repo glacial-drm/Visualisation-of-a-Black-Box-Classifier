@@ -11,6 +11,7 @@ service Connector {
   rpc TrainDecisionTree (DecisionTreeRequest) returns (ModelResults);
   rpc TrainRandomForest (RandomForestRequest) returns (ModelResults);
   rpc TrainKNeighbors (KNeighborsRequest) returns (ModelResults);
+  rpc TrainLogisticRegression (LRRequest) returns (ModelResults);
 }
 
 message Point {
@@ -104,6 +105,40 @@ message KNeighborsRequest {
   Metric metric = 7;
   int32 nJobs = 8;
 
+}
+
+message LRRequest {
+
+  Points points = 1;
+
+  enum Penalty {
+    NONE = 0;
+    L1 = 1;
+    L2 = 2;
+    ELASTICNET = 3;
+  }
+  Penalty penalty = 2;
+  bool dual = 3;
+  float tol = 4;
+  float C = 5;
+  bool fit_intercept = 6;
+  float intercept_scaling = 7;
+  int32 random_state = 8;
+
+  enum Solver {
+    LBFGS = 0;
+    LIBLINEAR = 1;
+    NEWTON_CG = 2;
+    NEWTON_CHOLESKY = 3;
+    SAG = 4;
+    SAGA = 5;
+  }
+  Solver solver = 9;
+  int32 max_iter = 10;
+
+  int32 verbose = 11;
+  bool warm_start = 12;
+  int32 nJobs = 13;
 }
 
 message ModelResults {

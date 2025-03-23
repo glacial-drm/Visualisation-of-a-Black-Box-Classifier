@@ -76,7 +76,10 @@ public class Controller {
     UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2),
             SvmRequest.newBuilder(), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1),
             RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT),
-            KNeighborsRequest.newBuilder().setNNeighbors(5).setWeights(KNeighborsRequest.Weights.UNIFORM).setAlgorithm(KNeighborsRequest.Algorithm.AUTO).setLeafSize(30).setP(2).setMetric(KNeighborsRequest.Metric.MINKOWSKI).setNJobs(1)});
+            KNeighborsRequest.newBuilder().setNNeighbors(5).setWeights(KNeighborsRequest.Weights.UNIFORM).setAlgorithm(KNeighborsRequest.Algorithm.AUTO).setLeafSize(30).setP(2).setMetric(KNeighborsRequest.Metric.MINKOWSKI).setNJobs(1),
+            LRRequest.newBuilder().setPenalty(LRRequest.Penalty.L2).setDual(false).setTol(1e-4F).setC(1).setFitIntercept(true).setInterceptScaling(1).setSolver(LRRequest.Solver.LBFGS).setMaxIter(100).
+                    setVerbose(0).setWarmStart(false).setNJobs(1)
+    });
 
     generateTrainingData();
     showTrainingData();

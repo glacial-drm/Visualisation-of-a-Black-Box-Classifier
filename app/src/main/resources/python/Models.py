@@ -3,6 +3,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import svm
+from sklearn.linear_model import LogisticRegression
 import numpy as np
 
 # File containing all models available to train data with.
@@ -41,3 +42,15 @@ class SVMClassifier(TrainModel):
         model = svm.SVC(kernel=kernel, degree=degree, C=C, gamma=gamma, probability=True)
 
         super().__init__("SVM.onnx", model = model, random_state = random_state, test_size = test_size)
+
+
+class LRClassifier(TrainModel):
+    def __init__(self, penalty = "l2", dual = False, tol = 1e-4, C = 1.0, fit_intercept = True, intercept_scaling = 1,
+                 random_state = 42, test_size = 0.2, solver = "lbfgs", max_iter = 100, multi_class = "auto", verbose = 0,
+                 warm_start = False, n_jobs = None):
+
+        model = LogisticRegression(penalty = penalty, dual = dual, tol = tol, C = C, fit_intercept = fit_intercept, intercept_scaling = intercept_scaling,
+                                   random_state = random_state, solver = solver, max_iter = max_iter, multi_class = multi_class,
+                                   verbose = verbose, warm_start = warm_start, n_jobs = n_jobs)
+
+        super().__init__("LogisticRegression.onnx", model = model, random_state = random_state, test_size = test_size)

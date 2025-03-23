@@ -11,6 +11,8 @@ from Models import SVMClassifier
 from Models import DecisionTreeClassifierWrapper
 from Models import RFClassifier
 from Models import KNClassifier
+from Models import LRClassifier
+
 
 def parsePoints(points: connector_pb2.Points):
     points = points.points
@@ -62,7 +64,8 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
         model.save(X, y)
 
         return connector_pb2.ModelResults(onnxPath=model.output_name)
-    def TrainRandomForest(self, request: connector_pb2.RandomForestRequest, context: grpc._server._Context):
+    def TrainRandomForest(
+            self, request: connector_pb2.RandomForestRequest, context: grpc._server._Context):
         X, y = parsePoints(request.points)
 
         model = RFClassifier(
@@ -93,6 +96,39 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
             leaf_size = request.leaf_size,
             p = request.p,
             metric = connector_pb2.KNeighborsRequest.Metric.Name(request.metric).lower(),
+            n_jobs = request.nJobs
+        )
+
+        model.fit(X, y)
+        model.save(X, y)
+
+        return connector_pb2.ModelResults(onnxPath=model.output_name)
+
+    def TrainLogisticRegression(self, request: connector_pb2.LRRequest, context: grpc._server._Context):
+
+
+        if connector_pb2.LRRequest.Solver.Name(request.solver).lower() == "newton_cholesky":
+            solver_value = "newton-cholesky"
+        elif connector_pb2.LRRequest.Solver.Name(request.solver).lower() == "newton_cg":
+            solver_value = "newton-cg"
+        else:
+            solver_value = connector_pb2.LRRequest.Solver.Name(request.solver).lower()
+
+        X, y = parsePoints(request.points)
+
+        model = LRClassifier(
+            penalty = connector_pb2.LRRequest.Penalty.Name(request.penalty).lower(),
+            dual = request.dual,
+            tol = request.tol,
+            C = request.C,
+            fit_intercept = request.fit_intercept,
+            intercept_scaling = request.intercept_scaling,
+            random_state = request.random_state,
+            solver = solver_value,
+            max_iter = request.max_iter,
+            multi_class = "auto",
+            verbose = request.verbose,
+            warm_start = request.warm_start,
             n_jobs = request.nJobs
         )
 
