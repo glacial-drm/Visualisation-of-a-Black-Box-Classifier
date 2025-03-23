@@ -17,7 +17,6 @@ import com.blackbox.proto.connector.*;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 import javafx.application.Platform;
-import javafx.stage.DirectoryChooser;
 
 import java.io.File;
 import java.util.List;
@@ -33,7 +32,6 @@ public class Controller {
    * Messages passed here will be processed in the canvas render loop.
    */
   private final EventProducer<CanvasEvent> canvasEventSink;
-  DirectoryChooser chooser = new DirectoryChooser();
   /**
    * The model.
    */
@@ -81,22 +79,11 @@ public class Controller {
     showTrainingData();
 
     model.initClassifiers();
-    initFileLoader();
-
   }
 
   ///////////////////////////////////////////////////////////////////////////
   ///  File Loading                                                       ///
   ///////////////////////////////////////////////////////////////////////////
-
-  private void initFileLoader() {
-    chooser = new DirectoryChooser();
-    chooser.setTitle("Select Classifier");
-  }
-
-  public DirectoryChooser getFileDialog() {
-    return chooser;
-  }
 
   public void openNewFolder(File folder) {
     model.setCurrentDir(folder);
