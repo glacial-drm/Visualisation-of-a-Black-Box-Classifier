@@ -10,6 +10,8 @@ service Connector {
   rpc TrainSvm (SvmRequest) returns (ModelResults);
   rpc TrainDecisionTree (DecisionTreeRequest) returns (ModelResults);
   rpc TrainRandomForest (RandomForestRequest) returns (ModelResults);
+  rpc TrainKNeighbors (KNeighborsRequest) returns (ModelResults);
+  rpc TrainLogisticRegression (LogisticRegressionRequest) returns (ModelResults);
 }
 
 message Point {
@@ -66,6 +68,76 @@ message RandomForestRequest {
   }
   MaxFeatures maxFeatures = 7;
   float maxFeaturesVal = 8;
+}
+
+message KNeighborsRequest {
+
+  Points points = 1;
+
+  int32 nNeighbors = 2;
+
+  enum Weights {
+    UNIFORM = 0;
+    DISTANCE = 1;
+  }
+  Weights weights = 3;
+
+  enum Algorithm {
+    AUTO = 0;
+    BALL_TREE = 1;
+    KD_TREE = 2;
+    BRUTE = 3;
+  }
+  Algorithm algorithm = 4;
+
+  int32 leaf_size = 5;
+  float p = 6;
+
+  enum Metric {
+    CITYBLOCK = 0;
+    COSINE = 1;
+    EUCLIDEAN = 2;
+    L1 = 3;
+    L2 = 4;
+    MANHATTAN = 5;
+    MINKOWSKI = 6;
+  }
+  Metric metric = 7;
+  int32 nJobs = 8;
+
+}
+
+message LogisticRegressionRequest {
+
+  Points points = 1;
+
+  enum Penalty {
+    NONE = 0;
+    L1 = 1;
+    L2 = 2;
+    ELASTICNET = 3;
+  }
+  Penalty penalty = 2;
+  bool dual = 3;
+  float tol = 4;
+  float C = 5;
+  bool fit_intercept = 6;
+  float intercept_scaling = 7;
+  int32 random_state = 8;
+
+  enum Solver {
+    LBFGS = 0;
+    LIBLINEAR = 1;
+    NEWTON_CG = 2;
+    NEWTON_CHOLESKY = 3;
+    SAG = 4;
+    SAGA = 5;
+  }
+  Solver solver = 9;
+  int32 max_iter = 10;
+
+  bool warm_start = 11;
+  int32 nJobs = 12;
 }
 
 message ModelResults {

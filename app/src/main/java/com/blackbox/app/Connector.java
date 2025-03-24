@@ -89,10 +89,8 @@ public class Connector {
             "connector_pb2_grpc.py",
             "SAO.py",
             "server.py",
-            "TrainDecisionTree.py",
-            "TrainRF.py",
-            "TrainSVM.py",
             "TrainModel.py",
+            "Models.py"
         };
 
         // Copy from resources to the temporary folder
@@ -142,6 +140,12 @@ public class Connector {
         } else if (request instanceof RandomForestRequest.Builder builder) {
             RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
             res = stub.trainRandomForest(modelRequest);
+        } else if (request instanceof KNeighborsRequest.Builder builder) {
+            KNeighborsRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainKNeighbors(modelRequest);
+        } else if (request instanceof LogisticRegressionRequest.Builder builder) {
+            LogisticRegressionRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainLogisticRegression(modelRequest);
         } else {
             return null;
         }
