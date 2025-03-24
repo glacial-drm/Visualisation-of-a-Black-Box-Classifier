@@ -7,11 +7,7 @@ import connector_pb2
 import connector_pb2_grpc
 
 import numpy as np
-from Models import SVMClassifier
-from Models import DecisionTreeClassifierWrapper
-from Models import RFClassifier
-from Models import KNClassifier
-from Models import LRClassifier
+from Models import *
 
 
 def parsePoints(points: connector_pb2.Points):
@@ -128,7 +124,6 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
             solver = solver_value,
             max_iter = request.max_iter,
             multi_class = "auto",
-            verbose = request.verbose,
             warm_start = request.warm_start,
             n_jobs = request.nJobs
         )

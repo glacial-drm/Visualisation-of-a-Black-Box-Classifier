@@ -46,11 +46,11 @@ class SVMClassifier(TrainModel):
 
 class LRClassifier(TrainModel):
     def __init__(self, penalty = "l2", dual = False, tol = 1e-4, C = 1.0, fit_intercept = True, intercept_scaling = 1,
-                 random_state = 42, test_size = 0.2, solver = "lbfgs", max_iter = 100, multi_class = "auto", verbose = 0,
+                 random_state = 42, test_size = 0.2, solver = "lbfgs", max_iter = 100, multi_class = "auto",
                  warm_start = False, n_jobs = None):
 
         model = LogisticRegression(penalty = penalty, dual = dual, tol = tol, C = C, fit_intercept = fit_intercept, intercept_scaling = intercept_scaling,
                                    random_state = random_state, solver = solver, max_iter = max_iter, multi_class = multi_class,
-                                   verbose = verbose, warm_start = warm_start, n_jobs = n_jobs)
+                                   warm_start = warm_start, n_jobs = n_jobs)
 
         super().__init__("LogisticRegression.onnx", model = model, random_state = random_state, test_size = test_size)

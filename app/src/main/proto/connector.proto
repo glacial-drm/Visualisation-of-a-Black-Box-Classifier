@@ -136,9 +136,8 @@ message LogisticRegressionRequest {
   Solver solver = 9;
   int32 max_iter = 10;
 
-  int32 verbose = 11;
-  bool warm_start = 12;
-  int32 nJobs = 13;
+  bool warm_start = 11;
+  int32 nJobs = 12;
 }
 
 message ModelResults {
