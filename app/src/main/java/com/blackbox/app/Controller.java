@@ -94,7 +94,6 @@ public class Controller {
             } else if (event instanceof CanvasResize canvasResize) {
                 model.setCanvasSize(canvasResize.width, canvasResize.height);
                 runSampler(model.getActiveModel());
-                // Should try and sample the model
             } else if (event instanceof CenterMoved centerMoved){
                 model.setCanvasCenter(centerMoved.position);
                 runSampler(model.getActiveModel());
@@ -324,12 +323,29 @@ public class Controller {
         }
 
         OnnxModel onnx;
-        try {
-            onnx = new OnnxModel(path);
-        } catch (Exception err) {
-            System.err.println("ONNX file not found");
-            return;
+        if(model.getOnnxModel() == null){
+            try {
+                onnx = new OnnxModel(path);
+                model.setOnnxModel(onnx);
+            } catch (Exception err) {
+                System.err.println("ONNX file not found");
+                return;
+            }
+        } else {
+            if(!path.equals(model.getOnnxModel().getPath())){
+                model.getOnnxModel().endSession();
+                try {
+                    onnx = new OnnxModel(path);
+                    model.setOnnxModel(onnx);
+                } catch (Exception err) {
+                    System.err.println("ONNX file not found");
+                    return;
+                }
+            } else {
+                onnx = model.getOnnxModel();
+            }
         }
+
 
         Sampler sampler = new Sampler(onnx);
 
@@ -393,7 +409,7 @@ public class Controller {
             pointLoaded(point, false);
         }
 
-        onnx.endSession();
+      //  onnx.endSession();
     }
 
     public String getSelectedClassifier() {

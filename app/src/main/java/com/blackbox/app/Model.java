@@ -7,7 +7,9 @@ import java.util.function.Consumer;
 
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
+import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
+import com.blackbox.model.Sampler;
 import com.google.protobuf.GeneratedMessage.Builder;
 import org.joml.Vector3f;
 
@@ -47,6 +49,8 @@ public class Model {
     private String activeModelPath;
     private double previousZoom;
     private Vector3f canvasCenter = new Vector3f(0, 0, 0);
+    private OnnxModel onnxModel;
+    private Sampler sampler;
 
     public void setTrainingData(PointData[] data) {
         trainingData = data;
@@ -263,6 +267,22 @@ public class Model {
 
     public float getCanvasZ() {
         return canvasCenter.z;
+    }
+
+    public OnnxModel getOnnxModel() {
+        return onnxModel;
+    }
+
+    public void setOnnxModel(OnnxModel onnxModel) {
+        this.onnxModel = onnxModel;
+    }
+
+    public Sampler getSampler() {
+        return sampler;
+    }
+
+    public void setSampler(Sampler sampler) {
+        this.sampler = sampler;
     }
 }
 
