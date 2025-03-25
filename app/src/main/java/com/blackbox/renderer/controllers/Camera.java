@@ -126,8 +126,10 @@ public class Camera {
         InputHandler.setOriginalMouseX(InputHandler.getMouseX());
         InputHandler.setOriginalMouseY(InputHandler.getMouseY());
 
-        position.x -= dx * sensitivity;
-        position.y -= dy * sensitivity;
+        float zoomSpeed = Math.min(1.0f, (float) Math.abs(InputHandler.getZoom()));
+
+        position.x -= dx * sensitivity * zoomSpeed;
+        position.y -= dy * sensitivity * zoomSpeed;
     }
 
     private boolean keyboardMovement2D() {
@@ -151,7 +153,10 @@ public class Camera {
         if (movement.length() > 0) {
             movement.normalize();
         }
-        movement.mul(moveSpeed);
+
+        float zoomSpeed = Math.min(1.0f, (float) Math.abs(InputHandler.getZoom()));
+
+        movement.mul(moveSpeed).mul((zoomSpeed));
 
         // Handle zooming forward-backward
 

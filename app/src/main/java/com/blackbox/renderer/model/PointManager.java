@@ -49,7 +49,7 @@ public class PointManager {
         if(isTraining) {
             scale = 0.05f;
         } else{
-            scale = 0.05f * (float)Math.pow((float)Math.abs(InputHandler.getZoom()) / 0.8f, (float)(2.0f/3.0f));;
+            scale = 0.05f * InputHandler.inverseZoom();
         }
         points.add(new Point(position, new Vector3f(0, 0, 0), scale, color));
     }

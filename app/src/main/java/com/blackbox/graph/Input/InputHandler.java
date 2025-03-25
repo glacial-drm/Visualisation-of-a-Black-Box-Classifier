@@ -75,7 +75,7 @@ public class InputHandler {
 
     public static void incZoom(double yOffSet) {
         zoom += yOffSet;
-        zoom = Math.min(zoom, -1);
+        zoom = Math.min(zoom, -0.15);
     }
 
     public static void incXOffSet(double xOffSet) {
@@ -86,6 +86,10 @@ public class InputHandler {
         // Account for the camera being perspective for now
         // Speeds up zooming further away from the origin
         // position.z = -(float)Math.pow(-zoom, 1.5) * 0.8f;
-        return -Math.pow(-InputHandler.zoom, 1.5) * 0.8;
+        return -Math.pow(-InputHandler.zoom, 1.5) * 0.2;
+    }
+
+    public static float inverseZoom() {
+        return (float)Math.pow((float)Math.abs(InputHandler.getZoom()) / 0.2f, (float)(2.0f/3.0f));
     }
 }
