@@ -9,10 +9,6 @@ import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.model.PointData;
 import com.google.protobuf.GeneratedMessage.Builder;
 
-/**
- * Feel free to change/enhance any of the code
- * - Salameh Alfasatleh / psysa21
- */
 public class Model {
     /**
      * List of classifier names available in the ComboBox.
