@@ -10,11 +10,23 @@ import com.blackbox.model.PointData;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 public class Model {
-    /**
-     * List of classifier names available in the ComboBox.
-     */
+    ///////////////////////////////////////////////////////////////////////////
+    ///  Current Directory                                                  ///
+    ///////////////////////////////////////////////////////////////////////////
+
     private File currentDir;
-    private ArrayList<String> classifiers;
+
+    public File getCurrentDir() {
+        return currentDir;
+    }
+
+    public void setCurrentDir(File newDir) {
+        currentDir = newDir;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///  Generator Options                                                  ///
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * The global options for all the training data generators.
@@ -22,19 +34,6 @@ public class Model {
     private GlobalGenOptions genOptions = new GlobalGenOptions();
     private int selectedGenerator;
     private DataGenerator[] generators;
-
-    private int selectedTrainingRequest = 0;
-    private Builder<?>[] trainingRequests;
-
-    private PointData[] trainingData;
-
-    public void setTrainingData(PointData[] data) {
-        trainingData = data;
-    }
-
-    public PointData[] getTrainingData() {
-        return trainingData;
-    }
 
     public GlobalGenOptions getGenOptions() {
         return genOptions;
@@ -56,6 +55,23 @@ public class Model {
         selectedGenerator = index;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    ///  Training Requests                                                  ///
+    ///////////////////////////////////////////////////////////////////////////
+
+    private int selectedTrainingRequest = 0;
+    private Builder<?>[] trainingRequests;
+
+    private PointData[] trainingData;
+
+    public void setTrainingData(PointData[] data) {
+        trainingData = data;
+    }
+
+    public PointData[] getTrainingData() {
+        return trainingData;
+    }
+
     public void setTrainingRequests(Builder<?>[] requests) {
         trainingRequests = requests;
     }
@@ -71,6 +87,12 @@ public class Model {
     public Builder<?> getSelectedTrainingRequest() {
         return trainingRequests[selectedTrainingRequest];
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///  Classifiers                                                        ///
+    ///////////////////////////////////////////////////////////////////////////
+
+    private ArrayList<String> classifiers;
 
     /**
      * Selected classifier name.
@@ -124,14 +146,4 @@ public class Model {
     public void setSelectedClassifier(String selectedClassifier) {
         this.selectedClassifier = selectedClassifier;
     }
-
-    public File getCurrentDir() {
-        return currentDir;
-    }
-
-    public void setCurrentDir(File newDir) {
-        currentDir = newDir;
-    }
 }
-
-
