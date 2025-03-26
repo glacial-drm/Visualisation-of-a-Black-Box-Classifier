@@ -182,7 +182,7 @@ public class Controller {
   ///////////////////////////////////////////////////////////////////////////
 
   public GlobalGenOptions getGenOptions() {
-    return model.getGetOptions();
+    return model.getGenOptions();
   }
 
   public DataGenerator[] getGenerators() {

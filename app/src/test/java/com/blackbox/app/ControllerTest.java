@@ -49,7 +49,7 @@ class ControllerTest {
         // Defining mock behavior for Model to prevent NullPointerException
         when(model.getGenerators()).thenReturn(new DataGenerator[]{ new CircleGenerator(), new CubeGenerator() });
         when(model.getSelectedGenerator()).thenReturn(new CircleGenerator());
-        when(model.getGetOptions()).thenReturn(new GlobalGenOptions());
+        when(model.getGenOptions()).thenReturn(new GlobalGenOptions());
         when(model.getTrainingRequests()).thenReturn(new Builder[]{});
         when(model.getTrainingData()).thenReturn(new PointData[]{});
 
@@ -74,7 +74,7 @@ class ControllerTest {
         DataGenerator mockGenerator = mock(DataGenerator.class);
         GlobalGenOptions mockOptions = mock(GlobalGenOptions.class);
         when(model.getSelectedGenerator()).thenReturn(mockGenerator);
-        when(model.getGetOptions()).thenReturn(mockOptions);
+        when(model.getGenOptions()).thenReturn(mockOptions);
 
         controller.generateTrainingData();
 

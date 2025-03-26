@@ -40,7 +40,7 @@ public class Model {
         return trainingData;
     }
 
-    public GlobalGenOptions getGetOptions() {
+    public GlobalGenOptions getGenOptions() {
         return genOptions;
     }
 

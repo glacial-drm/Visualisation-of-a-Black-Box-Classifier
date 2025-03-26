@@ -62,8 +62,8 @@ public class ModelTest {
     }
 
     @Test
-    void testGetGetOptions(){
-        assertNotNull(model.getGetOptions());
+    void testGetGenOptions(){
+        assertNotNull(model.getGenOptions());
     }
 
     @Test
