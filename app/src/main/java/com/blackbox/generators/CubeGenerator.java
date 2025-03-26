@@ -7,8 +7,6 @@ import javafx.scene.layout.VBox;
 
 /**
  * A training data generator to generate a circle separating the classes.
- *
- * Quadrants are toggleable to test incomplete data.
  */
 public class CubeGenerator extends DataGenerator3D {
     private float radius = 1f;
