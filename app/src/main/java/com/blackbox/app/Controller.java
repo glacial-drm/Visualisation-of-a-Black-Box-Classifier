@@ -58,7 +58,7 @@ public class Controller {
     this.connector = connector;
 
     model.setGenerators(new DataGenerator[] {
-      new CircleGenerator(), new CubeGenerator()
+      new CircleGenerator(), new CubeGenerator(), new ExprGenerator2D()
     });
     for (DataGenerator generator : getGenerators()) {
       generator.setOnChange(_v -> genAndShowTrainingData());
