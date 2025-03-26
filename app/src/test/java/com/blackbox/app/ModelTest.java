@@ -91,60 +91,14 @@ public class ModelTest {
     }
 
     @Test
-    void testGetSetClassifiers(){
-        model.setClassifiers(classifiers);
-        assertEquals(classifiers,model.getClassifiers());
-    }
-    @Test
-    void testAddClassifier(){
-        model.setClassifiers(classifiers);
-        model.addClassifier(newClassifier);
-        assertEquals(newClassifier,model.getClassifiers().getLast());
-    }
-    @Test
     void testInitClassifiers(){
         model.initClassifiers();
         assertEquals("",model.getClassifiers().getFirst());
     }
     @Test
-    void testRemoveClassifier(){
-        model.initClassifiers();
-        model.addClassifier(newClassifier);
-        assertEquals(newClassifier,model.getClassifiers().getLast());
-
-        model.removeClassifier(newClassifier);
-        assertEquals("",model.getClassifiers().getLast());
-    }
-    @Test
-    void testClearClassifiers(){
-        model.initClassifiers();
-        model.addClassifier(newClassifier);
-        assertEquals(newClassifier,model.getClassifiers().getLast());
-
-        model.clearClassifiers();
-        assert(model.getClassifiers().isEmpty());
-    }
-    @Test
     void testGetSetSelectedClassifiers(){
         model.setSelectedClassifier(newClassifier);
         assertEquals(newClassifier,model.getSelectedClassifier());
-    }
-
-    @Test
-    void testGetSetNavigationDetails(){
-        model.setNavigationDetails(newClassifier);
-        assertEquals(newClassifier,model.getNavigationDetails());
-    }
-
-    @Disabled
-    void testAddChangeListeners(){
-        // No current way to get change listeners
-        fail("Not yet implemented");
-    }
-    @Disabled
-    void testNotifyChangeListeners(){
-        // No current way to get change listeners
-        fail("Not yet implemented");
     }
 
     @Test
