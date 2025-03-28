@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.grpc.stub)
     implementation(libs.grpc.protobuf)
     implementation(libs.grpc.okhttp)
+
+    implementation(libs.evalex)
 }
 
 testing {

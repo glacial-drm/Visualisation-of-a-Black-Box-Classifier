@@ -23,6 +23,8 @@ protobuf-plugin = "0.9.4"
 protobuf-java = "4.29.3"
 grpc = "1.70.0"
 
+evalex = "3.4.0"
+
 [libraries]
 javax-annotation = { module = "javax.annotation:javax.annotation-api", version.ref = "javax-annotation" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
@@ -48,6 +50,8 @@ grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
 grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpc" }
 grpc-gen = { module = "io.grpc:protoc-gen-grpc-java", version.ref = "grpc" }
+
+evalex = { module = "com.ezylang:EvalEx", version.ref = "evalex" }
 
 [plugins]
 javafx-plugin = { id = "org.openjfx.javafxplugin", version.ref = "javafx-plugin" }

@@ -175,12 +175,19 @@ public class CubeGeneratorTest {
 
     /**
      * Helper method to set private fields via reflection.
+     * Also looks for the field in the superclass if it wasn't present.
+     *
      * @param target The object whose field is modified.
      * @param fieldName The name of the field to set.
      * @param value The value to assign.
      */
     private void setField(Object target, String fieldName, Object value) throws Exception {
-        Field field = target.getClass().getDeclaredField(fieldName);
+        Field field;
+        try {
+            field = target.getClass().getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            field = target.getClass().getSuperclass().getDeclaredField(fieldName);
+        }
         field.setAccessible(true);
         field.set(target, value);
     }
