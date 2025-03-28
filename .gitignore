@@ -12,6 +12,7 @@ bin
 .settings/
 .vscode
 .idea
+.onnx
 
 *.log
 
