@@ -53,6 +53,8 @@ public class View extends Application {
      */
     private final Duration eventCheckInterval = Duration.millis(250);
 
+    DirectoryChooser chooser = new DirectoryChooser();
+
     /**
      * The controller.
      */
@@ -91,6 +93,8 @@ public class View extends Application {
         setupTimer();
 
         primaryStage.setTitle("UON Blackbox Classifier");
+
+        chooser.setTitle("Select Classifier");
 
         // Main layout
 
@@ -465,7 +469,6 @@ public class View extends Application {
             if (path == null) return;
             selectedDirectory = new File(path);
         } else {
-            DirectoryChooser chooser = controller.getFileDialog();
             selectedDirectory = chooser.showDialog(stage);
         }
 

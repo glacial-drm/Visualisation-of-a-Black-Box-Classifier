@@ -17,7 +17,6 @@ import com.blackbox.proto.connector.*;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 import javafx.application.Platform;
-import javafx.stage.DirectoryChooser;
 
 import java.io.File;
 import java.util.List;
@@ -33,7 +32,6 @@ public class Controller {
    * Messages passed here will be processed in the canvas render loop.
    */
   private final EventProducer<CanvasEvent> canvasEventSink;
-  DirectoryChooser chooser = new DirectoryChooser();
   /**
    * The model.
    */
@@ -80,12 +78,54 @@ public class Controller {
     generateTrainingData();
     showTrainingData();
 
-    // Register a listener to update the view when the model changes
-    model.addChangeListener(voidParam -> onModelChanged());
     model.initClassifiers();
-    initFileLoader();
-
   }
+
+  ///////////////////////////////////////////////////////////////////////////
+  ///  File Loading                                                       ///
+  ///////////////////////////////////////////////////////////////////////////
+
+  public void openNewFolder(File folder) {
+    model.setCurrentDir(folder);
+    loadAllOnnx();
+  }
+
+  public File getCurrentDir() {
+    return model.getCurrentDir();
+  }
+
+  private String getExt(File file) {
+    String extension = "";
+    String fileName = file.getName();
+
+    int i = fileName.lastIndexOf('.');
+    if (i > 0) {
+      extension = fileName.substring(i + 1);
+    }
+    return extension;
+  }
+
+  public void loadAllOnnx() {
+    if (model.getCurrentDir() == null) {
+      return;
+    }
+
+    model.clearClassifiers();
+
+    for (File file : Objects.requireNonNull(model.getCurrentDir().listFiles())) {
+      if (!file.isDirectory()) {
+        String ext = getExt(file);
+        if (ext.equals("onnx")) {
+          model.addClassifier(file.getName());
+          Logger.info("Loading onnx file: {}", file.getName());
+        }
+      }
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  ///  Control Flow                                                       ///
+  ///////////////////////////////////////////////////////////////////////////
 
   /**
    * Clears the currently shown training data,
@@ -114,11 +154,60 @@ public class Controller {
     }
   }
 
+  public void closeConnector() {
+    connector.close();
+  }
+
+  /**
+   * Send the {@link com.blackbox.graph.events.StopEvent StopEvent} event.
+   */
+  public void stop() {
+    // Called with true to also kill this thread
+    // May be changed in the future when windows can be open independently.
+    canvasEventSink.send(new StopEvent(true));
+    Platform.exit();
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  ///  Canvas                                                             ///
+  ///////////////////////////////////////////////////////////////////////////
+
   /**
    * Send the {@link ClearPoints} event.
    */
   public void clearPoints() {
     canvasEventSink.send(new ClearPoints());
+  }
+
+  /**
+   * Send the {@link com.blackbox.graph.events.PointsLoaded PointsLoaded} event.
+   *
+   * @param point The point data.
+   */
+  public void pointLoaded(PointData point, boolean isTraining) {
+    canvasEventSink.send(new PointsLoaded(point, isTraining));
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  ///  Training Data Generation                                           ///
+  ///////////////////////////////////////////////////////////////////////////
+
+  public GlobalGenOptions getGenOptions() {
+    return model.getGenOptions();
+  }
+
+  public DataGenerator[] getGenerators() {
+    return model.getGenerators();
+  }
+
+  public DataGenerator getSelectedGenerator() {
+    return model.getSelectedGenerator();
+  }
+
+  public void setSelectedGenerator(int index) {
+    model.setSelectedGenerator(index);
+    DataGenerator selectedGenerator = model.getSelectedGenerator();
+    canvasEventSink.send(new DimensionChange(selectedGenerator.getDimension()));
   }
 
   /**
@@ -140,18 +229,6 @@ public class Controller {
     }
   }
 
-  public GlobalGenOptions getGenOptions() {
-    return model.getGetOptions();
-  }
-
-  public DataGenerator[] getGenerators() {
-    return model.getGenerators();
-  }
-
-  public DataGenerator getSelectedGenerator() {
-    return model.getSelectedGenerator();
-  }
-
   /**
    * Get the dimension of the selected generator.
    */
@@ -169,11 +246,9 @@ public class Controller {
     return target;
   }
 
-  public void setSelectedGenerator(int index) {
-    model.setSelectedGenerator(index);
-    DataGenerator selectedGenerator = model.getSelectedGenerator();
-    canvasEventSink.send(new DimensionChange(selectedGenerator.getDimension()));
-  }
+  ///////////////////////////////////////////////////////////////////////////
+  ///  Model Training                                                     ///
+  ///////////////////////////////////////////////////////////////////////////
 
   public Builder<?>[] getTrainingRequests() {
     return model.getTrainingRequests();
@@ -204,54 +279,9 @@ public class Controller {
     );
   }
 
-  private void initFileLoader() {
-    chooser = new DirectoryChooser();
-    chooser.setTitle("Select Classifier");
-  }
-
-  public void openNewFolder(File folder) {
-    model.setCurrentDir(folder);
-    loadAllOnnx();
-  }
-
-  public File getCurrentDir() {
-    return model.getCurrentDir();
-  }
-
-  /**
-   * Send the {@link com.blackbox.graph.events.PointsLoaded PointsLoaded} event.
-   *
-   * @param point The point data.
-   */
-  public void pointLoaded(PointData point, boolean isTraining) {
-    canvasEventSink.send(new PointsLoaded(point, isTraining));
-  }
-
-  /**
-   * Send the {@link com.blackbox.graph.events.StopEvent StopEvent} event.
-   */
-  public void stop() {
-    // Called with true to also kill this thread
-    // May be changed in the future when windows can be open independently.
-    canvasEventSink.send(new StopEvent(true));
-    Platform.exit();
-  }
-
-  /**
-   * Get the message.
-   */
-  public String getMessage() {
-    return model.message;
-  }
-
-  // Other getters
-  public String[] getMenuList() {
-    return model.menuList;
-  }
-
-  public String[] getFileList() {
-    return model.fileList;
-  }
+  ///////////////////////////////////////////////////////////////////////////
+  ///  Model Sampling                                                     ///
+  ///////////////////////////////////////////////////////////////////////////
 
   /**
    * gets the list of classifier names.
@@ -262,64 +292,12 @@ public class Controller {
     return model.getClassifiers();
   }
 
-  /**
-   * Sets a new list of classifiers and notifies listeners.
-   *
-   * @param classifiers a new List of classifier names as Strings
-   */
-  public void setClassifiers(List<String> classifiers) {
-    model.setClassifiers(classifiers);
+  public String getSelectedClassifier() {
+    return model.getSelectedClassifier();
   }
 
-  /**
-   * Adds a classifier to the existing list and notifies listeners.
-   *
-   * @param classifier the classifier name to add
-   */
-  public void addClassifier(String classifier) {
-    model.addClassifier(classifier);
-  }
-
-  public void removeClassifier(String classifier) {
-    model.removeClassifier(classifier);
-  }
-
-  public void clearClassifiers() {
-    model.clearClassifiers();
-  }
-
-  /**
-   * gets navigation details for display in the navigation section.
-   *
-   * @return a string with navigation instructions or information
-   */
-  public String getNavigationDetails() {
-    return model.getNavigationDetails();
-  }
-
-  /**
-   * Sets new navigation details and notifies listeners.
-   *
-   * @param navigationDetails the new navigation details as a String
-   */
-  public void setNavigationDetails(String navigationDetails) {
-    model.setNavigationDetails(navigationDetails);
-  }
-
-  /**
-   * Handle the selection of a classifier from the ComboBox.
-   *
-   * @param selectedClassifier the selected classifier name
-   */
-  public void onClassifierSelected(String selectedClassifier) {
-    Logger.info("Selected classifier: {}", selectedClassifier);
-  }
-
-  /**
-   * Responds to model changes.
-   */
-  private void onModelChanged() {
-    Logger.info("Model has changed. Notify the view to update components.");
+  public void setSelectedClassifier(String classifier) {
+    model.setSelectedClassifier(classifier);
   }
 
   /**
@@ -392,47 +370,6 @@ public class Controller {
     onnx.endSession();
   }
 
-  public String getSelectedClassifier() {
-    return model.getSelectedClassifier();
-  }
-
-  public void setSelectedClassifier(String classifier) {
-    model.setSelectedClassifier(classifier);
-  }
-
-  public DirectoryChooser getFileDialog() {
-    return chooser;
-  }
-
-  private String getExt(File file) {
-    String extension = "";
-    String fileName = file.getName();
-
-    int i = fileName.lastIndexOf('.');
-    if (i > 0) {
-      extension = fileName.substring(i + 1);
-    }
-    return extension;
-  }
-
-  public void loadAllOnnx() {
-    if (model.getCurrentDir() == null) {
-      return;
-    }
-
-    model.clearClassifiers();
-
-    for (File file : Objects.requireNonNull(model.getCurrentDir().listFiles())) {
-      if (!file.isDirectory()) {
-        String ext = getExt(file);
-        if (ext.equals("onnx")) {
-          model.addClassifier(file.getName());
-          Logger.info("Loading onnx file: {}", file.getName());
-        }
-      }
-    }
-  }
-
   public void sampleCurrentModel() {
     // Clear current points and reshow training data
     clearPoints();
@@ -441,9 +378,5 @@ public class Controller {
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
     Logger.info("Selected classifier: {}", path);
     runSampler(path);
-  }
-
-  public void closeConnector() {
-    connector.close();
   }
 }
