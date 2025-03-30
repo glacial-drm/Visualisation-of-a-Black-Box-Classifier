@@ -89,7 +89,7 @@ public class InputHandler {
         return -Math.pow(-InputHandler.zoom, 1.5) * 0.2;
     }
 
-    public static float inverseZoom() {
-        return (float)Math.pow((float)Math.abs(InputHandler.getZoom()) / 0.2f, (float)(2.0f/3.0f));
+    public static float getRawZoom() {
+        return (float) InputHandler.zoom;
     }
 }

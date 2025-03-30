@@ -261,6 +261,10 @@ public class Model {
         return canvasCenter.x;
     }
 
+    public float getCanvasAspect() {
+        return (float) canvasWidth / canvasHeight;
+    }
+
     public float getCanvasY() {
         return canvasCenter.y;
     }

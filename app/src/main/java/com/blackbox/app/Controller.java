@@ -311,67 +311,89 @@ public class Controller {
         Logger.info("Model has changed. Notify the view to update components.");
     }
 
-    /**
-     * Run the sampler, sending the output to the event queue.
-     * This makes input data spread across a hard-coded range.
-     */
     public void runSampler(String path) {
-
-        // Done so that the changing of window size and zoom does not try and sample
-        if(path == null){
+        if (path == null) {
             return;
         }
 
-        OnnxModel onnx;
-        if(model.getOnnxModel() == null){
-            try {
-                onnx = new OnnxModel(path);
-                model.setOnnxModel(onnx);
-            } catch (Exception err) {
-                System.err.println("ONNX file not found");
-                return;
-            }
-        } else {
-            if(!path.equals(model.getOnnxModel().getPath())){
-                model.getOnnxModel().endSession();
-                try {
-                    onnx = new OnnxModel(path);
-                    model.setOnnxModel(onnx);
-                } catch (Exception err) {
-                    System.err.println("ONNX file not found");
-                    return;
-                }
-            } else {
-                onnx = model.getOnnxModel();
-            }
+        OnnxModel onnx = getOrCreateOnnxModel(path);
+        if (onnx == null) {
+            return;
         }
-
 
         Sampler sampler = new Sampler(onnx);
 
-        // Prepare input data
+        // Log number of model input features.
+        int numFeatures = onnx.getNumInputFeatures();
+        Logger.info("Number of features: {}", numFeatures);
 
-        //Check number of features of the model
-        int num_features = onnx.getNumInputFeatures();
-        Logger.info("number of features: {}", num_features);
+        // Prepare the input data.
+        float[][] input;
+        if (numFeatures == 2) {
+            input = create2DInputGrid();
+        } else {
+            input = create3DInputGrid(numFeatures);
+        }
 
-        // Total numbers of points will be resolution * resolution
+        // Clear canvas and show training data.
+        clearPoints();
+        showTrainingData();
 
+        // Sample points and process them.
+        List<PointData> points = sampler.sampleBC(input);
+        for (PointData point : points) {
+            pointLoaded(point, false);
+        }
+    }
 
-        // Input data will start be from -range .. +range
+    private OnnxModel getOrCreateOnnxModel(String path) {
+        OnnxModel currentModel = model.getOnnxModel();
+        if (currentModel == null || !path.equals(currentModel.getPath())) {
+            if (currentModel != null) {
+                currentModel.endSession();
+            }
+            try {
+                OnnxModel newModel = new OnnxModel(path);
+                model.setOnnxModel(newModel);
+                return newModel;
+            } catch (Exception e) {
+                Logger.error("Failed to create OnnxModel: {}", e);
+                return null;
+            }
+        }
+        return currentModel;
+    }
 
-        // To calulate the range you need th inverse of the inputhandler zoom increase
-        // which involves taking its derivative
-        // which results in (y/0.8) ^ (2/3)
+    private float[][] create3DInputGrid(int numFeatures) {
+        // Calculate range based on the inverse zoom factor.
+        float range = (float) InputHandler.getZoom();
+        int resolution = 20;
+        float pointGap = range * 2f / (resolution - 1);
+        float epsilon = 0.00001f;
 
-        float range = InputHandler.inverseZoom();
+        int totalPoints = (int) Math.pow(resolution, numFeatures);
+        float[][] input = new float[totalPoints][numFeatures];
+        int index = 0;
 
+        for (float x = -range; x <= range + epsilon; x += pointGap) {
+            for (float y = -range; y <= range + epsilon; y += pointGap) {
+                for (float z = -range; z <= range + epsilon; z += pointGap) {
+                    input[index][0] = x;
+                    input[index][1] = y;
+                    input[index][2] = z;
+                    index++;
+                }
+            }
+        }
+        return input;
+    }
+    
+    private float[][] create2DInputGrid() {
         float fov = (float) Math.toRadians(70);
-        float aspect = (float) model.getCanvasWidth() / model.getCanvasHeight();
         float depth = (float) InputHandler.getZoom();
 
-        float visibleHeight = (float) (2.0f * depth * Math.tan(fov / 2.0f));
-        float visibleWidth = visibleHeight * aspect;
+        float visibleHeight = 2 * depth * (float) Math.tan(fov / 2.0f);
+        float visibleWidth = visibleHeight * model.getCanvasAspect();
 
         float left = model.getCanvasX() - visibleWidth / 2.0f;
         float right = model.getCanvasX() + visibleWidth / 2.0f;
@@ -379,56 +401,20 @@ public class Controller {
         float top = model.getCanvasY() + visibleHeight / 2.0f;
 
         int xResolution = 20;
-        // Should probably take into account aspect but for some reason
-        // it looked odd to me not sure why
         int yResolution = 20;
-
-        float pointGap = range * 2f / (float) (xResolution - 1);
-        // Needed for the outer edge
-        float epsilon = 0.00001f;
-
-        float[][] input;
-
+        float[][] input = new float[xResolution * yResolution][2];
         int index = 0;
 
-        if (num_features == 3) {
-            input = new float[(int) Math.pow(xResolution, num_features)][num_features];
-            for (float x = -range; x <= range + epsilon; x += pointGap) {
-                for (float y = -range; y <= range + epsilon; y += pointGap) {
-                    for (float z = -range; z <= range + epsilon; z += pointGap) {
-                        input[index][0] = x;
-                        input[index][1] = y;
-                        input[index][2] = z;
-                        index++;
-                    }
-                }
-            }
-        } else {
-            input = new float[(xResolution * yResolution)][num_features];
-            for (int i = 0; i < xResolution; i++) {
-                for (int j = 0; j < yResolution; j++) {
-                    float x = left + (right - left) * (i / (float)(xResolution - 1));
-                    float y = bottom + (top - bottom) * (j / (float)(yResolution - 1));
-
-                    input[index][0] = x;
-                    input[index][1] = y;
-                    index++;
-
-                }
+        for (int i = 0; i < xResolution; i++) {
+            float x = left + (right - left) * (i / (float) (xResolution - 1));
+            for (int j = 0; j < yResolution; j++) {
+                float y = bottom + (top - bottom) * (j / (float) (yResolution - 1));
+                input[index][0] = x;
+                input[index][1] = y;
+                index++;
             }
         }
-
-        // Send a clear message to the canvas
-        clearPoints();
-        showTrainingData();
-
-        // Get output
-
-        List<PointData> points = sampler.sampleBC(input);
-
-        for (PointData point : points) {
-            pointLoaded(point, false);
-        }
+        return input;
     }
 
     public String getSelectedClassifier() {

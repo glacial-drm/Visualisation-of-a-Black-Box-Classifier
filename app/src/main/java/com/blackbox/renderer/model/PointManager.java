@@ -55,7 +55,7 @@ public class PointManager {
         if(isTraining) {
             scale = 0.05f;
         } else{
-            scale = visibleWidth * 0.02f;
+            scale = visibleWidth * 0.03f;
         }
         points.add(new Point(position, new Vector3f(0, 0, 0), scale, color));
     }
