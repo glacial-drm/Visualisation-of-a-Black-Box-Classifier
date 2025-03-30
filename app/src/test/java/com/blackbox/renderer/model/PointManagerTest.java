@@ -50,7 +50,7 @@ class PointManagerTest {
     void testAddSinglePoint() {
         PointManager pm = new PointManager();
         PointData pd = new PointData(new float[] { 0.1f, 0.2f, 0.2f }, 1);
-        pm.addPoint(pd, false);
+        pm.addPoint(pd, false, 1);
         assertEquals(1, pm.getPointCount(), "Point count should be 1 after adding one point");
         assertTrue(pm.isPoints(), "isPoints() should return true when a point has been added");
         assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen");
@@ -62,7 +62,7 @@ class PointManagerTest {
         int numPoints = 5;
         for (int i = 0; i < numPoints; i++) {
             PointData pd = new PointData(new float[] { 0.1f * i, 0.2f * i,0.2f * i }, i % 2);
-            pm.addPoint(pd, false);
+            pm.addPoint(pd, false, 1);
         }
         assertEquals(numPoints, pm.getPointCount(), "Point count should equal the number of points added");
         assertTrue(pm.isPoints(), "no points are stored");
@@ -77,7 +77,7 @@ class PointManagerTest {
 
         for (int i = 0; i < 3; i++) {
             PointData pd = new PointData(new float[] { 0.1f * i, 0.2f * i, 0.2f * i }, 0);
-            pm.addPoint(pd, false);
+            pm.addPoint(pd, false, 1);
         }
         assertEquals(6, pm.getIndicesLength(), "Index buffer length should remain constant regardless of points added");
         assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen");
@@ -88,8 +88,8 @@ class PointManagerTest {
         PointManager pm = new PointManager();
 
         PointData pd = new PointData(new float[] { 0.5f, 0.5f, 0.5f }, 1);
-        pm.addPoint(pd, false);
-        pm.addPoint(pd, false);
+        pm.addPoint(pd, false, 1);
+        pm.addPoint(pd, false, 1);
 
 
         pm.prepPoints();
@@ -105,7 +105,7 @@ class PointManagerTest {
         PointManager pm = new PointManager();
 
         PointData pd = new PointData(new float[] { 0.5f, 0.5f, 0.5f }, 1);
-        pm.addPoint(pd, false);
+        pm.addPoint(pd, false, 1);
         pm.prepPoints();
 
         pm.cleanUp();
@@ -137,7 +137,7 @@ class PointManagerTest {
         // Add several points.
         for (int i = 0; i < 7; i++) {
             PointData pd = new PointData(new float[] { i * 0.1f,i * 0.5f , i * 0.5f }, i % 2);
-            pm.addPoint(pd, false);
+            pm.addPoint(pd, false, 1);
         }
         assertEquals(initialCount + 7, pm.getPointCount(), "Point count should update correctly after adding points");
 

@@ -356,7 +356,8 @@ public class Controller {
         Logger.info("number of features: {}", num_features);
 
         // Total numbers of points will be resolution * resolution
-        int resolution = 40;
+
+
         // Input data will start be from -range .. +range
 
         // To calulate the range you need th inverse of the inputhandler zoom increase
@@ -365,17 +366,33 @@ public class Controller {
 
         float range = InputHandler.inverseZoom();
 
-        float pointGap = range * 2f / (float) (resolution - 1);
+        float fov = (float) Math.toRadians(70);
+        float aspect = (float) model.getCanvasWidth() / model.getCanvasHeight();
+        float depth = (float) InputHandler.getZoom();
+
+        float visibleHeight = (float) (2.0f * depth * Math.tan(fov / 2.0f));
+        float visibleWidth = visibleHeight * aspect;
+
+        float left = model.getCanvasX() - visibleWidth / 2.0f;
+        float right = model.getCanvasX() + visibleWidth / 2.0f;
+        float bottom = model.getCanvasY() - visibleHeight / 2.0f;
+        float top = model.getCanvasY() + visibleHeight / 2.0f;
+
+        int xResolution = 20;
+        // Should probably take into account aspect but for some reason
+        // it looked odd to me not sure why
+        int yResolution = 20;
+
+        float pointGap = range * 2f / (float) (xResolution - 1);
         // Needed for the outer edge
         float epsilon = 0.00001f;
 
-        int totalPoints = (int) Math.pow(resolution, num_features);
-
-        float[][] input = new float[totalPoints][num_features];
+        float[][] input;
 
         int index = 0;
 
         if (num_features == 3) {
+            input = new float[(int) Math.pow(xResolution, num_features)][num_features];
             for (float x = -range; x <= range + epsilon; x += pointGap) {
                 for (float y = -range; y <= range + epsilon; y += pointGap) {
                     for (float z = -range; z <= range + epsilon; z += pointGap) {
@@ -387,8 +404,12 @@ public class Controller {
                 }
             }
         } else {
-            for (float x = -range + model.getCanvasX(); x <= range + epsilon + model.getCanvasX(); x += pointGap) {
-                for (float y = -range + model.getCanvasY(); y <= range + epsilon + + model.getCanvasY(); y += pointGap) {
+            input = new float[(xResolution * yResolution)][num_features];
+            for (int i = 0; i < xResolution; i++) {
+                for (int j = 0; j < yResolution; j++) {
+                    float x = left + (right - left) * (i / (float)(xResolution - 1));
+                    float y = bottom + (top - bottom) * (j / (float)(yResolution - 1));
+
                     input[index][0] = x;
                     input[index][1] = y;
                     index++;

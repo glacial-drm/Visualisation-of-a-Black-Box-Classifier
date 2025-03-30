@@ -94,7 +94,7 @@ public class Renderer {
 
         Camera camera = model.getCamera();
         if (camera == null) {
-            model.setCamera(new Camera(width, height, 70, 0, 100));
+            model.setCamera(new Camera(width, height, 70, 0.0001f, 100));
         } else {
             camera.resize(width, height);
         }

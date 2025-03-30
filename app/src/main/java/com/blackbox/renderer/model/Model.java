@@ -41,7 +41,7 @@ public class Model {
      * Adds a point (color depends on the label).
      */
     public void addPoint(PointData point, boolean isTraining) {
-        pointManager.addPoint(point, isTraining);
+        pointManager.addPoint(point, isTraining, (float) sWidth / sWidth);
     }
 
     public void updateSize(int width, int height) {
