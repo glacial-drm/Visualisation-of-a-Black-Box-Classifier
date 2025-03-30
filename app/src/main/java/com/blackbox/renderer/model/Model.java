@@ -21,7 +21,7 @@ public class Model {
     public Model(int width, int height) {
         this.sWidth = width;
         this.sHeight = height;
-        pointManager = new PointManager();
+        pointManager = new PointManager((float)width/height, fov);
         initShaders();
     }
 
@@ -42,12 +42,14 @@ public class Model {
      * Adds a point (color depends on the label).
      */
     public void addPoint(PointData point, boolean isTraining) {
-        pointManager.addPoint(point, isTraining, (float) sWidth / sWidth, fov);
+        pointManager.addPoint(point, isTraining);
     }
 
     public void updateSize(int width, int height) {
         sWidth = width;
         sHeight = height;
+
+        pointManager.setAspectRatio((float) width / (float) height);
     }
 
     public Camera getCamera() {

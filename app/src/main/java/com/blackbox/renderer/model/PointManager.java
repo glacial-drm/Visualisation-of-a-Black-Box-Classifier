@@ -23,16 +23,23 @@ public class PointManager {
     private VertexBuffer instanceVBO;       // For MVP matrices
     private VertexBuffer instanceColorVBO;  // For per-instance colors
 
-    public PointManager() {
+    // For point radius
+    private float aspectRatio;
+    private float fov;
+
+    public PointManager(float aspectRatio, float fov) {
         vao = new VertexArray();
         points = new ArrayList<>();
         initInstanceRendering();
+
+        this.aspectRatio = aspectRatio;
+        this.fov = fov;
     }
 
     /**
      * Adds a point using your provided data.
      */
-    public void addPoint(PointData pointData, boolean isTraining, float aspect, float fov) {
+    public void addPoint(PointData pointData, boolean isTraining) {
         // Don't expect any number of dimensions
         Vector3f position = new Vector3f(
             pointData.getValue(0).orElse(0f),
@@ -49,7 +56,7 @@ public class PointManager {
         float depth = (float) InputHandler.getZoom();
 
         float visibleHeight = (float) (2.0f * depth * Math.tan(fov / 2.0f));
-        float visibleWidth = visibleHeight * aspect;
+        float visibleWidth = visibleHeight * aspectRatio;
 
         if(isTraining) {
             scale = 0.05f;
@@ -186,5 +193,13 @@ public class PointManager {
 
     public int getIndicesLength() {
         return indexBuffer.getCount();
+    }
+
+    public void setFov(float fov) {
+        this.fov = fov;
+    }
+
+    public void setAspectRatio(float aspectRatio) {
+        this.aspectRatio = aspectRatio;
     }
 }
