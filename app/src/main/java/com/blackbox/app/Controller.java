@@ -1,9 +1,6 @@
 package com.blackbox.app;
 
-import com.blackbox.app.events.CanvasResize;
-import com.blackbox.app.events.CenterMoved;
-import com.blackbox.app.events.CloseGUI;
-import com.blackbox.app.events.ControllerEvent;
+import com.blackbox.app.events.*;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.generators.CircleGenerator;
@@ -96,6 +93,9 @@ public class Controller {
                 runSampler(model.getActiveModel());
             } else if (event instanceof CenterMoved centerMoved){
                 model.setCanvasCenter(centerMoved.position);
+                runSampler(model.getActiveModel());
+            } else if (event instanceof FovChange fovChange) {
+                model.setCanvasFov(fovChange.fov);
                 runSampler(model.getActiveModel());
             }
         }
@@ -389,10 +389,7 @@ public class Controller {
     }
     
     private float[][] create2DInputGrid() {
-        float fov = (float) Math.toRadians(70);
-        float depth = (float) InputHandler.getZoom();
-
-        float visibleHeight = 2 * depth * (float) Math.tan(fov / 2.0f);
+        float visibleHeight = (float) (2 * InputHandler.getZoom() * (float) Math.tan(model.getCanvasFov() / 2.0f));
         float visibleWidth = visibleHeight * model.getCanvasAspect();
 
         float left = model.getCanvasX() - visibleWidth / 2.0f;

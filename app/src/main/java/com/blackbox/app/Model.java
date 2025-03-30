@@ -51,6 +51,7 @@ public class Model {
     private Vector3f canvasCenter = new Vector3f(0, 0, 0);
     private OnnxModel onnxModel;
     private Sampler sampler;
+    private float canvasFov;
 
     public void setTrainingData(PointData[] data) {
         trainingData = data;
@@ -287,6 +288,14 @@ public class Model {
 
     public void setSampler(Sampler sampler) {
         this.sampler = sampler;
+    }
+
+    public float getCanvasFov() {
+        return canvasFov;
+    }
+
+    public void setCanvasFov(float canvasFov) {
+        this.canvasFov = canvasFov;
     }
 }
 

@@ -1,9 +1,6 @@
 package com.blackbox.graph;
 
-import com.blackbox.app.events.CanvasResize;
-import com.blackbox.app.events.CenterMoved;
-import com.blackbox.app.events.CloseGUI;
-import com.blackbox.app.events.ControllerEvent;
+import com.blackbox.app.events.*;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.graph.Input.InputHandler;
@@ -98,6 +95,7 @@ public class Canvas {
         rendererModel = new Model(width, height);
         renderer = new Renderer(rendererModel);
 
+        controllerEventSink.send(new FovChange(rendererModel.getFov()));
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
             controllerEventSink.send(new CanvasResize(width, height));

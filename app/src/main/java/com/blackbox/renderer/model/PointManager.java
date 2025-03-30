@@ -32,7 +32,7 @@ public class PointManager {
     /**
      * Adds a point using your provided data.
      */
-    public void addPoint(PointData pointData, boolean isTraining, float aspect) {
+    public void addPoint(PointData pointData, boolean isTraining, float aspect, float fov) {
         // Don't expect any number of dimensions
         Vector3f position = new Vector3f(
             pointData.getValue(0).orElse(0f),
@@ -46,7 +46,6 @@ public class PointManager {
             : new Vector3f(brightness, brightness, 1.0f);
 
         float scale;
-        float fov = (float) Math.toRadians(70);
         float depth = (float) InputHandler.getZoom();
 
         float visibleHeight = (float) (2.0f * depth * Math.tan(fov / 2.0f));

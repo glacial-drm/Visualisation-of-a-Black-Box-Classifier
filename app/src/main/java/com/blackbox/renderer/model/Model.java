@@ -15,6 +15,7 @@ public class Model {
     private final HashMap<Class<?>, Shader> shaders = new HashMap<>();
     private final PointManager pointManager;
     private int sWidth, sHeight;
+    private float fov = (float) Math.toRadians(70.0f);
     private Camera camera;
 
     public Model(int width, int height) {
@@ -41,7 +42,7 @@ public class Model {
      * Adds a point (color depends on the label).
      */
     public void addPoint(PointData point, boolean isTraining) {
-        pointManager.addPoint(point, isTraining, (float) sWidth / sWidth);
+        pointManager.addPoint(point, isTraining, (float) sWidth / sWidth, fov);
     }
 
     public void updateSize(int width, int height) {
@@ -70,5 +71,9 @@ public class Model {
      */
     public PointManager getPointManager() {
         return pointManager;
+    }
+
+    public float getFov() {
+        return fov;
     }
 }
