@@ -9,10 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -67,20 +64,6 @@ public class Connector {
      * Returns the absolute path of the server python script.
      */
     private String loadPython() throws IOException {
-        String tmpPath = System.getProperty("java.io.tmpdir") + File.separator + "blackbox-python";
-
-        // Delete old tmp folder
-        if (Path.of(tmpPath).toFile().exists()) {
-            Files.walk(Path.of(tmpPath))
-                .sorted(Comparator.reverseOrder())
-                .forEachOrdered(path -> path.toFile().delete());
-        }
-
-        // Create tmp folder
-        File tmpDir = new File(tmpPath);
-        tmpDir.mkdirs();
-        Logger.info("Created tmp folder at {}", tmpDir.getAbsolutePath());
-
         // All the needed python files
         // Auto generating this from resources was not easy
         String[] paths = new String[] {
@@ -97,15 +80,15 @@ public class Connector {
         for (String path : paths) {
             InputStream input = getClass().getResourceAsStream("/python/" + path);
 
-            File output = new File(tmpDir, path);
-            output.createNewFile();
+            File output = TempManager.createFile(path);
+            if (output == null) continue;
 
             try (FileWriter outputWriter = new FileWriter(output)) {
                 outputWriter.write(new String(input.readAllBytes()));
             }
         }
 
-        return tmpDir.getAbsolutePath() + File.separator + "server.py";
+        return TempManager.path + File.separator + "server.py";
     }
 
     private ProcessBuilder createProcessBuilder(String port) {

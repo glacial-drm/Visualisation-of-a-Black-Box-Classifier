@@ -3,6 +3,10 @@
  */
 package com.blackbox.app;
 
+import java.io.IOException;
+
+import org.tinylog.Logger;
+
 import com.blackbox.app.events.ControllerEvent;
 import com.blackbox.eventqueue.ProducerConsumerPair;
 import com.blackbox.graph.Canvas;
@@ -12,6 +16,13 @@ import javafx.application.Application;
 
 public class App {
     public static void main(String[] args) {
+        try {
+            TempManager.init();
+        } catch (IOException e) {
+            Logger.error("Failed to setup temporary folder: {}", e);
+            System.exit(1);
+        }
+
         // Create 1 directional link from canvas -> controller
         var controllerEventQueue = new ProducerConsumerPair<ControllerEvent>();
         // Create 1 directional link from controller -> canvas
