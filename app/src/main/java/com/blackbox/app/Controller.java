@@ -1,7 +1,6 @@
 package com.blackbox.app;
 
-import com.blackbox.app.events.CloseGUI;
-import com.blackbox.app.events.ControllerEvent;
+import com.blackbox.app.events.*;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.generators.*;
@@ -19,6 +18,7 @@ import com.google.protobuf.GeneratedMessage.Builder;
 import javafx.application.Platform;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -140,18 +140,31 @@ public class Controller {
 
   /**
    * Check for received events and respond to them.
+   *
+   * @returns Unprocessed events for the View
    */
-  public void checkForEvents() {
+  public List<ControllerEvent> checkForEvents() {
+    List<ControllerEvent> viewEvents = null;
+
     while (!eventQueue.isEmpty()) {
       ControllerEvent event = eventQueue.poll();
 
-      if(event == null) {
+      if (event == null) {
         continue;
       }
-      if(event instanceof CloseGUI){
+
+      // Handle event in Controller
+      if (event instanceof CloseGUI) {
         stop();
+      } else {
+        // Handle event in View
+
+        if (viewEvents == null) viewEvents = new ArrayList<>();
+        viewEvents.add(event);
       }
     }
+
+    return viewEvents;
   }
 
   public void closeConnector() {

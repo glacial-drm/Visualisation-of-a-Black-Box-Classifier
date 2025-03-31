@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import org.tinylog.Logger;
 
@@ -26,17 +27,21 @@ import com.google.protobuf.GeneratedMessage.Builder;
  */
 public class Connector {
     private final int port = 50000 + new Random().nextInt(10000);
-    Process server;
-    ManagedChannel channel;
-    ConnectorBlockingStub stub;
+    private Process server;
+    private ManagedChannel channel;
+    private ConnectorBlockingStub stub;
+    private final Consumer<String> onError;
 
-    public Connector() {
+    public Connector(Consumer<String> onError) {
+        this.onError = onError;
+
         try {
             ProcessBuilder serverBuilder = createProcessBuilder(Integer.toString(port));
             if (Logger.isDebugEnabled()) serverBuilder.inheritIO();
             server = serverBuilder.start();
         } catch (Exception e) {
             Logger.error("Can't proceed, failed to start python server: {}", e);
+            onError.accept("Failed to start python server : " + e.getMessage());
             return;
         }
 

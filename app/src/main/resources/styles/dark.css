@@ -63,3 +63,11 @@
     -fx-background-color: -fx-color-hover;
 }
 
+.dialog-pane {
+    -fx-background-color: -fx-color-bg;
+}
+
+.dialog-pane:header .header-panel {
+    -fx-background-color: -fx-color-btn;
+}
+

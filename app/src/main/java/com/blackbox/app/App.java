@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.tinylog.Logger;
 
 import com.blackbox.app.events.ControllerEvent;
+import com.blackbox.app.events.ErrorDialog;
 import com.blackbox.eventqueue.ProducerConsumerPair;
 import com.blackbox.graph.Canvas;
 import com.blackbox.graph.events.CanvasEvent;
@@ -23,14 +24,17 @@ public class App {
             System.exit(1);
         }
 
-        // Create 1 directional link from canvas -> controller
+        // Create 1 directional link from anywhere -> controller
+        // Current event sources are canvas or connector
         var controllerEventQueue = new ProducerConsumerPair<ControllerEvent>();
         // Create 1 directional link from controller -> canvas
         var canvasEventQueue = new ProducerConsumerPair<CanvasEvent>();
 
         // Setup MVC
         Model model = new Model();
-        Connector connector = new Connector();
+        Connector connector = new Connector(message ->
+            controllerEventQueue.producer.send(new ErrorDialog(message))
+        );
         Controller controller = new Controller(
             model,
             controllerEventQueue.consumer,
