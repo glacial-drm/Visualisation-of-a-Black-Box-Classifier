@@ -45,6 +45,7 @@ public class TempManager {
 
     /**
      * Create a new file in the temporary folder.
+     * Proceeds fine if the file already exists.
      *
      * Returns null if the file can't be created.
      */
