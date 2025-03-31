@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +28,7 @@ import com.google.protobuf.GeneratedMessage.Builder;
  * Connects to the python server through GRPC.
  */
 public class Connector {
+    private final Duration connectionTimeout = Duration.ofSeconds(6);
     private final int port = 50000 + new Random().nextInt(10000);
     private Process server;
     private ManagedChannel channel;
@@ -48,12 +51,24 @@ public class Connector {
         channel = Grpc.newChannelBuilder("localhost:" + Integer.toString(port), InsecureChannelCredentials.create())
             .build();
 
+        Instant startTime = Instant.now();
+
         ConnectivityState lastState = null;
         while (lastState != ConnectivityState.READY) {
             ConnectivityState state = channel.getState(true);
             if (state != lastState) {
                 Logger.debug("Server state: {}", state);
                 lastState = state;
+            }
+
+            try {
+                Thread.sleep(Duration.ofMillis(200));
+            } catch (InterruptedException e) {}
+
+            Duration elapsed = Duration.between(startTime, Instant.now());
+            if (elapsed.compareTo(connectionTimeout) >= 0) {
+                onError.accept("Python server failed to start, timed out");
+                return;
             }
         }
 
