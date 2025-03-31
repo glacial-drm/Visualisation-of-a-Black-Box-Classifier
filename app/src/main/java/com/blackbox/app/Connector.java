@@ -30,7 +30,7 @@ import com.google.protobuf.GeneratedMessage.Builder;
 public class Connector {
     private final Duration connectionTimeout = Duration.ofSeconds(6);
     private final int port = 50000 + new Random().nextInt(10000);
-    private Process server;
+    private final Process server;
     private ManagedChannel channel;
     private ConnectorBlockingStub stub;
     private final Consumer<String> onError;
@@ -38,15 +38,8 @@ public class Connector {
     public Connector(Consumer<String> onError) {
         this.onError = onError;
 
-        try {
-            ProcessBuilder serverBuilder = createProcessBuilder(Integer.toString(port));
-            if (Logger.isDebugEnabled()) serverBuilder.inheritIO();
-            server = serverBuilder.start();
-        } catch (Exception e) {
-            Logger.error("Can't proceed, failed to start python server: {}", e);
-            onError.accept("Failed to start python server : " + e.getMessage());
-            return;
-        }
+        server = createProcess();
+        if (server == null) return;
 
         channel = Grpc.newChannelBuilder("localhost:" + Integer.toString(port), InsecureChannelCredentials.create())
             .build();
@@ -111,7 +104,7 @@ public class Connector {
         return TempManager.path + File.separator + "server.py";
     }
 
-    private ProcessBuilder createProcessBuilder(String port) {
+    private Process createProcess() {
         String serverPath;
         try {
             serverPath = loadPython();
@@ -120,12 +113,24 @@ public class Connector {
             return null;
         }
 
-        String os = System.getProperty("os.name");
-        if (os.toLowerCase().contains("windows")) {
-            return new ProcessBuilder("python", serverPath, port);
-        } else {
-            return new ProcessBuilder("python3", serverPath, port);
+        ProcessBuilder builder = new ProcessBuilder(
+            System.getProperty("os.name").toLowerCase().contains("windows")
+                ? "python" : "python3",
+            serverPath,
+            Integer.toString(port)
+        );
+
+        if (Logger.isDebugEnabled()) builder.inheritIO();
+
+        Process process = null;
+        try {
+            process = builder.start();
+        } catch (Exception e) {
+            Logger.error("Can't proceed, failed to start python server: {}", e);
+            onError.accept("Failed to start python server : " + e.getMessage());
         }
+
+        return process;
     }
 
     public String trainModel(Builder<?> request, PointData[] trainingData) {
