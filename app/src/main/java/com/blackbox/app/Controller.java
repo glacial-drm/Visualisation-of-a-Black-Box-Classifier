@@ -205,10 +205,10 @@ public class Controller {
   ///////////////////////////////////////////////////////////////////////////
 
   public GlobalGenOptions getGenOptions() {
-    return model.getGenOptions();
+      return model.getGenOptions();
   }
 
-  public DataGenerator[] getGenerators() {
+    public DataGenerator[] getGenerators() {
     return model.getGenerators();
   }
 
@@ -321,7 +321,6 @@ public class Controller {
         if (onnx == null) {
             return;
         }
-
         Sampler sampler = new Sampler(onnx);
 
         // Log number of model input features.
@@ -421,6 +420,7 @@ public class Controller {
     showTrainingData();
     Logger.info("Sampling");
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
+    model.setActiveModel(path);
     Logger.info("Selected classifier: {}", path);
     runSampler(path);
   }

@@ -37,7 +37,7 @@ public class Model {
     private int selectedGenerator;
     private DataGenerator[] generators;
 
-    public GlobalGenOptions getGetOptions() {
+    public GlobalGenOptions getGenOptions() {
         return genOptions;
     }
 
