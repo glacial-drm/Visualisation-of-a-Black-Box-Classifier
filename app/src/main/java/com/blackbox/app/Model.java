@@ -3,11 +3,13 @@ package com.blackbox.app;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
+import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
+import com.blackbox.model.Sampler;
 import com.google.protobuf.GeneratedMessage.Builder;
+import org.joml.Vector3f;
 
 public class Model {
     ///////////////////////////////////////////////////////////////////////////
@@ -35,7 +37,7 @@ public class Model {
     private int selectedGenerator;
     private DataGenerator[] generators;
 
-    public GlobalGenOptions getGenOptions() {
+    public GlobalGenOptions getGetOptions() {
         return genOptions;
     }
 
@@ -145,5 +147,92 @@ public class Model {
      */
     public void setSelectedClassifier(String selectedClassifier) {
         this.selectedClassifier = selectedClassifier;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///  Resampling and canvas                                                        ///
+    ///////////////////////////////////////////////////////////////////////////
+
+    private int canvasWidth;
+    private int canvasHeight;
+    private String activeModelPath;
+    private double previousZoom;
+    private Vector3f canvasCenter = new Vector3f(0, 0, 0);
+    private OnnxModel onnxModel;
+    private Sampler sampler;
+    private float canvasFov;
+
+
+    public void setCanvasSize(int width, int height) {
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+    }
+
+    public int getCanvasHeight() {
+        return canvasHeight;
+    }
+
+    public int getCanvasWidth() {
+        return canvasWidth;
+    }
+
+    public double getPreviousZoom() {
+        return previousZoom;
+    }
+
+    public void setPreviousZoom(double previousZoom) {
+        this.previousZoom = previousZoom;
+    }
+
+    public void setActiveModel(String path) {
+        activeModelPath = path;
+    }
+
+    public String getActiveModel() {
+        return activeModelPath;
+    }
+
+    public void setCanvasCenter(Vector3f position) {
+        this.canvasCenter = position;
+    }
+
+    public float getCanvasX() {
+        return canvasCenter.x;
+    }
+
+    public float getCanvasAspect() {
+        return (float) canvasWidth / canvasHeight;
+    }
+
+    public float getCanvasY() {
+        return canvasCenter.y;
+    }
+
+    public float getCanvasZ() {
+        return canvasCenter.z;
+    }
+
+    public OnnxModel getOnnxModel() {
+        return onnxModel;
+    }
+
+    public void setOnnxModel(OnnxModel onnxModel) {
+        this.onnxModel = onnxModel;
+    }
+
+    public Sampler getSampler() {
+        return sampler;
+    }
+
+    public void setSampler(Sampler sampler) {
+        this.sampler = sampler;
+    }
+
+    public float getCanvasFov() {
+        return canvasFov;
+    }
+
+    public void setCanvasFov(float canvasFov) {
+        this.canvasFov = canvasFov;
     }
 }

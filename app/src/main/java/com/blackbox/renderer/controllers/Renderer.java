@@ -3,6 +3,8 @@ package com.blackbox.renderer.controllers;
 import com.blackbox.renderer.model.Model;
 import com.blackbox.renderer.model.PointManager;
 import com.blackbox.renderer.model.primitives.Point;
+import org.joml.Vector3f;
+
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
@@ -25,7 +27,10 @@ public class Renderer {
 
     public void renderSetUp(){
         clearScreen();
-        move();
+    }
+
+    public boolean rendererMove() {
+        return move();
     }
 
     /**
@@ -89,7 +94,7 @@ public class Renderer {
 
         Camera camera = model.getCamera();
         if (camera == null) {
-            model.setCamera(new Camera(width, height, 70, 0, 100));
+            model.setCamera(new Camera(width, height, model.getFov(), 0.0001f, 100));
         } else {
             camera.resize(width, height);
         }
@@ -107,9 +112,15 @@ public class Renderer {
     /**
      * Updates the view matrix if the camera has moved.
      */
-    public void move() {
+    public boolean move() {
         if (model.getCamera().move()) {
             uploadViewMatrix();
+            return true;
         }
+        return false;
+    }
+
+    public Vector3f getPosition() {
+        return model.getCamera().getPosition();
     }
 }

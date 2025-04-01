@@ -1,7 +1,6 @@
 package com.blackbox.renderer.model;
 
 import com.blackbox.model.PointData;
-import com.blackbox.renderer.model.PointManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class PointManagerTest {
 
     @Test
     void testInitialState() {
-        PointManager pm = new PointManager();
+        PointManager pm = new PointManager(1, 1);
         // Initially, no points have been added.
         assertEquals(0, pm.getPointCount(), "Initial point count should be 0");
         assertFalse(pm.isPoints(), "isPoints() should return false when no points have been added");
@@ -48,7 +47,7 @@ class PointManagerTest {
 
     @Test
     void testAddSinglePoint() {
-        PointManager pm = new PointManager();
+        PointManager pm = new PointManager(1, 1);
         PointData pd = new PointData(new float[] { 0.1f, 0.2f, 0.2f }, 1);
         pm.addPoint(pd, false);
         assertEquals(1, pm.getPointCount(), "Point count should be 1 after adding one point");
@@ -58,7 +57,7 @@ class PointManagerTest {
 
     @Test
     void testAddMultiplePoints() {
-        PointManager pm = new PointManager();
+        PointManager pm = new PointManager(1, 1);
         int numPoints = 5;
         for (int i = 0; i < numPoints; i++) {
             PointData pd = new PointData(new float[] { 0.1f * i, 0.2f * i,0.2f * i }, i % 2);
@@ -71,8 +70,7 @@ class PointManagerTest {
 
     @Test
     void testIndicesLengthConstant() {
-        PointManager pm = new PointManager();
-
+        PointManager pm = new PointManager(1, 1);
         assertEquals(6, pm.getIndicesLength(), "Index buffer length should always be 6");
 
         for (int i = 0; i < 3; i++) {
@@ -85,12 +83,10 @@ class PointManagerTest {
 
     @Test
     void testPrepPointsBindsVAOAndIndexBuffer() {
-        PointManager pm = new PointManager();
-
+        PointManager pm = new PointManager(1, 1);
         PointData pd = new PointData(new float[] { 0.5f, 0.5f, 0.5f }, 1);
         pm.addPoint(pd, false);
         pm.addPoint(pd, false);
-
 
         pm.prepPoints();
         int vaoBinding = glGetInteger(GL_VERTEX_ARRAY_BINDING);
@@ -102,8 +98,7 @@ class PointManagerTest {
 
     @Test
     void testCleanUpUnbinds() {
-        PointManager pm = new PointManager();
-
+        PointManager pm = new PointManager(1, 1);
         PointData pd = new PointData(new float[] { 0.5f, 0.5f, 0.5f }, 1);
         pm.addPoint(pd, false);
         pm.prepPoints();
@@ -118,8 +113,7 @@ class PointManagerTest {
 
     @Test
     void testPrepPointsWithNoPoints() {
-        PointManager pm = new PointManager();
-        // Without adding any points, call prepPoints().
+        PointManager pm = new PointManager(1, 1);        // Without adding any points, call prepPoints().
         pm.prepPoints();
         int vaoBinding = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         int indexBinding = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
@@ -132,7 +126,7 @@ class PointManagerTest {
 
     @Test
     void testAddAndPrepPointsConsistency() {
-        PointManager pm = new PointManager();
+        PointManager pm = new PointManager(1, 1);
         int initialCount = pm.getPointCount();
         // Add several points.
         for (int i = 0; i < 7; i++) {
