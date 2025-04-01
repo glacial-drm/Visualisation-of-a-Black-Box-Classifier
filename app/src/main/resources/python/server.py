@@ -135,7 +135,7 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
 def serve():
     if len(sys.argv) != 2:
-        print("Invalid args")
+        print("Invalid args", file=sys.stderr)
         print("Usage : server.py <PORT>")
         exit(1)
 
