@@ -53,22 +53,22 @@ public class Sampler {
             inputTensor.close();
 
             OnnxTensor outputTensor = StreamSupport.stream(outputs.spliterator(), false)
-                // This has to be a scope because of Closable
-                .filter(entry -> { return entry.getValue() instanceof OnnxTensor; })
-                .map(entry -> (OnnxTensor) entry.getValue())
-                .filter(tensor -> {
-                    TensorInfo info = tensor.getInfo();
+                    // This has to be a scope because of Closable
+                    .filter(entry -> { return entry.getValue() instanceof OnnxTensor; })
+                    .map(entry -> (OnnxTensor) entry.getValue())
+                    .filter(tensor -> {
+                        TensorInfo info = tensor.getInfo();
 
-                    // Check shape and data type of tensor, for labels the shape should be
-                    // 1 and the data type should either be int[] or long[]
-                    boolean isCorrectShape = info.getShape().length == 1;
-                    boolean isCorrentType = info.type == OnnxJavaType.INT64
-                        || info.type == OnnxJavaType.INT32;
+                        // Check shape and data type of tensor, for labels the shape should be
+                        // 1 and the data type should either be int[] or long[]
+                        boolean isCorrectShape = info.getShape().length == 1;
+                        boolean isCorrentType = info.type == OnnxJavaType.INT64
+                                || info.type == OnnxJavaType.INT32;
 
-                    return isCorrectShape && isCorrentType;
-                })
-                .findFirst()
-                .orElse(null);
+                        return isCorrectShape && isCorrentType;
+                    })
+                    .findFirst()
+                    .orElse(null);
 
             if (outputTensor == null) {
                 Logger.error("Could not retrieve data from output tensor as this was found to be null");

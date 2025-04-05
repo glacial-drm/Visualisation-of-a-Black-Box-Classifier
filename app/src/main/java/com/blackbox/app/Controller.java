@@ -1,15 +1,11 @@
 package com.blackbox.app;
 
-import com.blackbox.app.events.CloseGUI;
-import com.blackbox.app.events.ControllerEvent;
+import com.blackbox.app.events.*;
 import com.blackbox.eventqueue.EventConsumer;
 import com.blackbox.eventqueue.EventProducer;
 import com.blackbox.generators.*;
-import com.blackbox.graph.events.CanvasEvent;
-import com.blackbox.graph.events.ClearPoints;
-import com.blackbox.graph.events.DimensionChange;
-import com.blackbox.graph.events.PointsLoaded;
-import com.blackbox.graph.events.StopEvent;
+import com.blackbox.graph.Input.InputHandler;
+import com.blackbox.graph.events.*;
 import com.blackbox.model.OnnxModel;
 import com.blackbox.model.PointData;
 import com.blackbox.model.Sampler;
@@ -17,6 +13,8 @@ import com.blackbox.proto.connector.*;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 import javafx.application.Platform;
+import javafx.stage.DirectoryChooser;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.util.List;
@@ -138,21 +136,35 @@ public class Controller {
     showTrainingData();
   }
 
-  /**
-   * Check for received events and respond to them.
-   */
-  public void checkForEvents() {
-    while (!eventQueue.isEmpty()) {
-      ControllerEvent event = eventQueue.poll();
+    /**
+     * Check for received events and respond to them.
+     */
+    public void checkForEvents() {
+        while (!eventQueue.isEmpty()) {
+            ControllerEvent event = eventQueue.poll();
 
-      if(event == null) {
-        continue;
-      }
-      if(event instanceof CloseGUI){
-        stop();
-      }
+            if (event == null) {
+                continue;
+            }
+            if (event instanceof CloseGUI) {
+                stop();
+            } else if (event instanceof CanvasResize canvasResize) {
+                model.setCanvasSize(canvasResize.width, canvasResize.height);
+                runSampler(model.getActiveModel());
+            } else if (event instanceof CenterMoved centerMoved){
+                model.setCanvasCenter(centerMoved.position);
+                runSampler(model.getActiveModel());
+            } else if (event instanceof FovChange fovChange) {
+                model.setCanvasFov(fovChange.fov);
+                runSampler(model.getActiveModel());
+            }
+        }
+
+        if(InputHandler.getZoom() != model.getPreviousZoom()){
+            model.setPreviousZoom(InputHandler.getZoom());
+            runSampler(model.getActiveModel());
+        }
     }
-  }
 
   public void closeConnector() {
     connector.close();
@@ -193,10 +205,10 @@ public class Controller {
   ///////////////////////////////////////////////////////////////////////////
 
   public GlobalGenOptions getGenOptions() {
-    return model.getGenOptions();
+      return model.getGenOptions();
   }
 
-  public DataGenerator[] getGenerators() {
+    public DataGenerator[] getGenerators() {
     return model.getGenerators();
   }
 
@@ -219,15 +231,15 @@ public class Controller {
     model.setTrainingData(getSelectedGenerator().buildData(getGenOptions()));
   }
 
-  /**
-   * Show the previously generated training data on the Canvas.
-   * Use in conjunction with {@link #clearPoints()}.
-   */
-  public void showTrainingData() {
-    for (PointData point : model.getTrainingData()) {
-      pointLoaded(point, true);
+    /**
+     * Show the previously generated training data on the Canvas.
+     * Use in conjunction with {@link #clearPoints()}.
+     */
+    public void showTrainingData() {
+        for (PointData point : model.getTrainingData()) {
+            pointLoaded(point, true);
+        }
     }
-  }
 
   /**
    * Get the dimension of the selected generator.
@@ -236,15 +248,15 @@ public class Controller {
     return getSelectedGenerator().getDimension();
   }
 
-  public DataGenerator getGeneratorByName(String name) {
-    DataGenerator target = null;
-    for (DataGenerator generator : model.getGenerators()) {
-      if (generator.getClass().getSimpleName().equals(name)) {
-        target = generator;
-      }
+    public DataGenerator getGeneratorByName(String name) {
+        DataGenerator target = null;
+        for (DataGenerator generator : model.getGenerators()) {
+            if (generator.getClass().getSimpleName().equals(name)) {
+                target = generator;
+            }
+        }
+        return target;
     }
-    return target;
-  }
 
   ///////////////////////////////////////////////////////////////////////////
   ///  Model Training                                                     ///
@@ -254,19 +266,19 @@ public class Controller {
     return model.getTrainingRequests();
   }
 
-  public Builder<?> getTrainingRequestByName(String name) {
-    Builder<?> target = null;
-    for (Builder<?> builder : model.getTrainingRequests()) {
-      if (builder.getDescriptorForType().getName().equals(name)) {
-        target = builder;
-      }
+    public Builder<?> getTrainingRequestByName(String name) {
+        Builder<?> target = null;
+        for (Builder<?> builder : model.getTrainingRequests()) {
+            if (builder.getDescriptorForType().getName().equals(name)) {
+                target = builder;
+            }
+        }
+        return target;
     }
-    return target;
-  }
 
-  public void setSelectedTrainingRequest(int index) {
-    model.setSelectedTrainingRequest(index);
-  }
+    public void setSelectedTrainingRequest(int index) {
+        model.setSelectedTrainingRequest(index);
+    }
 
   /**
    * Trains a model with the currently selected settings and training data.
@@ -300,74 +312,106 @@ public class Controller {
     model.setSelectedClassifier(classifier);
   }
 
-  /**
-   * Run the sampler, sending the output to the event queue.
-   * This makes input data spread across a hard-coded range.
-   */
-  public void runSampler(String path) {
-    OnnxModel onnx;
-    try {
-      onnx = new OnnxModel(path);
-    } catch (Exception err) {
-      System.err.println("ONNX file not found");
-      return;
-    }
-
-    Sampler sampler = new Sampler(onnx);
-
-    // Prepare input data
-
-    //Check number of features of the model
-    int num_features = onnx.getNumInputFeatures();
-    Logger.info("number of features: {}", num_features);
-
-    // Total numbers of points will be resolution * resolution
-    int resolution = 40;
-    // Input data will start be from -range .. +range
-    float range = 3.0f;
-
-    float pointGap = range * 2f / (float) (resolution - 1);
-    // Needed for the outer edge
-    float epsilon = 0.00001f;
-
-    int totalPoints = (int) Math.pow(resolution, num_features);
-
-    float[][] input = new float[totalPoints][num_features];
-
-    int index = 0;
-
-    if(num_features == 3 ) {
-      for (float x = -range; x <= range + epsilon; x += pointGap) {
-        for (float y = -range; y <= range + epsilon; y += pointGap) {
-          for (float z = -range; z <= range + epsilon; z += pointGap) {
-            input[index][0] = x;
-            input[index][1] = y;
-            input[index][2] = z;
-            index++;
-          }
+    public void runSampler(String path) {
+        if (path == null) {
+            return;
         }
-      }
-    }
-    else {
-      for (float x = -range; x <= range + epsilon; x += pointGap) {
-        for (float y = -range; y <= range + epsilon; y += pointGap) {
-          input[index][0] = x;
-          input[index][1] = y;
-          index++;
 
+        OnnxModel onnx = getOrCreateOnnxModel(path);
+        if (onnx == null) {
+            return;
         }
-      }
+        Sampler sampler = new Sampler(onnx);
+
+        // Log number of model input features.
+        int numFeatures = onnx.getNumInputFeatures();
+        Logger.info("Number of features: {}", numFeatures);
+
+        // Prepare the input data.
+        float[][] input;
+        if (numFeatures == 2) {
+            input = create2DInputGrid();
+        } else {
+            input = create3DInputGrid(numFeatures);
+        }
+
+        // Clear canvas and show training data.
+        clearPoints();
+        showTrainingData();
+
+        // Sample points and process them.
+        List<PointData> points = sampler.sampleBC(input);
+        for (PointData point : points) {
+            pointLoaded(point, false);
+        }
     }
 
-    // Get output
-
-    List<PointData> points = sampler.sampleBC(input);
-
-    for (PointData point : points) {
-      pointLoaded(point, false);
+    private OnnxModel getOrCreateOnnxModel(String path) {
+        OnnxModel currentModel = model.getOnnxModel();
+        if (currentModel == null || !path.equals(currentModel.getPath())) {
+            if (currentModel != null) {
+                currentModel.endSession();
+            }
+            try {
+                OnnxModel newModel = new OnnxModel(path);
+                model.setOnnxModel(newModel);
+                return newModel;
+            } catch (Exception e) {
+                Logger.error("Failed to create OnnxModel: {}", e);
+                return null;
+            }
+        }
+        return currentModel;
     }
 
-    onnx.endSession();
+    private float[][] create3DInputGrid(int numFeatures) {
+        // Calculate range based on the inverse zoom factor.
+        float range = (float) InputHandler.getZoom();
+        int resolution = 20;
+        float pointGap = range * 2f / (resolution - 1);
+        float epsilon = 0.00001f;
+
+        int totalPoints = (int) Math.pow(resolution, numFeatures);
+        float[][] input = new float[totalPoints][numFeatures];
+        int index = 0;
+
+        for (float x = -range; x <= range + epsilon; x += pointGap) {
+            for (float y = -range; y <= range + epsilon; y += pointGap) {
+                for (float z = -range; z <= range + epsilon; z += pointGap) {
+                    input[index][0] = x;
+                    input[index][1] = y;
+                    input[index][2] = z;
+                    index++;
+                }
+            }
+        }
+        return input;
+    }
+
+    private float[][] create2DInputGrid() {
+        float visibleHeight = (float) (2 * InputHandler.getZoom() * (float) Math.tan(model.getCanvasFov() / 2.0f));
+        float visibleWidth = visibleHeight * model.getCanvasAspect();
+
+        float left = model.getCanvasX() - visibleWidth / 2.0f;
+        float right = model.getCanvasX() + visibleWidth / 2.0f;
+        float bottom = model.getCanvasY() - visibleHeight / 2.0f;
+        float top = model.getCanvasY() + visibleHeight / 2.0f;
+
+        int xResolution = 20;
+        int yResolution = (int) (20 * model.getCanvasAspect());
+        float[][] input = new float[xResolution * yResolution][2];
+        int index = 0;
+
+        for (int i = 0; i < xResolution; i++) {
+            float x = left + (right - left) * (i / (float) (xResolution - 1));
+            for (int j = 0; j < yResolution; j++) {
+                float y = bottom + (top - bottom) * (j / (float) (yResolution - 1));
+                input[index][0] = x;
+                input[index][1] = y;
+                index++;
+            }
+        }
+        return input;
   }
 
   public void sampleCurrentModel() {
@@ -376,6 +420,7 @@ public class Controller {
     showTrainingData();
     Logger.info("Sampling");
     String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
+    model.setActiveModel(path);
     Logger.info("Selected classifier: {}", path);
     runSampler(path);
   }
