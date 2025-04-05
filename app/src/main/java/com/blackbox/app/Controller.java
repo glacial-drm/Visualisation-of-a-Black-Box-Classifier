@@ -398,7 +398,7 @@ public class Controller {
         float top = model.getCanvasY() + visibleHeight / 2.0f;
 
         int xResolution = 20;
-        int yResolution = 20;
+        int yResolution = (int) (20 * model.getCanvasAspect());
         float[][] input = new float[xResolution * yResolution][2];
         int index = 0;
 
