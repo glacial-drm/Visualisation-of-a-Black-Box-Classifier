@@ -6,6 +6,7 @@ from sklearn import svm
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 import numpy as np
+import sys
 
 # File containing all models available to train data with.
 
@@ -56,8 +57,25 @@ class LRClassifier(TrainModel):
 
         super().__init__("LogisticRegression.onnx", model = model, random_state = random_state, test_size = test_size)
 
+class Logger:
+    def __init__(self, filename):
+        self.terminal = sys.stdout
+        self.log = open(filename, "w")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+        self.log.flush()  # flush for real-time output
+
+    def flush(self):
+        self.terminal.flush()
+        self.log.flush()
+
+
 class MLPClassifierWrapper(TrainModel):
     def __init__(self, activation='relu', solver='adam', alpha=0.0001, hidden_layers=(10,5), random_state=42, test_size=0.2):
-        model = MLPClassifier(activation=activation, solver=solver, alpha=alpha, hidden_layer_sizes=hidden_layers)
+        sys.stdout = Logger("mlp_output.log")
+        
+        model = MLPClassifier(activation=activation, solver=solver, alpha=alpha, hidden_layer_sizes=hidden_layers, verbose=True)
 
         super().__init__("MLPClassifier.onnx", model=model, random_state=random_state, test_size=test_size)
