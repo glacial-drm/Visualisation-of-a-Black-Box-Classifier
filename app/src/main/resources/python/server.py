@@ -31,6 +31,10 @@ def splitIntFloat(value):
     else:
         return value
 
+def parse_hidden_layers(layers : str) -> tuple[int]:
+    # TODO : Add error checking
+    return tuple(int(x.strip()) for x in layers.split(','))
+
 class Connector(connector_pb2_grpc.ConnectorServicer):
     def TrainSvm(self, request: connector_pb2.SvmRequest, context: grpc._server._Context):
         X, y = parsePoints(request.points)
@@ -93,6 +97,22 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
             p = request.p,
             metric = connector_pb2.KNeighborsRequest.Metric.Name(request.metric).lower(),
             n_jobs = request.nJobs
+        )
+
+        model.fit(X, y)
+        model.save(X, y)
+
+        return connector_pb2.ModelResults(onnxPath=model.output_name)
+
+
+    def TrainMLPClassifier(self, request: connector_pb2.MLPClassifierRequest, context: grpc._server._Context):
+        X, y = parsePoints(request.points)
+
+        model = MLPClassifierWrapper(
+            activation=connector_pb2.MLPClassifierRequest.Activation.Name(request.activation).lower(),
+            solver=connector_pb2.MLPClassifierRequest.Solver.Name(request.solver).lower(),
+            alpha=request.alpha,
+            hidden_layers=parse_hidden_layers(request.hidden_layers)
         )
 
         model.fit(X, y)

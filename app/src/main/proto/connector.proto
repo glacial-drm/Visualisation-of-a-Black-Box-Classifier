@@ -12,6 +12,7 @@ service Connector {
   rpc TrainRandomForest (RandomForestRequest) returns (ModelResults);
   rpc TrainKNeighbors (KNeighborsRequest) returns (ModelResults);
   rpc TrainLogisticRegression (LogisticRegressionRequest) returns (ModelResults);
+  rpc TrainMLPClassifier (MLPClassifierRequest) returns (ModelResults);
 }
 
 message Point {
