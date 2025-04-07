@@ -107,6 +107,30 @@ message KNeighborsRequest {
 
 }
 
+message MLPClassifierRequest {
+  Points points = 1;
+
+  enum Activation {
+    relu = 0;
+    identity = 1;
+    logistic = 2;
+    tanh = 3;
+  }
+  Activation activation = 2;
+
+  enum Solver {
+    adam = 0;
+    lbfgs = 1;
+    sgd = 2;
+  }
+
+  Solver solver = 3;
+
+  float alpha = 4;
+
+  string hidden_layers = 5;
+}
+
 message LogisticRegressionRequest {
 
   Points points = 1;
