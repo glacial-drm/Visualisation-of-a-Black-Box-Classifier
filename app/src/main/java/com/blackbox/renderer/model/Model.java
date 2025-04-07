@@ -13,7 +13,9 @@ import java.util.HashMap;
  */
 public class Model {
     private final HashMap<Class<?>, Shader> shaders = new HashMap<>();
-    private final PointManager pointManager;
+    private final PointManager sampledPointManager;
+    private final PointManager trainingPointManager;
+
     private int sWidth, sHeight;
     private float fov = (float) Math.toRadians(70.0f);
     private Camera camera;
@@ -21,7 +23,8 @@ public class Model {
     public Model(int width, int height) {
         this.sWidth = width;
         this.sHeight = height;
-        pointManager = new PointManager((float)width/height, fov);
+        sampledPointManager = new PointManager((float)width/height, fov);
+        trainingPointManager = new PointManager((float)width/height, fov);
         initShaders();
     }
 
@@ -42,14 +45,19 @@ public class Model {
      * Adds a point (color depends on the label).
      */
     public void addPoint(PointData point, boolean isTraining) {
-        pointManager.addPoint(point, isTraining);
+        if(isTraining) {
+            trainingPointManager.addPoint(point, isTraining);
+        } else{
+            sampledPointManager.addPoint(point, isTraining);
+        }
     }
 
     public void updateSize(int width, int height) {
         sWidth = width;
         sHeight = height;
 
-        pointManager.setAspectRatio((float) width / (float) height);
+        trainingPointManager.setAspectRatio((float) width / (float) height);
+        sampledPointManager.setAspectRatio((float) width / (float) height);
     }
 
     public Camera getCamera() {
@@ -71,8 +79,12 @@ public class Model {
     /**
      * Provides access to the point manager.
      */
-    public PointManager getPointManager() {
-        return pointManager;
+    public PointManager getSampledPointManager() {
+        return sampledPointManager;
+    }
+
+    public PointManager getTrainingPointManager() {
+        return trainingPointManager;
     }
 
     public float getFov() {
