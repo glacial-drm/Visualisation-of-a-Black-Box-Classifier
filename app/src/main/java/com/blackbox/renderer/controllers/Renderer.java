@@ -41,19 +41,10 @@ public class Renderer {
 
     public void render(PointManager pointManager) {
         // Get the shader for rendering points.
-        Shader shader = model.getShaders().get(Point.class);
         uploadProjectionMatrix();
         uploadViewMatrix();
 
-        shader.bind();
-
-        // Update per-instance MVP matrices for all points.
-        pointManager.prepPoints();
-        // Render all points
-        glDrawElementsInstanced(GL_TRIANGLES, pointManager.getIndicesLength(),
-                GL_UNSIGNED_INT, 0, pointManager.getPointCount());
-        pointManager.cleanUp();
-        shader.unbind();
+        pointManager.render(model.getShaders());
     }
 
     /**

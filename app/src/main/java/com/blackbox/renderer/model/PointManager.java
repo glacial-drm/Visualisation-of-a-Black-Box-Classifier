@@ -3,6 +3,7 @@ package com.blackbox.renderer.model;
 import com.blackbox.graph.Input.InputHandler;
 import com.blackbox.model.PointData;
 import com.blackbox.renderer.controllers.IndexBuffer;
+import com.blackbox.renderer.controllers.Shader;
 import com.blackbox.renderer.controllers.VertexArray;
 import com.blackbox.renderer.controllers.VertexBuffer;
 import com.blackbox.renderer.model.primitives.Point;
@@ -10,9 +11,13 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
+import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 
 public class PointManager {
     private final List<Point> points;
@@ -201,5 +206,17 @@ public class PointManager {
 
     public void setAspectRatio(float aspectRatio) {
         this.aspectRatio = aspectRatio;
+    }
+
+    public void render(HashMap<Class<?>, Shader> shaders) {
+        Shader shader = shaders.get(Point.class);
+        shader.bind();
+        // Update per-instance MVP matrices for all points.
+        prepPoints();
+        // Render all points
+        glDrawElementsInstanced(GL_TRIANGLES, getIndicesLength(),
+                GL_UNSIGNED_INT, 0, getPointCount());
+        cleanUp();
+        shader.unbind();
     }
 }
