@@ -30,6 +30,25 @@ def splitIntFloat(value):
         return int(round(value))
     else:
         return value
+    
+def parse_hidden_layers(layers: str) -> tuple[int]:
+    if not layers:
+        return ()
+
+    result = []
+    for i, x in enumerate(layers.split(','), start=1):
+        x = x.strip()
+        if not x.isdigit():
+            raise ValueError(f"Invalid layer size at position {i}: '{x}' is not a positive integer")
+        value = int(x)
+        if value <= 0:
+            raise ValueError(f"Layer size at position {i} must be greater than 0 got {value}")
+        result.append(value)
+
+    if not result:
+        raise ValueError("no layers provided")
+
+    return tuple(result)
 
 class Connector(connector_pb2_grpc.ConnectorServicer):
     def TrainSvm(self, request: connector_pb2.SvmRequest, context: grpc._server._Context):
@@ -93,6 +112,22 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
             p = request.p,
             metric = connector_pb2.KNeighborsRequest.Metric.Name(request.metric).lower(),
             n_jobs = request.nJobs
+        )
+
+        model.fit(X, y)
+        model.save(X, y)
+
+        return connector_pb2.ModelResults(onnxPath=model.output_name)
+
+
+    def TrainMLPClassifier(self, request: connector_pb2.MLPClassifierRequest, context: grpc._server._Context):
+        X, y = parsePoints(request.points)
+
+        model = MLPClassifierWrapper(
+            activation=connector_pb2.MLPClassifierRequest.Activation.Name(request.activation).lower(),
+            solver=connector_pb2.MLPClassifierRequest.Solver.Name(request.solver).lower(),
+            alpha=request.alpha,
+            hidden_layers=parse_hidden_layers(request.hidden_layers)
         )
 
         model.fit(X, y)

@@ -12,6 +12,7 @@ service Connector {
   rpc TrainRandomForest (RandomForestRequest) returns (ModelResults);
   rpc TrainKNeighbors (KNeighborsRequest) returns (ModelResults);
   rpc TrainLogisticRegression (LogisticRegressionRequest) returns (ModelResults);
+  rpc TrainMLPClassifier (MLPClassifierRequest) returns (ModelResults);
 }
 
 message Point {
@@ -105,6 +106,30 @@ message KNeighborsRequest {
   Metric metric = 7;
   int32 nJobs = 8;
 
+}
+
+message MLPClassifierRequest {
+  Points points = 1;
+
+  enum Activation {
+    relu = 0;
+    identity = 1;
+    logistic = 2;
+    tanh = 3;
+  }
+  Activation activation = 2;
+
+  enum Solver {
+    adam = 0;
+    lbfgs = 1;
+    sgd = 2;
+  }
+
+  Solver solver = 3;
+
+  float alpha = 4;
+
+  string hidden_layers = 5;
 }
 
 message LogisticRegressionRequest {

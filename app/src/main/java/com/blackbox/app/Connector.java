@@ -90,7 +90,7 @@ public class Connector {
             "SAO.py",
             "server.py",
             "TrainModel.py",
-            "Models.py"
+            "Models.py",
         };
 
         // Copy from resources to the temporary folder
@@ -146,7 +146,11 @@ public class Connector {
         } else if (request instanceof LogisticRegressionRequest.Builder builder) {
             LogisticRegressionRequest modelRequest = builder.setPoints(pointsProto).build();
             res = stub.trainLogisticRegression(modelRequest);
-        } else {
+        } else if (request instanceof MLPClassifierRequest.Builder builder) {
+            MLPClassifierRequest modelRequest = builder.setPoints(pointsProto).build();
+            res = stub.trainMLPClassifier(modelRequest);
+        }
+        else {
             return null;
         }
 
