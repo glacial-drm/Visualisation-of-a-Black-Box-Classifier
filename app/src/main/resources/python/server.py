@@ -7,7 +7,6 @@ import connector_pb2
 import connector_pb2_grpc
 
 import numpy as np
-from logger import Logger
 from Models import *
 
 
@@ -131,10 +130,8 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
             hidden_layers=parse_hidden_layers(request.hidden_layers)
         )
 
-        sys.stdout = Logger("MLPClassifierProgress.log")
         model.fit(X, y)
         model.save(X, y)
-        sys.stdout = sys.__stdout__
 
         return connector_pb2.ModelResults(onnxPath=model.output_name)
 

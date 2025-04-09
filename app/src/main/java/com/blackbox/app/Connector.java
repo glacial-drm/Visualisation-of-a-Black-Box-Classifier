@@ -91,7 +91,6 @@ public class Connector {
             "server.py",
             "TrainModel.py",
             "Models.py",
-                "logger.py"
         };
 
         // Copy from resources to the temporary folder
