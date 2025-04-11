@@ -39,15 +39,13 @@ public class PointLayer {
 
         float visibleHeight = 2.0f * depth * (float) Math.tan(fov / 2.0f);
 
-        float scaleX, scaleY;
+        float scale;
         if (isTraining) {
-            scaleX = 0.05f;
-            scaleY = 0.05f;
+            scale = 0.05f;
         } else {
-            scaleX = visibleHeight / 20.0f;
-            scaleY = visibleHeight / 20.0f;
+            scale = visibleHeight / 20.0f;
         }
-        pointManager.addPoint(new Point(position, new Vector3f(0, 0, 0), scaleX, scaleY, color));
+        pointManager.addPoint(new Point(position, new Vector3f(0, 0, 0), scale, color));
     }
 
     public PointManager getPointManager() {
