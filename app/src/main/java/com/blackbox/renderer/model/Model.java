@@ -16,7 +16,7 @@ public class Model {
         this.sHeight = height;
         float aspectRatio = (float) width / height;
 
-        sampledLayer = new PointLayer(aspectRatio, fov, "vertex.glsl", "fragment.glsl");
+        sampledLayer = new PointLayer(aspectRatio, fov, "vertex.glsl", "square.glsl");
         trainingLayer = new PointLayer(aspectRatio, fov, "vertex.glsl", "fragment.glsl");
     }
 
