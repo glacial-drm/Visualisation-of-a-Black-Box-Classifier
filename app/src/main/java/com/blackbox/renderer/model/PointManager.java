@@ -208,8 +208,7 @@ public class PointManager {
         this.aspectRatio = aspectRatio;
     }
 
-    public void render(HashMap<Class<?>, Shader> shaders) {
-        Shader shader = shaders.get(Point.class);
+    public void render(Shader shader) {
         shader.bind();
         // Update per-instance MVP matrices for all points.
         prepPoints();

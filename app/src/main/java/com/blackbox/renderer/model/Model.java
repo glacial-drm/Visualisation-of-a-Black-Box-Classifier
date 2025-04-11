@@ -2,62 +2,45 @@ package com.blackbox.renderer.model;
 
 import com.blackbox.model.PointData;
 import com.blackbox.renderer.controllers.Camera;
-import com.blackbox.renderer.controllers.Shader;
-import com.blackbox.renderer.model.primitives.Point;
 
-import java.util.HashMap;
-
-/**
- * Stores data which the renderer needs
- * and manages which object handles specific tasks.
- */
 public class Model {
-    private final HashMap<Class<?>, Shader> shaders = new HashMap<>();
-    private final PointManager sampledPointManager;
-    private final PointManager trainingPointManager;
-
     private int sWidth, sHeight;
     private float fov = (float) Math.toRadians(70.0f);
     private Camera camera;
 
+    private final PointLayer sampledLayer;
+    private final PointLayer trainingLayer;
+
     public Model(int width, int height) {
         this.sWidth = width;
         this.sHeight = height;
-        sampledPointManager = new PointManager((float)width/height, fov);
-        trainingPointManager = new PointManager((float)width/height, fov);
-        initShaders();
+        float aspectRatio = (float) width / height;
+
+        sampledLayer = new PointLayer(aspectRatio, fov, "vertex.glsl", "fragment.glsl");
+        trainingLayer = new PointLayer(aspectRatio, fov, "vertex.glsl", "fragment.glsl");
     }
 
     /**
-     * Loads the shader(s) from files and stores them in a hashmap.
-     */
-    private void initShaders() {
-        Shader pointShader = new Shader(true);
-        pointShader.create("vertex.glsl", "fragment.glsl");
-        shaders.put(Point.class, pointShader);
-    }
-
-    public HashMap<Class<?>, Shader> getShaders() {
-        return shaders;
-    }
-
-    /**
-     * Adds a point (color depends on the label).
+     * Adds a point to the appropriate layer.
      */
     public void addPoint(PointData point, boolean isTraining) {
         if(isTraining) {
-            trainingPointManager.addPoint(point, isTraining);
-        } else{
-            sampledPointManager.addPoint(point, isTraining);
+            trainingLayer.addPoint(point, true);
+        } else {
+            sampledLayer.addPoint(point, false);
         }
     }
 
+    /**
+     * Updates the width and height and propagates the aspect ratio change.
+     */
     public void updateSize(int width, int height) {
         sWidth = width;
         sHeight = height;
+        float aspectRatio = (float) width / height;
 
-        trainingPointManager.setAspectRatio((float) width / (float) height);
-        sampledPointManager.setAspectRatio((float) width / (float) height);
+        sampledLayer.updateAspectRatio(aspectRatio);
+        trainingLayer.updateAspectRatio(aspectRatio);
     }
 
     public Camera getCamera() {
@@ -76,18 +59,15 @@ public class Model {
         return sHeight;
     }
 
-    /**
-     * Provides access to the point manager.
-     */
-    public PointManager getSampledPointManager() {
-        return sampledPointManager;
-    }
-
-    public PointManager getTrainingPointManager() {
-        return trainingPointManager;
-    }
-
     public float getFov() {
         return fov;
+    }
+
+    public PointLayer getSampledLayer() {
+        return sampledLayer;
+    }
+
+    public PointLayer getTrainingLayer() {
+        return trainingLayer;
     }
 }
