@@ -187,6 +187,8 @@ public class Canvas {
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;
+            } else if (canvasEvent instanceof SamplingResolutionChanged resolutionChange) {
+                rendererModel.setResolution(resolutionChange.resolution);
             }
         }
     }

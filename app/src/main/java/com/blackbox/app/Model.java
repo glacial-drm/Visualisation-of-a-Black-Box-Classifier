@@ -161,6 +161,7 @@ public class Model {
     private OnnxModel onnxModel;
     private Sampler sampler;
     private float canvasFov;
+    private int samplingResolution = 20;
 
 
     public void setCanvasSize(int width, int height) {
@@ -234,5 +235,9 @@ public class Model {
 
     public void setCanvasFov(float canvasFov) {
         this.canvasFov = canvasFov;
+    }
+
+    public int getSamplingResolution() {
+        return samplingResolution;
     }
 }

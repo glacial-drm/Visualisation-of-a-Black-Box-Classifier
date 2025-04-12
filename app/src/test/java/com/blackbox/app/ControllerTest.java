@@ -178,7 +178,7 @@ class ControllerTest {
 
         controller.sampleCurrentModel();
 
-        verify(canvasEventSink, times(1)).send(any(ClearPoints.class));
+        verify(canvasEventSink, times(2)).send(any(ClearPoints.class));
         verify(model, times(1)).getCurrentDir();
         verify(model, times(1)).getSelectedClassifier();
     }

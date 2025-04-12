@@ -10,6 +10,7 @@ public class Model {
 
     private final PointLayer sampledLayer;
     private final PointLayer trainingLayer;
+    private int samplingResolution;
 
     public Model(int width, int height) {
         this.sWidth = width;
@@ -25,9 +26,9 @@ public class Model {
      */
     public void addPoint(PointData point, boolean isTraining) {
         if(isTraining) {
-            trainingLayer.addPoint(point, true);
+            trainingLayer.addPoint(point, true, samplingResolution);
         } else {
-            sampledLayer.addPoint(point, false);
+            sampledLayer.addPoint(point, false, samplingResolution);
         }
     }
 
@@ -69,5 +70,13 @@ public class Model {
 
     public PointLayer getTrainingLayer() {
         return trainingLayer;
+    }
+
+    public void setResolution(int resolution) {
+        samplingResolution = resolution;
+    }
+
+    public int getSamplingResolution() {
+        return samplingResolution;
     }
 }

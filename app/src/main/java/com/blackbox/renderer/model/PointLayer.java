@@ -22,7 +22,7 @@ public class PointLayer {
         shader.create(vertexShaderPath, fragmentShaderPath);
     }
 
-    public void addPoint(PointData pointData, boolean isTraining) {
+    public void addPoint(PointData pointData, boolean isTraining, int samplingResolution) {
         // Don't expect any number of dimensions
         Vector3f position = new Vector3f(
                 pointData.getValue(0).orElse(0f),
@@ -43,7 +43,7 @@ public class PointLayer {
         if (isTraining) {
             scale = 0.05f;
         } else {
-            scale = visibleHeight / 20.0f;
+            scale = visibleHeight / (float)samplingResolution;
         }
         pointManager.addPoint(new Point(position, new Vector3f(0, 0, 0), scale, color));
     }
