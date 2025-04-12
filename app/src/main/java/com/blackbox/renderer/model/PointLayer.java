@@ -41,7 +41,7 @@ public class PointLayer {
 
         float scale;
         if (isTraining) {
-            scale = 0.05f;
+            scale = (float) Math.min(0.05, Math.abs(visibleHeight * 0.02f));
         } else {
             scale = visibleHeight / (float)samplingResolution;
         }
