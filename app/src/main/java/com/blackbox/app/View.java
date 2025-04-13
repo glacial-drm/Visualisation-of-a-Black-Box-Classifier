@@ -80,8 +80,6 @@ public class View extends Application {
         dialog.getDialogPane().setMaxHeight(250);
 
         Label label = new Label(errorDialog.message);
-        label.setMaxHeight(Double.MAX_VALUE);
-        label.setMinHeight(250);
         label.setWrapText(true);
 
         ScrollPane scrollPane = new ScrollPane(label);
