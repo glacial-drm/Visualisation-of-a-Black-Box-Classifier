@@ -23,6 +23,7 @@ public class OnnxModel {
 
     private final OrtEnvironment environment;
     private final OrtSession session;
+    private final String path;
 
     // Create the environment from a path to an ONNX file.
     public OnnxModel(String filePath) throws FileNotFoundException {
@@ -30,6 +31,7 @@ public class OnnxModel {
             this.environment = OrtEnvironment.getEnvironment();
             environment.setTelemetry(false);
             this.session = environment.createSession(filePath, new OrtSession.SessionOptions());
+            this.path = filePath;
             Logger.info("Created environment and session for onnx file");
         } catch (Exception e) {
             Logger.error("Onnx file for creating environment could not be found: {}", e);
@@ -147,5 +149,9 @@ public class OnnxModel {
         }
 
         return Optional.of(points);
+    }
+
+    public String getPath() {
+        return path;
     }
 }

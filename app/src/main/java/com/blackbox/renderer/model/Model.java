@@ -15,12 +15,13 @@ public class Model {
     private final HashMap<Class<?>, Shader> shaders = new HashMap<>();
     private final PointManager pointManager;
     private int sWidth, sHeight;
+    private float fov = (float) Math.toRadians(70.0f);
     private Camera camera;
 
     public Model(int width, int height) {
         this.sWidth = width;
         this.sHeight = height;
-        pointManager = new PointManager();
+        pointManager = new PointManager((float)width/height, fov);
         initShaders();
     }
 
@@ -47,6 +48,8 @@ public class Model {
     public void updateSize(int width, int height) {
         sWidth = width;
         sHeight = height;
+
+        pointManager.setAspectRatio((float) width / (float) height);
     }
 
     public Camera getCamera() {
@@ -70,5 +73,9 @@ public class Model {
      */
     public PointManager getPointManager() {
         return pointManager;
+    }
+
+    public float getFov() {
+        return fov;
     }
 }
