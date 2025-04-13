@@ -80,16 +80,17 @@ public class View extends Application {
         dialog.getDialogPane().setMaxHeight(250);
 
         Label label = new Label(errorDialog.message);
-        label.setMaxWidth(Double.MAX_VALUE);
         label.setMaxHeight(Double.MAX_VALUE);
         label.setMinHeight(250);
         label.setWrapText(true);
 
         ScrollPane scrollPane = new ScrollPane(label);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setFitToWidth(true);
         scrollPane.minHeight(250);
-        dialog.getDialogPane().setContent(label);
+        scrollPane.setPadding(new Insets(4, 16, 4, 4));
+        dialog.getDialogPane().setContent(scrollPane);
 
         dialog.setHeaderText("Error");
         dialog.getDialogPane().getButtonTypes()

@@ -71,3 +71,7 @@
     -fx-background-color: -fx-color-btn;
 }
 
+.dialog-pane .content {
+    -fx-background-color: -fx-color-bg;
+}
+
