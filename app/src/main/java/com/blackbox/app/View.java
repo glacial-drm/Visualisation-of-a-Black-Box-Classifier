@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
@@ -75,10 +76,22 @@ public class View extends Application {
         // Inherit styling and other things
         dialog.initOwner(Stage.getWindows().getFirst());
         dialog.setTitle("UON Blackbox - Error");
+        dialog.getDialogPane().setMaxWidth(400);
+        dialog.getDialogPane().setMaxHeight(250);
 
-        // Set content
+        Label label = new Label(errorDialog.message);
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setMaxHeight(Double.MAX_VALUE);
+        label.setMinHeight(250);
+        label.setWrapText(true);
+
+        ScrollPane scrollPane = new ScrollPane(label);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.minHeight(250);
+        dialog.getDialogPane().setContent(label);
+
         dialog.setHeaderText("Error");
-        dialog.setContentText(errorDialog.message);
         dialog.getDialogPane().getButtonTypes()
             .add(new ButtonType("Ok", ButtonData.OK_DONE));
 
