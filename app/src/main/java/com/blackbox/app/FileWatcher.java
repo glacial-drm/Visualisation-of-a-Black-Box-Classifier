@@ -29,7 +29,7 @@ public class FileWatcher {
     /**
      * Callback for when the file has changed.
      */
-    private final Consumer<String> onChange;
+    protected Consumer<String> onChange;
 
     /**
      * The watcher.

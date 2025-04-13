@@ -13,7 +13,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -22,7 +21,6 @@ import org.tinylog.Logger;
 import com.blackbox.model.PointData;
 import com.blackbox.proto.connector.*;
 import com.blackbox.proto.connector.ConnectorGrpc.ConnectorBlockingStub;
-import com.google.common.collect.Streams;
 import com.google.protobuf.GeneratedMessage.Builder;
 
 
@@ -42,11 +40,7 @@ public class Connector {
     public Connector(Consumer<String> onError) {
         this.onError = onError;
 
-        watcher = new FileWatcher(TempManager.createFile(serverErrName).toPath(), contents -> {
-            Optional<String> errorOptional = Streams.findLast(contents.lines());
-            if (errorOptional.isEmpty()) return;
-            String error = errorOptional.get();
-
+        watcher = new ChangeFileWatcher(TempManager.createFile(serverErrName).toPath(), error -> {
             if (error.contains("warnings.warn")) return;
             onError.accept(error);
         });
