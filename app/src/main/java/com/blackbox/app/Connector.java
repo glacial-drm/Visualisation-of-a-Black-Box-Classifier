@@ -4,6 +4,7 @@ import io.grpc.ConnectivityState;
 import io.grpc.Grpc;
 import io.grpc.InsecureChannelCredentials;
 import io.grpc.ManagedChannel;
+import io.grpc.StatusRuntimeException;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -148,22 +149,27 @@ public class Connector {
 
         ModelResults res;
 
-        if (request instanceof SvmRequest.Builder svm) {
-            SvmRequest modelRequest = svm.setPoints(pointsProto).build();
-            res = stub.trainSvm(modelRequest);
-        } else if (request instanceof DecisionTreeRequest.Builder builder) {
-            DecisionTreeRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainDecisionTree(modelRequest);
-        } else if (request instanceof RandomForestRequest.Builder builder) {
-            RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainRandomForest(modelRequest);
-        } else if (request instanceof KNeighborsRequest.Builder builder) {
-            KNeighborsRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainKNeighbors(modelRequest);
-        } else if (request instanceof LogisticRegressionRequest.Builder builder) {
-            LogisticRegressionRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainLogisticRegression(modelRequest);
-        } else {
+        try {
+            if (request instanceof SvmRequest.Builder svm) {
+                SvmRequest modelRequest = svm.setPoints(pointsProto).build();
+                res = stub.trainSvm(modelRequest);
+            } else if (request instanceof DecisionTreeRequest.Builder builder) {
+                DecisionTreeRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainDecisionTree(modelRequest);
+            } else if (request instanceof RandomForestRequest.Builder builder) {
+                RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainRandomForest(modelRequest);
+            } else if (request instanceof KNeighborsRequest.Builder builder) {
+                KNeighborsRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainKNeighbors(modelRequest);
+            } else if (request instanceof LogisticRegressionRequest.Builder builder) {
+                LogisticRegressionRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainLogisticRegression(modelRequest);
+            } else {
+                return null;
+            }
+        } catch (StatusRuntimeException e) {
+            onError.accept("Error training model : " + e.getMessage());
             return null;
         }
 
