@@ -13,7 +13,7 @@ public class ChangeFileWatcher extends FileWatcher {
     public ChangeFileWatcher(Path path, Consumer<String> userOnChange) {
         super(path, s -> {});
         onChange = contents -> {
-            String change = contents.substring(previousContentsLen);
+            String change = contents.substring(previousContentsLen).trim();
             if (change.isBlank()) return;
             userOnChange.accept(change);
             previousContentsLen = contents.length();
