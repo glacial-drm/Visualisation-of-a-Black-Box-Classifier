@@ -43,7 +43,8 @@ public class PointLayer {
         if (isTraining) {
             scale = (float) Math.min(0.05, Math.abs(visibleHeight * 0.02f));
         } else {
-            scale = visibleHeight / (float)samplingResolution;
+            // small scaling factor to remove extra lines
+            scale = (visibleHeight / (float)samplingResolution) * 1.1f;
         }
         pointManager.addPoint(new Point(position, new Vector3f(0, 0, 0), scale, color));
     }
