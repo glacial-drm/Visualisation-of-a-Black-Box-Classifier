@@ -38,8 +38,11 @@ class RFClassifier(TrainModel):
         super().__init__("RandomForest.onnx", model = model, random_state = random_state, test_size = test_size)
 
 class SVMClassifier(TrainModel):
-    def __init__(self, kernel='rbf', degree=3, C=1.0, gamma='scale', test_size=0.2, random_state=42):
-        model = svm.SVC(kernel=kernel, degree=degree, C=C, gamma=gamma, probability=True)
+    def __init__(self, C=1.0, kernel='rbf', degree=3, gamma='scale', coef0=0.0, shrinking=True,
+                 probability=False, tol=0.001, cache_size=200, max_iter=-1, break_ties=False, test_size=0.2, random_state=42):
+        model = svm.SVC(C=C, kernel=kernel, degree=degree, gamma=gamma, coef0=coef0,
+                        shrinking=shrinking, probability=probability, tol=tol, cache_size=cache_size,
+                        max_iter=max_iter, break_ties=break_ties, random_state=random_state)
 
         super().__init__("SVM.onnx", model = model, random_state = random_state, test_size = test_size)
 

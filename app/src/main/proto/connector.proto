@@ -26,15 +26,34 @@ message Points {
 message SvmRequest {
   Points points = 1;
 
+  float c = 2;
+
   enum Kernel {
     LINEAR = 0;
     POLY = 1;
     RBF = 2;
     SIGMOID = 3;
   }
-  Kernel kernel = 2;
+  Kernel kernel = 3;
 
-  int32 polyDegree = 3;
+  int32 polyDegree = 4;
+
+  enum Gamma {
+    SCALE = 0;
+    AUTO = 1;
+    VALUE = 2;
+  }
+  Gamma gamma = 5;
+  float gammaVal = 6;
+
+  float coef0 = 7;
+  bool shrinking = 8;
+  bool probability = 9;
+  float tol = 10;
+  float cacheSize = 11;
+  int32 maxIter = 12;
+  bool breakTies = 13;
+  int32 randomState = 14;
 }
 
 // Used by both decision trees and random forest
