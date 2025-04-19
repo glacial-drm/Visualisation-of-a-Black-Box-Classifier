@@ -76,10 +76,10 @@ public class View extends Application {
         dialog.initOwner(Stage.getWindows().getFirst());
         dialog.setTitle("UON Blackbox - Error");
         dialog.getDialogPane().setMaxWidth(400);
-        dialog.getDialogPane().setMaxHeight(250);
 
         Label label = new Label(errorDialog.message);
         label.setWrapText(true);
+        label.setPadding(new Insets(0, 0, 16, 0));
 
         ScrollPane scrollPane = new ScrollPane(label);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
