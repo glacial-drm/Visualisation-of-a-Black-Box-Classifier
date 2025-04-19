@@ -139,6 +139,30 @@ protobuf {
     }
 }
 
+tasks.register<Exec>("pythonBuild") {
+    // Set the working directory to the project root
+    workingDir = project.rootDir
+
+    val osName = System.getProperty("os.name").lowercase()
+    val pythonExecutable = if (osName.contains("win")) "python" else "python3"
+
+    // run python script
+    commandLine(pythonExecutable, "app/src/main/resources/python/build.py")
+
+    // Declare inputs and outputs
+    // This means the task is only run when the inputs have changed
+    inputs.dir("src/main/proto")
+    inputs.file("src/main/resources/python/precheck.py")
+    inputs.file("src/main/resources/python/build.py")
+    outputs.dir("src/main/resources/python")
+}
+
+// This needs to happen before the jar is packaged,
+// as we want the python built into the jar
+tasks.named("processResources") {
+    dependsOn("pythonBuild")
+}
+
 tasks.register<Exec>("pythonPrechecks") {
     // Set the working directory to the project root
     workingDir = project.rootDir
