@@ -43,6 +43,9 @@ public class Connector {
 
         watcher = new ChangeFileWatcher(TempManager.createFile(serverErrName).toPath(), error -> {
             if (error.contains("warnings.warn")) return;
+            // This error causes a gRPC exception in Java,
+            // so doesn't need to be forwarded from stderr as well
+            if (error.contains("ERROR:grpc._server:Exception calling application")) return;
             onError.accept(error);
         });
         watcher.start();
