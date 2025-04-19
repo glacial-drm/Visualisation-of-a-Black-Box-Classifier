@@ -172,7 +172,8 @@ public class Connector {
                 return null;
             }
         } catch (StatusRuntimeException e) {
-            onError.accept("Error training model : " + e.getMessage());
+            String msg = e.getMessage().split("Exception calling application: ")[1];
+            onError.accept("Error training model : " + msg);
             return null;
         }
 
