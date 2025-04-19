@@ -155,6 +155,9 @@ tasks.register<Exec>("pythonBuild") {
     inputs.file("src/main/resources/python/precheck.py")
     inputs.file("src/main/resources/python/build.py")
     outputs.dir("src/main/resources/python")
+
+    // Don't run in CI
+    onlyIf { System.getenv("SKIP_PYTHON_BUILD") != "1" }
 }
 
 // This needs to happen before the jar is packaged,
