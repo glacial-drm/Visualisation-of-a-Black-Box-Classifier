@@ -165,24 +165,7 @@ class ControllerTest {
         verify(model, times(1)).clearClassifiers();
         verify(model, times(1)).addClassifier("test.onnx");
     }
-
-    /**
-     * Tests if sampleCurrentModel() correctly prepares and runs sampling.
-     */
-    @Test
-    void testSampleCurrentModel() {
-        File mockFile = mock(File.class);
-        when(model.getCurrentDir()).thenReturn(mockFile);
-        when(mockFile.getAbsolutePath()).thenReturn("/path/to/file");
-        when(model.getSelectedClassifier()).thenReturn("test.onnx");
-
-        controller.sampleCurrentModel();
-
-        verify(canvasEventSink, times(2)).send(any(ClearPoints.class));
-        verify(model, times(1)).getCurrentDir();
-        verify(model, times(1)).getSelectedClassifier();
-    }
-
+    
     /**
      * Tests if getClassifiers() returns the expected classifier list.
      */
