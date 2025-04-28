@@ -4,6 +4,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import svm
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 # File containing all models available to train data with.
@@ -57,3 +58,9 @@ class LRClassifier(TrainModel):
                                    warm_start = warm_start, n_jobs = n_jobs)
 
         super().__init__("LogisticRegression.onnx", model = model, random_state = random_state, test_size = test_size)
+
+class MLPClassifierWrapper(TrainModel):
+    def __init__(self, activation='relu', solver='adam', alpha=0.0001, hidden_layers=(10,5), random_state=42, test_size=0.2):        
+        model = MLPClassifier(activation=activation, solver=solver, alpha=alpha, hidden_layer_sizes=hidden_layers, verbose=True)
+
+        super().__init__("MLPClassifier.onnx", model=model, random_state=random_state, test_size=test_size)
