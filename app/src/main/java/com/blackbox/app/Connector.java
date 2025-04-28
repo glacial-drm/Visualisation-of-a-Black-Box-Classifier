@@ -4,17 +4,18 @@ import io.grpc.ConnectivityState;
 import io.grpc.Grpc;
 import io.grpc.InsecureChannelCredentials;
 import io.grpc.ManagedChannel;
+import io.grpc.StatusRuntimeException;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import org.tinylog.Logger;
 
@@ -28,23 +29,34 @@ import com.google.protobuf.GeneratedMessage.Builder;
  * Connects to the python server through GRPC.
  */
 public class Connector {
+    private final String serverErrName = "server-err.txt";
+    private final Duration connectionTimeout = Duration.ofSeconds(6);
     private final int port = 50000 + new Random().nextInt(10000);
-    Process server;
-    ManagedChannel channel;
-    ConnectorBlockingStub stub;
+    private final Process server;
+    private ManagedChannel channel;
+    private ConnectorBlockingStub stub;
+    private final Consumer<String> onError;
+    private FileWatcher watcher;
 
-    public Connector() {
-        try {
-            ProcessBuilder serverBuilder = createProcessBuilder(Integer.toString(port));
-            if (Logger.isDebugEnabled()) serverBuilder.inheritIO();
-            server = serverBuilder.start();
-        } catch (Exception e) {
-            Logger.error("Can't proceed, failed to start python server: {}", e);
-            return;
-        }
+    public Connector(Consumer<String> onError) {
+        this.onError = onError;
+
+        watcher = new ChangeFileWatcher(TempManager.createFile(serverErrName).toPath(), error -> {
+            if (error.contains("warnings.warn")) return;
+            // This error causes a gRPC exception in Java,
+            // so doesn't need to be forwarded from stderr as well
+            if (error.contains("ERROR:grpc._server:Exception calling application")) return;
+            onError.accept(error);
+        });
+        watcher.start();
+
+        server = createProcess();
+        if (server == null) return;
 
         channel = Grpc.newChannelBuilder("localhost:" + Integer.toString(port), InsecureChannelCredentials.create())
             .build();
+
+        Instant startTime = Instant.now();
 
         ConnectivityState lastState = null;
         while (lastState != ConnectivityState.READY) {
@@ -52,6 +64,16 @@ public class Connector {
             if (state != lastState) {
                 Logger.debug("Server state: {}", state);
                 lastState = state;
+            }
+
+            try {
+                Thread.sleep(Duration.ofMillis(200));
+            } catch (InterruptedException e) {}
+
+            Duration elapsed = Duration.between(startTime, Instant.now());
+            if (elapsed.compareTo(connectionTimeout) >= 0) {
+                onError.accept("Python server failed to start, timed out");
+                return;
             }
         }
 
@@ -67,20 +89,6 @@ public class Connector {
      * Returns the absolute path of the server python script.
      */
     private String loadPython() throws IOException {
-        String tmpPath = System.getProperty("java.io.tmpdir") + File.separator + "blackbox-python";
-
-        // Delete old tmp folder
-        if (Path.of(tmpPath).toFile().exists()) {
-            Files.walk(Path.of(tmpPath))
-                .sorted(Comparator.reverseOrder())
-                .forEachOrdered(path -> path.toFile().delete());
-        }
-
-        // Create tmp folder
-        File tmpDir = new File(tmpPath);
-        tmpDir.mkdirs();
-        Logger.info("Created tmp folder at {}", tmpDir.getAbsolutePath());
-
         // All the needed python files
         // Auto generating this from resources was not easy
         String[] paths = new String[] {
@@ -97,18 +105,18 @@ public class Connector {
         for (String path : paths) {
             InputStream input = getClass().getResourceAsStream("/python/" + path);
 
-            File output = new File(tmpDir, path);
-            output.createNewFile();
+            File output = TempManager.createFile(path);
+            if (output == null) continue;
 
             try (FileWriter outputWriter = new FileWriter(output)) {
                 outputWriter.write(new String(input.readAllBytes()));
             }
         }
 
-        return tmpDir.getAbsolutePath() + File.separator + "server.py";
+        return TempManager.path + File.separator + "server.py";
     }
 
-    private ProcessBuilder createProcessBuilder(String port) {
+    private Process createProcess() {
         String serverPath;
         try {
             serverPath = loadPython();
@@ -117,12 +125,25 @@ public class Connector {
             return null;
         }
 
-        String os = System.getProperty("os.name");
-        if (os.toLowerCase().contains("windows")) {
-            return new ProcessBuilder("python", serverPath, port);
-        } else {
-            return new ProcessBuilder("python3", serverPath, port);
+        ProcessBuilder builder = new ProcessBuilder(
+            System.getProperty("os.name").toLowerCase().contains("windows")
+                ? "python" : "python3",
+            serverPath,
+            Integer.toString(port)
+        );
+
+        if (Logger.isDebugEnabled()) builder.inheritIO();
+        builder.redirectError(TempManager.createFile(serverErrName));
+
+        Process process = null;
+        try {
+            process = builder.start();
+        } catch (Exception e) {
+            Logger.error("Can't proceed, failed to start python server: {}", e);
+            onError.accept("Failed to start python server : " + e.getMessage());
         }
+
+        return process;
     }
 
     public String trainModel(Builder<?> request, PointData[] trainingData) {
@@ -131,26 +152,32 @@ public class Connector {
 
         ModelResults res;
 
-        if (request instanceof SvmRequest.Builder svm) {
-            SvmRequest modelRequest = svm.setPoints(pointsProto).build();
-            res = stub.trainSvm(modelRequest);
-        } else if (request instanceof DecisionTreeRequest.Builder builder) {
-            DecisionTreeRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainDecisionTree(modelRequest);
-        } else if (request instanceof RandomForestRequest.Builder builder) {
-            RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainRandomForest(modelRequest);
-        } else if (request instanceof KNeighborsRequest.Builder builder) {
-            KNeighborsRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainKNeighbors(modelRequest);
-        } else if (request instanceof LogisticRegressionRequest.Builder builder) {
-            LogisticRegressionRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainLogisticRegression(modelRequest);
-        } else if (request instanceof MLPClassifierRequest.Builder builder) {
-            MLPClassifierRequest modelRequest = builder.setPoints(pointsProto).build();
-            res = stub.trainMLPClassifier(modelRequest);
-        }
-        else {
+        try {
+            if (request instanceof SvmRequest.Builder svm) {
+                SvmRequest modelRequest = svm.setPoints(pointsProto).build();
+                res = stub.trainSvm(modelRequest);
+            } else if (request instanceof DecisionTreeRequest.Builder builder) {
+                DecisionTreeRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainDecisionTree(modelRequest);
+            } else if (request instanceof RandomForestRequest.Builder builder) {
+                RandomForestRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainRandomForest(modelRequest);
+            } else if (request instanceof KNeighborsRequest.Builder builder) {
+                KNeighborsRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainKNeighbors(modelRequest);
+            } else if (request instanceof LogisticRegressionRequest.Builder builder) {
+                LogisticRegressionRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainLogisticRegression(modelRequest);
+            }  else if (request instanceof MLPClassifierRequest.Builder builder) {
+                MLPClassifierRequest modelRequest = builder.setPoints(pointsProto).build();
+                res = stub.trainMLPClassifier(modelRequest);
+            }
+            else {
+                return null;
+            }
+        } catch (StatusRuntimeException e) {
+            String msg = e.getMessage().split("Exception calling application: ")[1];
+            onError.accept("Error training model : " + msg);
             return null;
         }
 
@@ -166,6 +193,7 @@ public class Connector {
     }
 
     public void close() {
+        watcher.stop();
         server.destroy();
     }
 }

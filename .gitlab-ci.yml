@@ -10,6 +10,7 @@ build:
     - |
       export GRADLE_USER_HOME="$(pwd)/.gradle";
       export ENFORCE_VENDOR=1;
+      export SKIP_PYTHON_BUILD=1;
       # Build all the code including tests, without running the tests
       ./entrypoint.sh "./gradlew build testClasses -x test";
   cache:
@@ -25,6 +26,7 @@ test:
     - |
       export GRADLE_USER_HOME="$(pwd)/.gradle";
       export ENFORCE_VENDOR=1;
+      export SKIP_PYTHON_BUILD=1;
       # Run all the tests
       ./entrypoint.sh "./gradlew check";
   cache:
