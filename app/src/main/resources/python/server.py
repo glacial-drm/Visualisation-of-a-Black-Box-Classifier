@@ -37,12 +37,20 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
         kernel = connector_pb2.SvmRequest.Kernel.Name(request.kernel).lower()
 
         model = SVMClassifier(
-            kernel,
+            C = request.c,
+            kernel = kernel,
             degree = request.polyDegree,
-            C=1.0,
-            gamma="scale",
-            test_size=0.2,
-            random_state=42
+            gamma = request.gammaVal
+                if request.gamma == connector_pb2.SvmRequest.Gamma.VALUE
+                else connector_pb2.SvmRequest.Gamma.Name(request.gamma).lower(),
+            coef0 = request.coef0,
+            shrinking = request.shrinking,
+            probability = request.probability,
+            tol = request.tol,
+            cache_size = request.cacheSize,
+            max_iter = request.maxIter,
+            break_ties = request.breakTies,
+            random_state = request.randomState,
         )
         model.fit(X, y)
         model.save(X, y)
@@ -135,7 +143,7 @@ class Connector(connector_pb2_grpc.ConnectorServicer):
 
 def serve():
     if len(sys.argv) != 2:
-        print("Invalid args")
+        print("Invalid args", file=sys.stderr)
         print("Usage : server.py <PORT>")
         exit(1)
 

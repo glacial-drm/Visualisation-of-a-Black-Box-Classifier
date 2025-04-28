@@ -15,6 +15,7 @@ import javafx.application.Platform;
 import org.tinylog.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,39 +121,53 @@ public class Controller {
         showTrainingData();
     }
 
-    /**
-     * Check for received events and respond to them.
-     */
-    public void checkForEvents() {
-        while (!eventQueue.isEmpty()) {
-            ControllerEvent event = eventQueue.poll();
+  /**
+   * Check for received events and respond to them.
+   *
+   * @returns Unprocessed events for the View
+   */
+  public List<ControllerEvent> checkForEvents() {
+    List<ControllerEvent> viewEvents = null;
 
-            if (event == null) {
-                continue;
-            }
-            if (event instanceof CloseGUI) {
-                stop();
-            } else if (event instanceof CanvasResize canvasResize) {
-                model.setCanvasSize(canvasResize.width, canvasResize.height);
-                canvasChange(model.getActiveModel());
-            } else if (event instanceof CenterMoved centerMoved) {
-                model.setCanvasCenter(centerMoved.position);
-                canvasChange(model.getActiveModel());
-            } else if (event instanceof FovChange fovChange) {
-                model.setCanvasFov(fovChange.fov);
-                canvasChange(model.getActiveModel());
-            }
-        }
+    while (!eventQueue.isEmpty()) {
+      ControllerEvent event = eventQueue.poll();
 
-        if (InputHandler.getZoom() != model.getPreviousZoom()) {
-            model.setPreviousZoom(InputHandler.getZoom());
-            canvasChange(model.getActiveModel());
-        }
+      if (event == null) {
+        continue;
+      }
+
+      // Handle event in Controller
+      if (event instanceof CloseGUI) {
+        stop();
+      } else if (event instanceof CanvasResize canvasResize) {
+        model.setCanvasSize(canvasResize.width, canvasResize.height);
+        runSampler(model.getActiveModel());
+      } else if (event instanceof CenterMoved centerMoved){
+        model.setCanvasCenter(centerMoved.position);
+        runSampler(model.getActiveModel());
+      } else if (event instanceof FovChange fovChange) {
+        model.setCanvasFov(fovChange.fov);
+        runSampler(model.getActiveModel());
+      } else {
+        // Handle event in View
+
+        if (viewEvents == null) viewEvents = new ArrayList<>();
+        viewEvents.add(event);
+      }
+
+      if(InputHandler.getZoom() != model.getPreviousZoom()){
+        model.setPreviousZoom(InputHandler.getZoom());
+        runSampler(model.getActiveModel());
+      }
     }
 
-    public void closeConnector() {
-        connector.close();
-    }
+    return viewEvents;
+  }
+
+
+  public void closeConnector() {
+    connector.close();
+  }
 
     /**
      * Send the {@link com.blackbox.graph.events.StopEvent StopEvent} event.
@@ -289,10 +304,6 @@ public class Controller {
         return model.getSelectedClassifier();
     }
 
-    public void setSelectedClassifier(String classifier) {
-        model.setSelectedClassifier(classifier);
-    }
-
     // TODO: Not a good function name give better name
     public void canvasChange(String path) {
         clearPoints();
@@ -300,6 +311,11 @@ public class Controller {
 
         runSampler(path);
     }
+
+  public void setSelectedClassifier(String classifier) {
+    model.setOnnxModel(null);
+    model.setSelectedClassifier(classifier);
+  }
 
     public void runSampler(String path) {
         if (path == null) {
@@ -399,14 +415,11 @@ public class Controller {
         return input;
     }
 
-    public void sampleCurrentModel() {
-        // Clear current points and reshow training data
-        clearPoints();
-        showTrainingData();
-        Logger.info("Sampling");
-        String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
-        model.setActiveModel(path);
-        Logger.info("Selected classifier: {}", path);
-        canvasChange(path);
-    }
+  public void sampleCurrentModel() {
+    // Clear current points and reshow training data
+    clearPoints();
+    showTrainingData();
+    Logger.info("Sampling");
+    runSampler(model.getActiveModel());
+  }
 }

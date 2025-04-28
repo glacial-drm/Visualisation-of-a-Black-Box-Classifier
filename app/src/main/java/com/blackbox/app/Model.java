@@ -155,7 +155,6 @@ public class Model {
 
     private int canvasWidth;
     private int canvasHeight;
-    private String activeModelPath;
     private double previousZoom;
     private Vector3f canvasCenter = new Vector3f(0, 0, 0);
     private OnnxModel onnxModel;
@@ -185,12 +184,9 @@ public class Model {
         this.previousZoom = previousZoom;
     }
 
-    public void setActiveModel(String path) {
-        activeModelPath = path;
-    }
-
     public String getActiveModel() {
-        return activeModelPath;
+        return getCurrentDir().getAbsolutePath()
+            + File.separatorChar + getSelectedClassifier();
     }
 
     public void setCanvasCenter(Vector3f position) {

@@ -1,5 +1,6 @@
 package com.blackbox.app;
 
+import com.blackbox.app.events.*;
 import com.blackbox.generators.DataGenerator;
 import com.google.protobuf.GeneratedMessage.Builder;
 
@@ -12,10 +13,13 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -27,6 +31,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
+import org.tinylog.Logger;
 
 import java.io.File;
 import java.util.Arrays;
@@ -65,11 +70,48 @@ public class View extends Application {
     private Scene scene;
     private Node[] content;
 
-    public void setupTimer() {
+    private void createDialog(ErrorDialog errorDialog) {
+        Dialog<Void> dialog = new Dialog<>();
+        // Inherit styling and other things
+        dialog.initOwner(Stage.getWindows().getFirst());
+        dialog.setTitle("UON Blackbox - Error");
+        dialog.getDialogPane().setMaxWidth(400);
+
+        Label label = new Label(errorDialog.message);
+        label.setWrapText(true);
+        label.setPadding(new Insets(0, 0, 16, 0));
+
+        ScrollPane scrollPane = new ScrollPane(label);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setFitToWidth(true);
+        scrollPane.minHeight(250);
+        scrollPane.setPadding(new Insets(4, 16, 4, 4));
+        dialog.getDialogPane().setContent(scrollPane);
+
+        dialog.setHeaderText("Error");
+        dialog.getDialogPane().getButtonTypes()
+            .add(new ButtonType("Ok", ButtonData.OK_DONE));
+
+        dialog.show();
+    }
+
+    private void setupTimer() {
         // JavaFX's Timeline and KeyFrame are used instead of a normal
         // Java Timer so that this runs on the main JavaFX application thread.
         Timeline timer = new Timeline(
-            new KeyFrame(eventCheckInterval, e -> controller.checkForEvents())
+            new KeyFrame(eventCheckInterval, e -> {
+                List<ControllerEvent> events = controller.checkForEvents();
+                if (events == null) return;
+
+                for (ControllerEvent event : events) {
+                    if (event instanceof ErrorDialog errorDialog) {
+                        Logger.error("Error dialog received : {}", errorDialog.message);
+
+                        createDialog(errorDialog);
+                    }
+                }
+            })
         );
         timer.setCycleCount(Timeline.INDEFINITE);
         timer.play();
