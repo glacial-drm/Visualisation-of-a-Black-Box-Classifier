@@ -165,7 +165,7 @@ class ControllerTest {
         verify(model, times(1)).clearClassifiers();
         verify(model, times(1)).addClassifier("test.onnx");
     }
-    
+
     /**
      * Tests if getClassifiers() returns the expected classifier list.
      */
