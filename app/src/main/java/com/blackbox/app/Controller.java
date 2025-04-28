@@ -20,8 +20,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
-import org.tinylog.Logger;
-
 public class Controller {
   private final EventConsumer<ControllerEvent> eventQueue;
   /**
@@ -309,6 +307,7 @@ public class Controller {
   }
 
   public void setSelectedClassifier(String classifier) {
+    model.setOnnxModel(null);
     model.setSelectedClassifier(classifier);
   }
 
@@ -419,9 +418,6 @@ public class Controller {
     clearPoints();
     showTrainingData();
     Logger.info("Sampling");
-    String path = model.getCurrentDir().getAbsolutePath() + "/" + model.getSelectedClassifier();
-    model.setActiveModel(path);
-    Logger.info("Selected classifier: {}", path);
-    runSampler(path);
+    runSampler(model.getActiveModel());
   }
 }
