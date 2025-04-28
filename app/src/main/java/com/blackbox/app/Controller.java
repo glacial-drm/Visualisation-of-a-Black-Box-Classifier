@@ -55,6 +55,8 @@ public class Controller {
                 // This specifies the default values for all the training requests
                 UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2), SvmRequest.newBuilder().setC(1f).setKernel(SvmRequest.Kernel.RBF).setPolyDegree(3).setGamma(SvmRequest.Gamma.SCALE).setCoef0(0f).setShrinking(true).setProbability(false).setTol(0.001f).setCacheSize(200).setMaxIter(-1).setBreakTies(false).setRandomState(42), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1), RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT), KNeighborsRequest.newBuilder().setNNeighbors(5).setWeights(KNeighborsRequest.Weights.UNIFORM).setAlgorithm(KNeighborsRequest.Algorithm.AUTO).setLeafSize(30).setP(2).setMetric(KNeighborsRequest.Metric.MINKOWSKI).setNJobs(1), LogisticRegressionRequest.newBuilder().setPenalty(LogisticRegressionRequest.Penalty.L2).setDual(false).setTol(1e-4F).setC(1).setFitIntercept(true).setInterceptScaling(1).setSolver(LogisticRegressionRequest.Solver.LBFGS).setMaxIter(100).setWarmStart(false).setNJobs(1), MLPClassifierRequest.newBuilder().setActivation(MLPClassifierRequest.Activation.relu).setSolver(MLPClassifierRequest.Solver.adam).setAlpha(0.0001f).setHiddenLayers("10,5")});
 
+        canvasEventSink.send(new SamplingResolutionChanged(model.getSamplingResolution()));
+
         generateTrainingData();
         showTrainingData();
 
@@ -100,19 +102,6 @@ public class Controller {
                     model.addClassifier(file.getName());
                     Logger.info("Loading onnx file: {}", file.getName());
                 }
-                getGenOptions().setOnChange(_v -> genAndShowTrainingData());
-
-                model.setTrainingRequests(new Builder[]{
-                        // This specifies the default values for all the training requests
-                        UiTest.newBuilder().setBoolean(true).setF32(1f).setF64(2.0).setI32(3).setI64(4).setStr("Hello world").setTestEnum(UiTest.TestEnum.OPTION2), SvmRequest.newBuilder().setC(1f).setKernel(SvmRequest.Kernel.RBF).setPolyDegree(3).setGamma(SvmRequest.Gamma.SCALE).setCoef0(0f).setShrinking(true).setProbability(false).setTol(0.001f).setCacheSize(200).setMaxIter(-1).setBreakTies(false).setRandomState(42), DecisionTreeRequest.newBuilder().setCriterion(Criterion.GINI).setMaxDepth(-1), RandomForestRequest.newBuilder().setNEstimators(100).setCriterion(Criterion.GINI).setMaxDepth(-1).setMinSamplesSplit(2).setMinSamplesLeaf(1).setMaxFeatures(RandomForestRequest.MaxFeatures.SQRT), KNeighborsRequest.newBuilder().setNNeighbors(5).setWeights(KNeighborsRequest.Weights.UNIFORM).setAlgorithm(KNeighborsRequest.Algorithm.AUTO).setLeafSize(30).setP(2).setMetric(KNeighborsRequest.Metric.MINKOWSKI).setNJobs(1), LogisticRegressionRequest.newBuilder().setPenalty(LogisticRegressionRequest.Penalty.L2).setDual(false).setTol(1e-4F).setC(1).setFitIntercept(true).setInterceptScaling(1).setSolver(LogisticRegressionRequest.Solver.LBFGS).setMaxIter(100).setWarmStart(false).setNJobs(1)});
-
-                // Tell the canvas what the sampling resolution is
-                canvasEventSink.send(new SamplingResolutionChanged(model.getSamplingResolution()));
-
-                generateTrainingData();
-                showTrainingData();
-
-                model.initClassifiers();
             }
         }
     }
