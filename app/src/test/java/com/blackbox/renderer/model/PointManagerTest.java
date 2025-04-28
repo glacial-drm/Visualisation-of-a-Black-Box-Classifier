@@ -1,6 +1,8 @@
 package com.blackbox.renderer.model;
 
 import com.blackbox.model.PointData;
+import com.blackbox.renderer.model.primitives.Point;
+import org.joml.Vector3f;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +38,7 @@ class PointManagerTest {
 
     @Test
     void testInitialState() {
-        PointManager pm = new PointManager(1, 1);
+        PointManager pm = new PointManager();
         // Initially, no points have been added.
         assertEquals(0, pm.getPointCount(), "Initial point count should be 0");
         assertFalse(pm.isPoints(), "isPoints() should return false when no points have been added");
@@ -47,9 +49,8 @@ class PointManagerTest {
 
     @Test
     void testAddSinglePoint() {
-        PointManager pm = new PointManager(1, 1);
-        PointData pd = new PointData(new float[] { 0.1f, 0.2f, 0.2f }, 1);
-        pm.addPoint(pd, false);
+        PointManager pm = new PointManager();
+        pm.addPoint(new Point(new Vector3f(0.5f), new Vector3f(0), 1, new Vector3f(1)));
         assertEquals(1, pm.getPointCount(), "Point count should be 1 after adding one point");
         assertTrue(pm.isPoints(), "isPoints() should return true when a point has been added");
         assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen");
@@ -57,11 +58,10 @@ class PointManagerTest {
 
     @Test
     void testAddMultiplePoints() {
-        PointManager pm = new PointManager(1, 1);
+        PointManager pm = new PointManager();
         int numPoints = 5;
         for (int i = 0; i < numPoints; i++) {
-            PointData pd = new PointData(new float[] { 0.1f * i, 0.2f * i,0.2f * i }, i % 2);
-            pm.addPoint(pd, false);
+            pm.addPoint(new Point(new Vector3f(0.1f * i), new Vector3f(0), 1, new Vector3f(1)));
         }
         assertEquals(numPoints, pm.getPointCount(), "Point count should equal the number of points added");
         assertTrue(pm.isPoints(), "no points are stored");
@@ -70,12 +70,11 @@ class PointManagerTest {
 
     @Test
     void testIndicesLengthConstant() {
-        PointManager pm = new PointManager(1, 1);
+        PointManager pm = new PointManager();
         assertEquals(6, pm.getIndicesLength(), "Index buffer length should always be 6");
 
         for (int i = 0; i < 3; i++) {
-            PointData pd = new PointData(new float[] { 0.1f * i, 0.2f * i, 0.2f * i }, 0);
-            pm.addPoint(pd, false);
+            pm.addPoint(new Point(new Vector3f(0.1f * i), new Vector3f(0), 1, new Vector3f(1)));
         }
         assertEquals(6, pm.getIndicesLength(), "Index buffer length should remain constant regardless of points added");
         assertEquals(GL_NO_ERROR, glGetError(), "No OpenGL errors should happen");
@@ -83,10 +82,10 @@ class PointManagerTest {
 
     @Test
     void testPrepPointsBindsVAOAndIndexBuffer() {
-        PointManager pm = new PointManager(1, 1);
+        PointManager pm = new PointManager();
         PointData pd = new PointData(new float[] { 0.5f, 0.5f, 0.5f }, 1);
-        pm.addPoint(pd, false);
-        pm.addPoint(pd, false);
+        pm.addPoint(new Point(new Vector3f(0.1f), new Vector3f(0), 1, new Vector3f(1)));
+        pm.addPoint(new Point(new Vector3f(0.1f), new Vector3f(0), 1, new Vector3f(1)));
 
         pm.prepPoints();
         int vaoBinding = glGetInteger(GL_VERTEX_ARRAY_BINDING);
@@ -98,9 +97,8 @@ class PointManagerTest {
 
     @Test
     void testCleanUpUnbinds() {
-        PointManager pm = new PointManager(1, 1);
-        PointData pd = new PointData(new float[] { 0.5f, 0.5f, 0.5f }, 1);
-        pm.addPoint(pd, false);
+        PointManager pm = new PointManager();
+        pm.addPoint(new Point(new Vector3f(0.5f), new Vector3f(0), 1, new Vector3f(1)));
         pm.prepPoints();
 
         pm.cleanUp();
@@ -113,7 +111,7 @@ class PointManagerTest {
 
     @Test
     void testPrepPointsWithNoPoints() {
-        PointManager pm = new PointManager(1, 1);        // Without adding any points, call prepPoints().
+        PointManager pm = new PointManager();        // Without adding any points, call prepPoints().
         pm.prepPoints();
         int vaoBinding = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         int indexBinding = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
@@ -126,12 +124,11 @@ class PointManagerTest {
 
     @Test
     void testAddAndPrepPointsConsistency() {
-        PointManager pm = new PointManager(1, 1);
+        PointManager pm = new PointManager();
         int initialCount = pm.getPointCount();
         // Add several points.
         for (int i = 0; i < 7; i++) {
-            PointData pd = new PointData(new float[] { i * 0.1f,i * 0.5f , i * 0.5f }, i % 2);
-            pm.addPoint(pd, false);
+            pm.addPoint(new Point(new Vector3f(0.1f * i), new Vector3f(0), 1, new Vector3f(1)));
         }
         assertEquals(initialCount + 7, pm.getPointCount(), "Point count should update correctly after adding points");
 

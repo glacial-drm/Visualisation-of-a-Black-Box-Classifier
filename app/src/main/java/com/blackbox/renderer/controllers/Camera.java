@@ -53,6 +53,19 @@ public class Camera {
     }
 
 
+    /**
+     * Creates a transform matrix which handle translation, rotation, and scaling the object with different xy
+     *
+     * @param translation Vector3 of the objects coordinates
+     * @return Matrix4f transformationMatrix
+     */
+    public static Matrix4f createTransformMatrix(Vector3f translation, float scaleX, float scaleY) {
+        return new Matrix4f()
+                .translate(translation)
+                .scaleXY(scaleX, scaleY);
+    }
+
+
     public Matrix4f createPerspectiveProjection(int width, int height, float FOV, float near, float far) {
         perspectiveMatrix = new Matrix4f();
         perspectiveMatrix.setPerspective(FOV, (float) width / height, near, far);

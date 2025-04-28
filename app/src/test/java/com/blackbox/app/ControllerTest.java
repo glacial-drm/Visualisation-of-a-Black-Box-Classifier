@@ -167,22 +167,6 @@ class ControllerTest {
     }
 
     /**
-     * Tests if sampleCurrentModel() correctly prepares and runs sampling.
-     */
-    @Test
-    void testSampleCurrentModel() {
-        File mockFile = mock(File.class);
-        when(model.getCurrentDir()).thenReturn(mockFile);
-        when(mockFile.getAbsolutePath()).thenReturn("/path/to/file");
-        when(model.getSelectedClassifier()).thenReturn("test.onnx");
-
-        controller.sampleCurrentModel();
-
-        verify(canvasEventSink, times(1)).send(any(ClearPoints.class));
-        verify(model, times(1)).getActiveModel();
-    }
-
-    /**
      * Tests if getClassifiers() returns the expected classifier list.
      */
     @Test

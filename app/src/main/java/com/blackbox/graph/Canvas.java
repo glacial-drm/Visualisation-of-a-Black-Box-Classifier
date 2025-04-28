@@ -162,9 +162,8 @@ public class Canvas {
             controllerEventSink.send(new CenterMoved(renderer.getPosition()));
         }
 
-        if(rendererModel.getPointManager().isPoints()){
-            renderer.render(rendererModel.getPointManager());
-        }
+        renderer.render(rendererModel.getSampledLayer());
+        renderer.render(rendererModel.getTrainingLayer());
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -181,12 +180,15 @@ public class Canvas {
             if (canvasEvent instanceof PointsLoaded pointsLoaded) {
                 rendererModel.addPoint(pointsLoaded.point, pointsLoaded.isTraining);
             } else if (canvasEvent instanceof ClearPoints ) {
-                rendererModel.getPointManager().clearPoints();
+                rendererModel.getSampledLayer().clearPoints();
+                rendererModel.getTrainingLayer().clearPoints();
             } else if (canvasEvent instanceof DimensionChange dimensionChange) {
                 Logger.info("Dimension changed to {}", dimensionChange.dimension);
             } else if (canvasEvent instanceof StopEvent event) {
                 running = false;
                 stopEvent = event;
+            } else if (canvasEvent instanceof SamplingResolutionChanged resolutionChange) {
+                rendererModel.setResolution(resolutionChange.resolution);
             }
         }
     }
