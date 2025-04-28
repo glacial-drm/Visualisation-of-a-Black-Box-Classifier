@@ -417,8 +417,6 @@ public class Controller {
 
   public void sampleCurrentModel() {
     // Clear current points and reshow training data
-    clearPoints();
-    showTrainingData();
     Logger.info("Sampling");
     canvasChange(model.getActiveModel());
   }
