@@ -17,6 +17,7 @@ import javafx.stage.DirectoryChooser;
 import org.tinylog.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -134,35 +135,48 @@ public class Controller {
     showTrainingData();
   }
 
-    /**
-     * Check for received events and respond to them.
-     */
-    public void checkForEvents() {
-        while (!eventQueue.isEmpty()) {
-            ControllerEvent event = eventQueue.poll();
+  /**
+   * Check for received events and respond to them.
+   *
+   * @returns Unprocessed events for the View
+   */
+  public List<ControllerEvent> checkForEvents() {
+    List<ControllerEvent> viewEvents = null;
 
-            if (event == null) {
-                continue;
-            }
-            if (event instanceof CloseGUI) {
-                stop();
-            } else if (event instanceof CanvasResize canvasResize) {
-                model.setCanvasSize(canvasResize.width, canvasResize.height);
-                runSampler(model.getActiveModel());
-            } else if (event instanceof CenterMoved centerMoved){
-                model.setCanvasCenter(centerMoved.position);
-                runSampler(model.getActiveModel());
-            } else if (event instanceof FovChange fovChange) {
-                model.setCanvasFov(fovChange.fov);
-                runSampler(model.getActiveModel());
-            }
-        }
+    while (!eventQueue.isEmpty()) {
+      ControllerEvent event = eventQueue.poll();
 
-        if(InputHandler.getZoom() != model.getPreviousZoom()){
-            model.setPreviousZoom(InputHandler.getZoom());
-            runSampler(model.getActiveModel());
-        }
+      if (event == null) {
+        continue;
+      }
+
+      // Handle event in Controller
+      if (event instanceof CloseGUI) {
+        stop();
+      } else if (event instanceof CanvasResize canvasResize) {
+        model.setCanvasSize(canvasResize.width, canvasResize.height);
+        runSampler(model.getActiveModel());
+      } else if (event instanceof CenterMoved centerMoved){
+        model.setCanvasCenter(centerMoved.position);
+        runSampler(model.getActiveModel());
+      } else if (event instanceof FovChange fovChange) {
+        model.setCanvasFov(fovChange.fov);
+        runSampler(model.getActiveModel());
+      } else {
+        // Handle event in View
+
+        if (viewEvents == null) viewEvents = new ArrayList<>();
+        viewEvents.add(event);
+      }
+
+      if(InputHandler.getZoom() != model.getPreviousZoom()){
+        model.setPreviousZoom(InputHandler.getZoom());
+        runSampler(model.getActiveModel());
+      }
     }
+
+    return viewEvents;
+  }
 
   public void closeConnector() {
     connector.close();
