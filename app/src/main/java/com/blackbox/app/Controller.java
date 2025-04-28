@@ -141,13 +141,13 @@ public class Controller {
         stop();
       } else if (event instanceof CanvasResize canvasResize) {
         model.setCanvasSize(canvasResize.width, canvasResize.height);
-        runSampler(model.getActiveModel());
+        canvasChange(model.getActiveModel());
       } else if (event instanceof CenterMoved centerMoved){
         model.setCanvasCenter(centerMoved.position);
-        runSampler(model.getActiveModel());
+        canvasChange(model.getActiveModel());
       } else if (event instanceof FovChange fovChange) {
         model.setCanvasFov(fovChange.fov);
-        runSampler(model.getActiveModel());
+        canvasChange(model.getActiveModel());
       } else {
         // Handle event in View
 
@@ -157,7 +157,7 @@ public class Controller {
 
       if(InputHandler.getZoom() != model.getPreviousZoom()){
         model.setPreviousZoom(InputHandler.getZoom());
-        runSampler(model.getActiveModel());
+        canvasChange(model.getActiveModel());
       }
     }
 
@@ -420,6 +420,6 @@ public class Controller {
     clearPoints();
     showTrainingData();
     Logger.info("Sampling");
-    runSampler(model.getActiveModel());
+    canvasChange(model.getActiveModel());
   }
 }
