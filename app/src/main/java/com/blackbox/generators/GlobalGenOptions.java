@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
  *
  * Creates a UI to modify itself.
  *
- * Use {@link #setOnChange()} to regenerate
+ * Use {@link #setOnChange(Consumer<GlobalGenOptions> onChange) onChange} to regenerate
  * the training data when the inputs are changed.
  */
 public class GlobalGenOptions {

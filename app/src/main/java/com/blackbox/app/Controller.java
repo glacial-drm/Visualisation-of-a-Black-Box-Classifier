@@ -125,7 +125,7 @@ public class Controller {
     /**
      * Check for received events and respond to them.
      *
-     * @returns Unprocessed events for the View
+     * @return Unprocessed events for the View
      */
     public List<ControllerEvent> checkForEvents() {
         List<ControllerEvent> viewEvents = null;
