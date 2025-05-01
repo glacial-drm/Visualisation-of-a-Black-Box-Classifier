@@ -185,8 +185,12 @@ public class Model {
     }
 
     public String getActiveModel() {
-        return getCurrentDir().getAbsolutePath()
-            + File.separatorChar + getSelectedClassifier();
+        if (getCurrentDir() != null) {
+            return getCurrentDir().getAbsolutePath()
+              + File.separatorChar + getSelectedClassifier();
+        } else{
+            return null;
+        }
     }
 
     public void setCanvasCenter(Vector3f position) {
