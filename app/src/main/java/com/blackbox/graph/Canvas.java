@@ -96,6 +96,9 @@ public class Canvas {
         renderer = new Renderer(rendererModel);
 
         controllerEventSink.send(new FovChange(rendererModel.getFov()));
+        controllerEventSink.send(new CanvasResize(width, height));
+        controllerEventSink.send(new CenterMoved(renderer.getPosition()));
+
         glfwSetWindowSizeCallback(window, (_window, width, height) -> {
             renderer.resize(width, height);
             controllerEventSink.send(new CanvasResize(width, height));
