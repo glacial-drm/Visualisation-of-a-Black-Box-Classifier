@@ -380,6 +380,7 @@ public class View extends Application {
                     controller.setSelectedClassifier(classifier);
                     // Refresh the styles
                     updateClassifierBox(classifierBox, classifiers);
+                    controller.sampleCurrentModel();
                 });
 
                 box.getChildren().add(label);
