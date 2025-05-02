@@ -108,7 +108,7 @@ public class OnnxModel {
             .collect(Collectors.toList());
     }
 
-    public Optional<List<PointData>> getTrainingData() {
+    public Optional<PointData[]> getTrainingData() {
         OnnxModelMetadata metadata;
         try {
             metadata = session.getMetadata();
@@ -135,17 +135,22 @@ public class OnnxModel {
         yBytes.order(ByteOrder.LITTLE_ENDIAN);
 
         int FLOAT_SIZE = 4;
-        int FLOATS_PER_POINT = 2;
-        int count = XBytes.limit() / (FLOAT_SIZE * FLOATS_PER_POINT);
+        int featuresNum = getNumInputFeatures();
+        int count = XBytes.limit() / (FLOAT_SIZE * featuresNum);
 
-        List<PointData> points = new ArrayList<>(count);
+        PointData[] points = new PointData[count];
 
         for (int i = 0; i < count; i++) {
-            float x = XBytes.getFloat(FLOAT_SIZE * i * FLOATS_PER_POINT);
-            float y = XBytes.getFloat(FLOAT_SIZE * (i * FLOATS_PER_POINT + 1));
+            float[] features = new float[featuresNum];
+
+            for (int j = 0; j < featuresNum; j++) {
+                float f = XBytes.getFloat(FLOAT_SIZE * (i * featuresNum + j));
+                features[j] = f;
+            }
+
             short label = yBytes.getShort(i * 2);
 
-            points.add(new PointData(new float[] { x, y }, label));
+            points[i] = new PointData(features, label);
         }
 
         return Optional.of(points);
