@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Controller {
     private final EventConsumer<ControllerEvent> eventQueue;
@@ -357,6 +358,12 @@ public class Controller {
             try {
                 OnnxModel newModel = new OnnxModel(path);
                 model.setOnnxModel(newModel);
+
+                Optional<PointData[]> trainingData = newModel.getTrainingData();
+                if (trainingData.isPresent()) {
+                    model.setTrainingData(trainingData.get());
+                }
+
                 return newModel;
             } catch (Exception e) {
                 Logger.error("Failed to create OnnxModel: {}", e);
