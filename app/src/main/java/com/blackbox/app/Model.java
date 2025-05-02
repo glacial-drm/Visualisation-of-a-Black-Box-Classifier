@@ -236,4 +236,9 @@ public class Model {
     public int getSamplingResolution() {
         return samplingResolution;
     }
+
+    public void setSamplingResolution(int resolution) {
+        samplingResolution = resolution;
+        System.out.println("Sampling resoulution updated: " + resolution);
+    }
 }

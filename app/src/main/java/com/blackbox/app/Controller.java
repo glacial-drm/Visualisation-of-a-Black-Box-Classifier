@@ -421,4 +421,12 @@ public class Controller {
         Logger.info("Sampling");
         canvasChange(model.getActiveModel());
     }
+
+    public int getSamplingResolution() {
+        return model.getSamplingResolution();
+    }
+
+    public void setSamplingResolution(int resolution) {
+        model.setSamplingResolution(resolution);
+    }
 }
