@@ -243,4 +243,3 @@ public class Model {
         samplingResolution = resolution;
     }
 }
-}
