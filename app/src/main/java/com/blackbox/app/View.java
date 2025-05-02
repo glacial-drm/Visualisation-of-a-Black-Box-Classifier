@@ -258,14 +258,6 @@ public class View extends Application {
         List<String> classifiers = controller.getClassifiers();
         updateClassifierBox(classifierBox, classifiers);
 
-        // Sample Button
-        Button sampleButton = new Button("Sample");
-        sampleButton.setOnAction(_e -> {
-            controller.sampleCurrentModel();
-        });
-        sampleButton.prefWidthProperty().bind(pane.widthProperty());
-        pane.getChildren().add(sampleButton);
-
         return pane;
     }
 
@@ -313,6 +305,7 @@ public class View extends Application {
             try {
                 int resolution = Integer.parseInt(txt);
                 controller.setSamplingResolution(resolution);
+                controller.sampleCurrentModel();
                 Logger.info("Sampling resolution set to {}", resolution);
             } catch (NumberFormatException ex) {
                 resField.setText(String.valueOf(controller.getSamplingResolution()));
