@@ -70,6 +70,8 @@ public class View extends Application {
     private Scene scene;
     private Node[] content;
 
+    private Consumer<Float> onAccuracyUpdated;
+
     private void createDialog(ErrorDialog errorDialog) {
         Dialog<Void> dialog = new Dialog<>();
         // Inherit styling and other things
@@ -272,6 +274,18 @@ public class View extends Application {
         sampleButton.prefWidthProperty().bind(pane.widthProperty());
         pane.getChildren().add(sampleButton);
 
+        // Test Button
+        Button testButton = new Button("Test Accuracy");
+        testButton.setOnAction(_e -> {
+            testButton.setText("Testing...");
+            runAsync(controller::calculateAccuracy, accuracy -> {
+                onAccuracyUpdated.accept(accuracy);
+                testButton.setText("Test Accuracy");
+            });
+        });
+        testButton.prefWidthProperty().bind(pane.widthProperty());
+        pane.getChildren().add(testButton);
+
         return pane;
     }
 
@@ -376,6 +390,16 @@ public class View extends Application {
         Label title = new Label("Model Info");
         title.getStyleClass().add("title");
         pane.getChildren().add(title);
+
+        Label accuracy = new Label();
+        pane.getChildren().add(accuracy);
+
+        onAccuracyUpdated = newAccuracy -> {
+            accuracy.setText("Accuracy : " + (newAccuracy == -1
+                ? "N/A"
+                : String.format("%.2f", newAccuracy * 100) + "%"));
+        };
+        onAccuracyUpdated.accept(-1f);
 
         return pane;
     }
