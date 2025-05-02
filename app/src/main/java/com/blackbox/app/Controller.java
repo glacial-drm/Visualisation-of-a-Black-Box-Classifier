@@ -428,5 +428,8 @@ public class Controller {
 
     public void setSamplingResolution(int resolution) {
         model.setSamplingResolution(resolution);
+
+        // Send the new resolution to the canvas
+        canvasEventSink.send(new SamplingResolutionChanged(resolution));
     }
 }
