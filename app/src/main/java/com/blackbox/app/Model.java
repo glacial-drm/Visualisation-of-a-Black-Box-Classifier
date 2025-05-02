@@ -185,8 +185,10 @@ public class Model {
     }
 
     public String getActiveModel() {
+        if (getCurrentDir() == null) return null;
+
         return getCurrentDir().getAbsolutePath()
-            + File.separatorChar + getSelectedClassifier();
+          + File.separatorChar + getSelectedClassifier();
     }
 
     public void setCanvasCenter(Vector3f position) {
@@ -239,6 +241,6 @@ public class Model {
 
     public void setSamplingResolution(int resolution) {
         samplingResolution = resolution;
-        System.out.println("Sampling resoulution updated: " + resolution);
     }
+}
 }
