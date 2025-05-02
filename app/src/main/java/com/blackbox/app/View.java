@@ -12,13 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Separator;
+import javafx.scene.control.*;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -298,6 +292,39 @@ public class View extends Application {
         themeBtn.prefWidthProperty().bind(pane.widthProperty());
         pane.getChildren().add(themeBtn);
 
+        Label resLabelTop = new Label("Sampling Resolution");
+        resLabelTop.getStyleClass().add("subtitle");
+        pane.getChildren().add(resLabelTop);
+
+        HBox resRow = new HBox(8);
+        resRow.setPadding(new Insets(0, 0, 4, 0));
+        resRow.prefWidthProperty().bind(pane.widthProperty());
+
+        TextField resField = new TextField(
+          String.valueOf(controller.getSamplingResolution())
+        );
+        resField.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(resField, Priority.ALWAYS);
+
+        Button saveBtn = new Button("Save");
+        saveBtn.prefHeightProperty().bind(resField.heightProperty());
+        saveBtn.setOnAction(evt -> {
+            String txt = resField.getText().trim();
+            try {
+                int resolution = Integer.parseInt(txt);
+                controller.setSamplingResolution(resolution);
+                Logger.info("Sampling resolution set to {}", resolution);
+            } catch (NumberFormatException ex) {
+                resField.setText(String.valueOf(controller.getSamplingResolution()));
+                createDialog(new ErrorDialog(
+                  String.format("Invalid resolution %s is not a number", txt)
+                ));
+            }
+        });
+        saveBtn.setFocusTraversable(false);
+
+        resRow.getChildren().addAll(resField, saveBtn);
+        pane.getChildren().add(resRow);
         return pane;
     }
 
