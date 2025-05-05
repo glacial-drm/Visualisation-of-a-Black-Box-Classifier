@@ -4,7 +4,7 @@ import com.blackbox.generators.DataGenerator;
 import com.blackbox.generators.GlobalGenOptions;
 import com.blackbox.model.PointData;
 import com.blackbox.proto.connector.SvmRequest;
-import com.blackbox.proto.connector.UiTest;
+import com.blackbox.proto.connector.DecisionTreeRequest;
 import com.google.protobuf.GeneratedMessage;
 import javafx.scene.Node;
 import org.junit.jupiter.api.Test;
@@ -38,15 +38,8 @@ public class ModelTest {
 
     GeneratedMessage.Builder<?>[] requests = new GeneratedMessage.Builder[] {
         // This specifies the default values for all the training requests
-        UiTest.newBuilder()
-                .setBoolean(true)
-                .setF32(1f)
-                .setF64(2.0)
-                .setI32(3)
-                .setI64(4)
-                .setStr("Hello world")
-                .setTestEnum(UiTest.TestEnum.OPTION2),
-                SvmRequest.newBuilder()
+        DecisionTreeRequest.newBuilder(),
+        SvmRequest.newBuilder()
     };
 
     List<String> classifiers = new ArrayList<String>();
