@@ -188,19 +188,3 @@ message ModelResults {
   string onnxPath = 1;
 }
 
-message UiTest {
-  bool boolean = 1;
-  float f32 = 2;
-  double f64 = 3;
-  int32 i32 = 4;
-  int64 i64 = 5;
-  string str = 6;
-
-  enum TestEnum {
-    OPTION1 = 0;
-    OPTION2 = 1;
-    OPTION3 = 2;
-  }
-  TestEnum testEnum = 7;
-}
-
