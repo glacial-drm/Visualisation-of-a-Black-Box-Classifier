@@ -63,6 +63,7 @@ public class View extends Application {
     private Stage primaryStage;
     private Scene scene;
     private Node[] content;
+    private Label accuracyText;
 
     private void createDialog(ErrorDialog errorDialog) {
         Dialog<Void> dialog = new Dialog<>();
@@ -336,6 +337,12 @@ public class View extends Application {
                     controller.setSelectedClassifier(path);
                     updateClassifiers();
                     controller.sampleCurrentModel();
+
+                    runAsync(controller::calculateAccuracy, newAccuracy -> {
+                        accuracyText.setText("Accuracy : " + (newAccuracy == -1
+                            ? "N/A"
+                            : String.format("%.2f", newAccuracy * 100) + "%"));
+                    });
                 }
             );
         });
@@ -402,22 +409,22 @@ public class View extends Application {
         accuracyBox.prefWidthProperty().bind(pane.widthProperty());
         pane.getChildren().add(accuracyBox);
 
-        Label accuracy = new Label("Accuracy : N/A");
-        accuracy.setMaxWidth(Double.MAX_VALUE);
-        accuracyBox.getChildren().add(accuracy);
-        HBox.setHgrow(accuracy, Priority.ALWAYS);
+        accuracyText = new Label("Accuracy : N/A");
+        accuracyText.setMaxWidth(Double.MAX_VALUE);
+        accuracyBox.getChildren().add(accuracyText);
+        HBox.setHgrow(accuracyText, Priority.ALWAYS);
 
         Button testButton = new Button("Test");
         testButton.setOnAction(_e -> {
             testButton.setText("...");
             runAsync(controller::calculateAccuracy, newAccuracy -> {
-                accuracy.setText("Accuracy : " + (newAccuracy == -1
+                accuracyText.setText("Accuracy : " + (newAccuracy == -1
                     ? "N/A"
                     : String.format("%.2f", newAccuracy * 100) + "%"));
                 testButton.setText("Test");
             });
         });
-        testButton.prefHeightProperty().bind(accuracy.heightProperty());
+        testButton.prefHeightProperty().bind(accuracyText.heightProperty());
         accuracyBox.getChildren().add(testButton);
 
         return pane;
