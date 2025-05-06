@@ -63,6 +63,7 @@ public class View extends Application {
     private Stage primaryStage;
     private Scene scene;
     private Node[] content;
+    private Label accuracyText;
 
     private void createDialog(ErrorDialog errorDialog) {
         Dialog<Void> dialog = new Dialog<>();
@@ -336,6 +337,12 @@ public class View extends Application {
                     controller.setSelectedClassifier(path);
                     updateClassifiers();
                     controller.sampleCurrentModel();
+
+                    runAsync(controller::calculateAccuracy, newAccuracy -> {
+                        accuracyText.setText("Accuracy : " + (newAccuracy == -1
+                            ? "N/A"
+                            : String.format("%.2f", newAccuracy * 100) + "%"));
+                    });
                 }
             );
         });
@@ -397,6 +404,28 @@ public class View extends Application {
         Label title = new Label("Model Info");
         title.getStyleClass().add("title");
         pane.getChildren().add(title);
+
+        HBox accuracyBox = new HBox();
+        accuracyBox.prefWidthProperty().bind(pane.widthProperty());
+        pane.getChildren().add(accuracyBox);
+
+        accuracyText = new Label("Accuracy : N/A");
+        accuracyText.setMaxWidth(Double.MAX_VALUE);
+        accuracyBox.getChildren().add(accuracyText);
+        HBox.setHgrow(accuracyText, Priority.ALWAYS);
+
+        Button testButton = new Button("Test");
+        testButton.setOnAction(_e -> {
+            testButton.setText("...");
+            runAsync(controller::calculateAccuracy, newAccuracy -> {
+                accuracyText.setText("Accuracy : " + (newAccuracy == -1
+                    ? "N/A"
+                    : String.format("%.2f", newAccuracy * 100) + "%"));
+                testButton.setText("Test");
+            });
+        });
+        testButton.prefHeightProperty().bind(accuracyText.heightProperty());
+        accuracyBox.getChildren().add(testButton);
 
         return pane;
     }

@@ -440,4 +440,59 @@ public class Controller {
         // Send the new resolution to the canvas
         canvasEventSink.send(new SamplingResolutionChanged(resolution));
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    ///  Model Accuracy                                                     ///
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Calculate the currently selected model's accuracy
+     * and return it.
+     *
+     * Accuracy is -1 if it failed to calculate.
+     */
+    public float calculateAccuracy() {
+        // Create the sampler
+
+        if (model.getActiveModel() == null) return -1;
+        OnnxModel onnx = getOrCreateOnnxModel(model.getActiveModel());
+        if (onnx == null) {
+            return -1;
+        }
+        Sampler sampler = new Sampler(onnx);
+
+        // Prepare the data
+
+        PointData[] trainingData = model.getTrainingData();
+        int count = trainingData.length;
+        int dimensions = trainingData[0].features.length;
+
+        float[][] dataArray = new float[count][dimensions];
+
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j < dimensions; j++) {
+                dataArray[i][j] = trainingData[i].features[j];
+            }
+        }
+
+        // Sample the model
+
+        List<PointData> output = sampler.sampleBC(dataArray);
+
+        // Calculate accuracy
+
+        int correct = 0;
+
+        for (int i = 0; i < count; i++) {
+            if (trainingData[i].label == output.get(i).label) {
+                correct++;
+            }
+        }
+
+        float accuracy = (float)correct / (float)count;
+
+        model.setAccuracy(accuracy);
+
+        return accuracy;
+    }
 }

@@ -100,6 +100,11 @@ public class Model {
      * Selected classifier name.
      */
     private String selectedClassifier;
+    /**
+     * The accuracy of the currently selected model.
+     * Is -1 if it hasn't been calculated yet.
+     */
+    private float accuracy = -1;
 
     /**
      * gets the list of classifier names.
@@ -141,12 +146,30 @@ public class Model {
     }
 
     /**
-     * Sets the selected classifier and notifies listeners.
+     * Sets the selected classifier.
+     * Also clears the accuracy, as the model has changed.
      *
      * @param selectedClassifier the classifier name to set as selected
      */
     public void setSelectedClassifier(String selectedClassifier) {
         this.selectedClassifier = selectedClassifier;
+        accuracy = -1;
+    }
+
+    /**
+     * Set the accuracy of the currently selected model.
+     * Set it to -1 to clear the current value.
+     */
+    public void setAccuracy(float accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    /**
+     * Get the accuracy of the currently selected model.
+     * -1 means it hasn't been calculated yet.
+     */
+    public float getAccuracy() {
+        return accuracy;
     }
 
     ///////////////////////////////////////////////////////////////////////////
