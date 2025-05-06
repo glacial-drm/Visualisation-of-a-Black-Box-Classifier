@@ -398,8 +398,14 @@ public class View extends Application {
         title.getStyleClass().add("title");
         pane.getChildren().add(title);
 
+        HBox accuracyBox = new HBox();
+        accuracyBox.prefWidthProperty().bind(pane.widthProperty());
+        pane.getChildren().add(accuracyBox);
+
         Label accuracy = new Label("Accuracy : N/A");
-        pane.getChildren().add(accuracy);
+        accuracy.setMaxWidth(Double.MAX_VALUE);
+        accuracyBox.getChildren().add(accuracy);
+        HBox.setHgrow(accuracy, Priority.ALWAYS);
 
         Button testButton = new Button("Test");
         testButton.setOnAction(_e -> {
@@ -411,8 +417,8 @@ public class View extends Application {
                 testButton.setText("Test");
             });
         });
-        testButton.prefWidthProperty().bind(pane.widthProperty());
-        pane.getChildren().add(testButton);
+        testButton.prefHeightProperty().bind(accuracy.heightProperty());
+        accuracyBox.getChildren().add(testButton);
 
         return pane;
     }
