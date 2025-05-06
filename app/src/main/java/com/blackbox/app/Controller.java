@@ -453,6 +453,7 @@ public class Controller {
     public float calculateAccuracy() {
         // Create the sampler
 
+        if (model.getActiveModel() == null) return -1;
         OnnxModel onnx = getOrCreateOnnxModel(model.getActiveModel());
         if (onnx == null) {
             return -1;
