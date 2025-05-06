@@ -230,6 +230,7 @@ public class Controller {
      */
     public void generateTrainingData() {
         model.setTrainingData(getSelectedGenerator().buildData(getGenOptions()));
+        System.gc();
     }
 
     /**
